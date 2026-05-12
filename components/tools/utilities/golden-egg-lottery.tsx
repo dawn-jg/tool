@@ -10,6 +10,7 @@ interface Prize {
 }
 
 export function GoldenEggLottery() {
+  const [eggColor, setEggColor] = useState('#f5d442');
   const [prizes, setPrizes] = useState<Prize[]>([
     { name: '一等奖', weight: 5, emoji: '🏆' },
     { name: '二等奖', weight: 15, emoji: '🥈' },
@@ -81,8 +82,9 @@ export function GoldenEggLottery() {
                 className={`text-9xl cursor-pointer transition-transform ${isHammering ? '' : 'hover:scale-110'}`}
                 onClick={roll}
                 title="点击砸金蛋"
+                style={{ filter: `drop-shadow(0 4px 12px ${eggColor}80)` }}
               >
-                🥚
+                <span style={{ color: eggColor }}>🥚</span>
               </div>
             ) : (
               <div className="text-9xl animate-bounce">
@@ -93,6 +95,19 @@ export function GoldenEggLottery() {
           <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
             {isHammering ? '砸！' : '点击金蛋开始抽奖'}
           </p>
+        </div>
+
+        <div className="text-center">
+          <label className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <span>金蛋颜色：</span>
+            <input
+              type="color"
+              value={eggColor}
+              onChange={(e) => setEggColor(e.target.value)}
+              className="w-8 h-8 rounded cursor-pointer"
+            />
+            <span>{eggColor}</span>
+          </label>
         </div>
 
         {result && (

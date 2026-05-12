@@ -85,7 +85,7 @@ export function LuckyWheel() {
             </div>
 
             <div
-              className="w-72 h-72 md:w-96 md:h-96 rounded-full border-4 border-gray-800 dark:border-gray-200 transition-all ease-out"
+              className="w-72 h-72 md:w-96 md:h-96 rounded-full border-4 border-gray-800 dark:border-gray-200 transition-all ease-out relative overflow-hidden"
               style={{
                 transform: `rotate(${rotation}deg)`,
                 transitionDuration: '5000ms',
@@ -95,10 +95,11 @@ export function LuckyWheel() {
               {prizes.map((prize, i) => (
                 <div
                   key={i}
-                  className="absolute w-full h-full flex items-center justify-center"
+                  className="absolute w-full h-full flex flex-col items-center justify-center"
                   style={{ transform: `rotate(${i * segmentAngle + segmentAngle / 2}deg)` }}
                 >
-                  <span className="text-3xl md:text-4xl" style={{ transform: 'rotate(90deg)' }}>{prize.emoji}</span>
+                  <span className="text-2xl md:text-3xl" style={{ transform: 'rotate(90deg)' }}>{prize.emoji}</span>
+                  <span className="text-xs md:text-sm font-medium text-white drop-shadow-lg" style={{ transform: 'rotate(90deg)', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>{prize.name}</span>
                 </div>
               ))}
             </div>
