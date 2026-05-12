@@ -51,6 +51,7 @@ import { TextToPoster } from '@/components/tools/utilities/text-to-poster';
 import { DailyFortune } from '@/components/tools/utilities/daily-fortune';
 import { LuckyWheel } from '@/components/tools/utilities/lucky-wheel';
 import MortgageCalculator from '@/components/tools/utilities/mortgage-calculator';
+import ProgrammerDaily from '@/components/tools/utilities/programmer-daily';
 
 const componentMap: Record<string, React.ComponentType> = {
   'developer-tools/json-formatter': JsonFormatter,
@@ -106,6 +107,7 @@ const componentMap: Record<string, React.ComponentType> = {
   'utilities/daily-fortune': DailyFortune,
   'utilities/lucky-wheel': LuckyWheel,
   'utilities/mortgage-calculator': MortgageCalculator,
+  'utilities/programmer-daily': ProgrammerDaily,
 };
 
 export function getToolComponent(category: string, tool: string): React.ComponentType | undefined {

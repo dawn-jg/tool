@@ -209,6 +209,8 @@ const translations = {
     "tool.luckyWheelDesc": "抽奖大转盘，自定义奖项和颜色",
     "tool.mortgageCalculator": "房贷/理财计算器",
     "tool.mortgageCalculatorDesc": "计算房贷月供和投资收益",
+    "tool.programmerDaily": "程序员日常",
+    "tool.programmerDailyDesc": "时间戳、ASCII表、颜色转换、HTTP状态码等程序员常用工具",
   },
   en: {
     // site
@@ -406,6 +408,8 @@ const translations = {
     "tool.luckyWheelDesc": "Spinning wheel lottery game",
     "tool.mortgageCalculator": "Mortgage/Investment Calculator",
     "tool.mortgageCalculatorDesc": "Calculate mortgage monthly payment and investment returns",
+    "tool.programmerDaily": "Programmer's Daily Tools",
+    "tool.programmerDailyDesc": "Timestamp, ASCII table, color converter, HTTP status codes and more",
   },
 };
 
