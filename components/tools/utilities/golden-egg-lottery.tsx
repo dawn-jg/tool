@@ -79,12 +79,11 @@ export function GoldenEggLottery() {
           <div className="relative inline-block">
             {showEgg ? (
               <div
-                className={`text-9xl cursor-pointer transition-transform ${isHammering ? '' : 'hover:scale-110'}`}
+                className={`cursor-pointer transition-transform ${isHammering ? '' : 'hover:scale-110'}`}
                 onClick={roll}
                 title="点击砸金蛋"
-                style={{ filter: `drop-shadow(0 4px 12px ${eggColor}80)` }}
               >
-                🥚
+                <span className="text-9xl" style={{ textShadow: `0 0 30px 10px ${eggColor}` }}>🥚</span>
               </div>
             ) : (
               <div className="text-9xl animate-bounce">
