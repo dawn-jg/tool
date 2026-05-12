@@ -42,6 +42,14 @@ import { TimerTool } from '@/components/tools/utilities/timer';
 import { RandomPicker } from '@/components/tools/utilities/random-picker';
 import { Calculator } from '@/components/tools/utilities/calculator';
 import { BmiCalculator } from '@/components/tools/utilities/bmi-calculator';
+import { LoveAnniversaryCalculator } from '@/components/tools/utilities/love-anniversary';
+import { PasswordGenerator } from '@/components/tools/utilities/password-generator';
+import { GoldenEggLottery } from '@/components/tools/utilities/golden-egg-lottery';
+import { CountdownDays } from '@/components/tools/utilities/countdown-days';
+import { PomodoroTimer } from '@/components/tools/utilities/pomodoro-timer';
+import { TextToPoster } from '@/components/tools/utilities/text-to-poster';
+import { DailyFortune } from '@/components/tools/utilities/daily-fortune';
+import { LuckyWheel } from '@/components/tools/utilities/lucky-wheel';
 
 const componentMap: Record<string, React.ComponentType> = {
   'developer-tools/json-formatter': JsonFormatter,
@@ -88,6 +96,14 @@ const componentMap: Record<string, React.ComponentType> = {
   'utilities/random-picker': RandomPicker,
   'utilities/calculator': Calculator,
   'utilities/bmi-calculator': BmiCalculator,
+  'utilities/love-anniversary': LoveAnniversaryCalculator,
+  'utilities/password-generator': PasswordGenerator,
+  'utilities/golden-egg-lottery': GoldenEggLottery,
+  'utilities/countdown-days': CountdownDays,
+  'utilities/pomodoro-timer': PomodoroTimer,
+  'utilities/text-to-poster': TextToPoster,
+  'utilities/daily-fortune': DailyFortune,
+  'utilities/lucky-wheel': LuckyWheel,
 };
 
 export function getToolComponent(category: string, tool: string): React.ComponentType | undefined {
