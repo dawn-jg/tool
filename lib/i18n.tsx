@@ -81,6 +81,22 @@ const translations = {
     "tool.uuidGeneratorDesc": "在线生成UUID v4唯一标识符",
     "tool.htmlEntities": "HTML实体编码",
     "tool.htmlEntitiesDesc": "HTML实体编码与解码工具",
+    "tool.flexboxGenerator": "Flexbox布局生成器",
+    "tool.flexboxGeneratorDesc": "CSS Flexbox布局属性在线生成工具",
+    "tool.boxShadowGenerator": "盒阴影生成器",
+    "tool.boxShadowGeneratorDesc": "CSS box-shadow属性在线生成工具",
+    "tool.borderRadiusGenerator": "圆角生成器",
+    "tool.borderRadiusGeneratorDesc": "CSS border-radius属性在线生成工具",
+    "tool.colorFormat": "颜色格式转换",
+    "tool.colorFormatDesc": "HEX、RGB、HSL颜色格式互相转换",
+    "tool.cssAnimationGenerator": "CSS动画生成器",
+    "tool.cssAnimationGeneratorDesc": "CSS @keyframes动画属性在线生成工具",
+    "tool.urlEncoderDecoder": "URL编码解码",
+    "tool.urlEncoderDecoderDesc": "URL编码与解码工具，百分号编码转换",
+    "tool.jsonPathQuery": "JSONPath查询",
+    "tool.jsonPathQueryDesc": "JSONPath路径查询工具，类似于XPath",
+    "tool.markdownPreview": "Markdown预览",
+    "tool.markdownPreviewDesc": "Markdown在线编辑与实时预览",
 
     // tools - text
     "tool.textDiff": "文本差异对比",
@@ -111,6 +127,10 @@ const translations = {
     "tool.svgToJsxDesc": "将SVG代码转换为React JSX格式",
     "tool.exifViewer": "Exif查看器",
     "tool.exifViewerDesc": "查看图片Exif元数据信息",
+    "tool.imageCompressor": "图片压缩",
+    "tool.imageCompressorDesc": "在线图片压缩工具，支持PNG、JPG、WebP",
+    "tool.imageResizer": "图片调整大小",
+    "tool.imageResizerDesc": "在线调整图片尺寸大小工具",
 
     // tools - data
     "tool.randomPassword": "随机密码生成",
@@ -131,6 +151,12 @@ const translations = {
     "tool.metaTagsDesc": "生成SEO优化的HTML Meta标签",
     "tool.dataUri": "Data URI生成",
     "tool.dataUriDesc": "将文本或文件转换为Data URI格式",
+    "tool.colorPaletteGenerator": "调色板生成器",
+    "tool.colorPaletteGeneratorDesc": "CSS颜色调色板生成工具，支持色彩和谐搭配",
+    "tool.gradientGenerator": "渐变生成器",
+    "tool.gradientGeneratorDesc": "CSS渐变背景在线生成工具",
+    "tool.randomNumberGenerator": "随机数生成器",
+    "tool.randomNumberGeneratorDesc": "生成随机数，支持正态分布等分布类型",
 
     // tools - validators
     "tool.jsonValidator": "JSON校验",
@@ -147,6 +173,10 @@ const translations = {
     "tool.urlValidatorDesc": "验证URL格式并解析各组成部分",
     "tool.colorContrast": "WCAG对比度",
     "tool.colorContrastDesc": "计算颜色对比度并检查WCAG合规性",
+    "tool.ipValidator": "IP地址验证",
+    "tool.ipValidatorDesc": "验证IPv4和IPv6地址格式是否正确",
+    "tool.domainValidator": "域名验证",
+    "tool.domainValidatorDesc": "验证域名格式是否正确",
 
     // tools - utilities
     "tool.unitConverter": "单位换算",
@@ -246,6 +276,22 @@ const translations = {
     "tool.uuidGeneratorDesc": "Generate UUID v4 unique identifiers online",
     "tool.htmlEntities": "HTML Entities",
     "tool.htmlEntitiesDesc": "Encode and decode HTML entities",
+    "tool.flexboxGenerator": "Flexbox Generator",
+    "tool.flexboxGeneratorDesc": "CSS Flexbox layout properties generator",
+    "tool.boxShadowGenerator": "Box Shadow Generator",
+    "tool.boxShadowGeneratorDesc": "CSS box-shadow properties generator",
+    "tool.borderRadiusGenerator": "Border Radius Generator",
+    "tool.borderRadiusGeneratorDesc": "CSS border-radius properties generator",
+    "tool.colorFormat": "Color Format Converter",
+    "tool.colorFormatDesc": "Convert between HEX, RGB, and HSL color formats",
+    "tool.cssAnimationGenerator": "CSS Animation Generator",
+    "tool.cssAnimationGeneratorDesc": "CSS @keyframes animation properties generator",
+    "tool.urlEncoderDecoder": "URL Encoder/Decoder",
+    "tool.urlEncoderDecoderDesc": "URL encoding and decoding tool",
+    "tool.jsonPathQuery": "JSONPath Query",
+    "tool.jsonPathQueryDesc": "JSONPath path query tool, similar to XPath",
+    "tool.markdownPreview": "Markdown Preview",
+    "tool.markdownPreviewDesc": "Online Markdown editor with live preview",
 
     // tools - text
     "tool.textDiff": "Text Diff",
@@ -276,6 +322,10 @@ const translations = {
     "tool.svgToJsxDesc": "Convert SVG code to React JSX format",
     "tool.exifViewer": "Exif Viewer",
     "tool.exifViewerDesc": "View image Exif metadata information",
+    "tool.imageCompressor": "Image Compressor",
+    "tool.imageCompressorDesc": "Online image compression tool supporting PNG, JPG, WebP",
+    "tool.imageResizer": "Image Resizer",
+    "tool.imageResizerDesc": "Online tool to resize image dimensions",
 
     // tools - data
     "tool.randomPassword": "Random Password",
@@ -296,6 +346,12 @@ const translations = {
     "tool.metaTagsDesc": "Generate SEO-optimized HTML meta tags",
     "tool.dataUri": "Data URI",
     "tool.dataUriDesc": "Convert text or files to Data URI format",
+    "tool.colorPaletteGenerator": "Color Palette Generator",
+    "tool.colorPaletteGeneratorDesc": "CSS color palette generator with color harmony support",
+    "tool.gradientGenerator": "Gradient Generator",
+    "tool.gradientGeneratorDesc": "CSS gradient background generator",
+    "tool.randomNumberGenerator": "Random Number Generator",
+    "tool.randomNumberGeneratorDesc": "Generate random numbers with normal distribution support",
 
     // tools - validators
     "tool.jsonValidator": "JSON Validator",
@@ -312,6 +368,10 @@ const translations = {
     "tool.urlValidatorDesc": "Validate URL format and parse components",
     "tool.colorContrast": "WCAG Contrast",
     "tool.colorContrastDesc": "Calculate color contrast and check WCAG compliance",
+    "tool.ipValidator": "IP Address Validator",
+    "tool.ipValidatorDesc": "Validate IPv4 and IPv6 address format",
+    "tool.domainValidator": "Domain Validator",
+    "tool.domainValidatorDesc": "Validate domain name format",
 
     // tools - utilities
     "tool.unitConverter": "Unit Converter",

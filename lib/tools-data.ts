@@ -1,4 +1,4 @@
-import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot } from 'lucide-react';
+import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline } from 'lucide-react';
 
 export interface Tool {
   slug: string;
@@ -38,6 +38,14 @@ export const tools: Tool[] = [
   { slug: 'hash-generator', category: 'developer-tools', nameKey: 'tool.hashGenerator', descriptionKey: 'tool.hashGeneratorDesc', keywords: 'MD5,SHA,哈希,Hash,加密', icon: Fingerprint },
   { slug: 'uuid-generator', category: 'developer-tools', nameKey: 'tool.uuidGenerator', descriptionKey: 'tool.uuidGeneratorDesc', keywords: 'UUID,GUID,唯一标识,生成', icon: Hash },
   { slug: 'html-entities', category: 'developer-tools', nameKey: 'tool.htmlEntities', descriptionKey: 'tool.htmlEntitiesDesc', keywords: 'HTML,实体编码,Encode,Decode,转义', icon: Quote },
+  { slug: 'flexbox-generator', category: 'developer-tools', nameKey: 'tool.flexboxGenerator', descriptionKey: 'tool.flexboxGeneratorDesc', keywords: 'Flexbox,CSS,布局,弹性盒子,布局生成', icon: Grid },
+  { slug: 'box-shadow-generator', category: 'developer-tools', nameKey: 'tool.boxShadowGenerator', descriptionKey: 'tool.boxShadowGeneratorDesc', keywords: 'BoxShadow,CSS,阴影,阴影生成', icon: Box },
+  { slug: 'border-radius-generator', category: 'developer-tools', nameKey: 'tool.borderRadiusGenerator', descriptionKey: 'tool.borderRadiusGeneratorDesc', keywords: 'BorderRadius,CSS,圆角,圆角生成', icon: Square },
+  { slug: 'color-format', category: 'developer-tools', nameKey: 'tool.colorFormat', descriptionKey: 'tool.colorFormatDesc', keywords: 'Color,HEX,RGB,HSL,颜色格式,颜色转换', icon: Palette },
+  { slug: 'css-animation-generator', category: 'developer-tools', nameKey: 'tool.cssAnimationGenerator', descriptionKey: 'tool.cssAnimationGeneratorDesc', keywords: 'CSS,Animation,动画,关键帧,@keyframes', icon: Play },
+  { slug: 'url-encoder-decoder', category: 'developer-tools', nameKey: 'tool.urlEncoderDecoder', descriptionKey: 'tool.urlEncoderDecoderDesc', keywords: 'URL,编码,解码,Encode,Decode,百分号编码', icon: Link },
+  { slug: 'json-path-query', category: 'developer-tools', nameKey: 'tool.jsonPathQuery', descriptionKey: 'tool.jsonPathQueryDesc', keywords: 'JSONPath,JSON,路径,查询,XPATH', icon: Braces },
+  { slug: 'markdown-preview', category: 'developer-tools', nameKey: 'tool.markdownPreview', descriptionKey: 'tool.markdownPreviewDesc', keywords: 'Markdown,预览,编辑,实时预览', icon: FileText },
 
   // text-tools
   { slug: 'text-diff', category: 'text-tools', nameKey: 'tool.textDiff', descriptionKey: 'tool.textDiffDesc', keywords: 'Diff,文本对比,差异,比较', icon: Diff },
@@ -55,6 +63,8 @@ export const tools: Tool[] = [
   { slug: 'barcode-generator', category: 'image-tools', nameKey: 'tool.barcodeGenerator', descriptionKey: 'tool.barcodeGeneratorDesc', keywords: '条形码,Barcode,Code128,生成', icon: Barcode },
   { slug: 'svg-to-jsx', category: 'image-tools', nameKey: 'tool.svgToJsx', descriptionKey: 'tool.svgToJsxDesc', keywords: 'SVG,JSX,React,转换', icon: FileCode },
   { slug: 'exif-viewer', category: 'image-tools', nameKey: 'tool.exifViewer', descriptionKey: 'tool.exifViewerDesc', keywords: 'Exif,元数据,图片信息,GPS', icon: Camera },
+  { slug: 'image-compressor', category: 'image-tools', nameKey: 'tool.imageCompressor', descriptionKey: 'tool.imageCompressorDesc', keywords: 'Image,Compress,压缩,图片压缩,优化', icon: Archive },
+  { slug: 'image-resizer', category: 'image-tools', nameKey: 'tool.imageResizer', descriptionKey: 'tool.imageResizerDesc', keywords: 'Image,Resize,调整大小,尺寸,图片缩放', icon: Scale },
 
   // data-tools
   { slug: 'random-password', category: 'data-tools', nameKey: 'tool.randomPassword', descriptionKey: 'tool.randomPasswordDesc', keywords: '密码,随机,安全,生成', icon: Lock },
@@ -67,6 +77,9 @@ export const tools: Tool[] = [
   { slug: 'color-gradient', category: 'generators', nameKey: 'tool.colorGradient', descriptionKey: 'tool.colorGradientDesc', keywords: 'CSS,渐变,Gradient,颜色', icon: PaintBucket },
   { slug: 'meta-tags', category: 'generators', nameKey: 'tool.metaTags', descriptionKey: 'tool.metaTagsDesc', keywords: 'Meta,SEO,标签,生成', icon: Globe },
   { slug: 'data-uri', category: 'generators', nameKey: 'tool.dataUri', descriptionKey: 'tool.dataUriDesc', keywords: 'DataURI,Base64,内嵌,生成', icon: Link },
+  { slug: 'color-palette-generator', category: 'generators', nameKey: 'tool.colorPaletteGenerator', descriptionKey: 'tool.colorPaletteGeneratorDesc', keywords: 'Color,Palette,调色板,色相,色彩,配色', icon: Palette },
+  { slug: 'gradient-generator', category: 'generators', nameKey: 'tool.gradientGenerator', descriptionKey: 'tool.gradientGeneratorDesc', keywords: 'Gradient,渐变,CSS,背景,渐变生成', icon: Spline },
+  { slug: 'random-number-generator', category: 'generators', nameKey: 'tool.randomNumberGenerator', descriptionKey: 'tool.randomNumberGeneratorDesc', keywords: 'Random,Number,随机数,正态分布,随机生成', icon: Hash },
 
   // validators
   { slug: 'json-validator', category: 'validators', nameKey: 'tool.jsonValidator', descriptionKey: 'tool.jsonValidatorDesc', keywords: 'JSON,校验,格式,错误', icon: FileJson },
@@ -76,6 +89,8 @@ export const tools: Tool[] = [
   { slug: 'credit-card-validator', category: 'validators', nameKey: 'tool.creditCardValidator', descriptionKey: 'tool.creditCardValidatorDesc', keywords: '信用卡,Luhn,校验,验证', icon: CreditCard },
   { slug: 'url-validator', category: 'validators', nameKey: 'tool.urlValidator', descriptionKey: 'tool.urlValidatorDesc', keywords: 'URL,验证,解析,格式', icon: Link },
   { slug: 'color-contrast', category: 'validators', nameKey: 'tool.colorContrast', descriptionKey: 'tool.colorContrastDesc', keywords: 'WCAG,对比度,颜色,无障碍', icon: Contrast },
+  { slug: 'ip-validator', category: 'validators', nameKey: 'tool.ipValidator', descriptionKey: 'tool.ipValidatorDesc', keywords: 'IP,IPv4,IPv6,地址,验证,网络', icon: Globe },
+  { slug: 'domain-validator', category: 'validators', nameKey: 'tool.domainValidator', descriptionKey: 'tool.domainValidatorDesc', keywords: 'Domain,域名,格式,验证,DNS', icon: Globe },
 
   // utilities
   { slug: 'unit-converter', category: 'utilities', nameKey: 'tool.unitConverter', descriptionKey: 'tool.unitConverterDesc', keywords: '单位,换算,长度,重量,温度,转换', icon: Ruler },
