@@ -83,10 +83,26 @@ export function GoldenEggLottery() {
                 onClick={roll}
                 title="点击砸金蛋"
               >
-                <span className="text-9xl" style={{ 
-                  color: eggColor,
-                  textShadow: `0 0 40px ${eggColor}, 0 0 80px ${eggColor}80, 0 0 120px ${eggColor}40`
-                }}>🥚</span>
+                <div className="relative" style={{ width: '180px', height: '220px' }}>
+                  <div 
+                    className="absolute inset-0 rounded-full" 
+                    style={{ 
+                      background: `radial-gradient(ellipse at 30% 30%, ${eggColor}cc, ${eggColor}88 50%, ${eggColor}44)`,
+                      boxShadow: `0 8px 32px ${eggColor}60, inset 0 -10px 30px ${eggColor}40`,
+                      transform: 'scaleY(1.15)'
+                    }}
+                  />
+                  <div 
+                    className="absolute flex items-center justify-center w-full h-full text-8xl font-bold" 
+                    style={{ 
+                      color: '#fff',
+                      textShadow: `0 2px 4px ${eggColor}80`,
+                      fontFamily: 'system-ui'
+                    }}
+                  >
+                    🥚
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="text-9xl animate-bounce">
