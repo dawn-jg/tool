@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, ArrowRight } from "lucide-react";
+import { Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, ArrowRight, Globe } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 const categories = [
@@ -58,8 +58,16 @@ const categories = [
     nameDescKey: "cat.utilitiesDesc",
     href: "/utilities",
     icon: Calculator,
-    count: 6,
+    count: 13,
     color: "bg-pink-500",
+  },
+  {
+    nameKey: "cat.network",
+    nameDescKey: "cat.networkDesc",
+    href: "/network-tools",
+    icon: Globe,
+    count: 5,
+    color: "bg-indigo-500",
   },
 ];
 
