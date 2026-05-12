@@ -207,6 +207,8 @@ const translations = {
     "tool.dailyFortuneDesc": "根据姓名生日生成今日运势",
     "tool.luckyWheel": "幸运大转盘",
     "tool.luckyWheelDesc": "抽奖大转盘，自定义奖项和颜色",
+    "tool.mortgageCalculator": "房贷/理财计算器",
+    "tool.mortgageCalculatorDesc": "计算房贷月供和投资收益",
   },
   en: {
     // site
@@ -402,6 +404,8 @@ const translations = {
     "tool.dailyFortuneDesc": "Daily fortune based on name and birthday",
     "tool.luckyWheel": "Lucky Wheel",
     "tool.luckyWheelDesc": "Spinning wheel lottery game",
+    "tool.mortgageCalculator": "Mortgage/Investment Calculator",
+    "tool.mortgageCalculatorDesc": "Calculate mortgage monthly payment and investment returns",
   },
 };
 

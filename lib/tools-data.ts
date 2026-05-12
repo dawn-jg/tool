@@ -107,6 +107,7 @@ export const tools: Tool[] = [
   { slug: 'text-to-poster', category: 'utilities', nameKey: 'tool.textToPoster', descriptionKey: 'tool.textToPosterDesc', keywords: '文字,海报,生成,图片', icon: ImageIcon },
   { slug: 'daily-fortune', category: 'utilities', nameKey: 'tool.dailyFortune', descriptionKey: 'tool.dailyFortuneDesc', keywords: '运势,占卜,幸运,每日', icon: Sparkles },
   { slug: 'lucky-wheel', category: 'utilities', nameKey: 'tool.luckyWheel', descriptionKey: 'tool.luckyWheelDesc', keywords: '转盘,抽奖,游戏,随机', icon: CircleDot },
+  { slug: 'mortgage-calculator', category: 'utilities', nameKey: 'tool.mortgageCalculator', descriptionKey: 'tool.mortgageCalculatorDesc', keywords: '房贷,贷款,理财,计算,月供', icon: Calculator },
 ];
 
 export function getTool(category: string, slug: string): Tool | undefined {
