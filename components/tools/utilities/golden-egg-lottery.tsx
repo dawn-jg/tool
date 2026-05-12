@@ -84,7 +84,7 @@ export function GoldenEggLottery() {
                 title="点击砸金蛋"
                 style={{ filter: `drop-shadow(0 4px 12px ${eggColor}80)` }}
               >
-                <span style={{ color: eggColor }}>🥚</span>
+                🥚
               </div>
             ) : (
               <div className="text-9xl animate-bounce">
