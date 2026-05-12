@@ -10,7 +10,7 @@ interface Prize {
 }
 
 export function GoldenEggLottery() {
-  const [eggColor, setEggColor] = useState('#f5d442');
+  const [eggColor, setEggColor] = useState('#FFD700');
   const [prizes, setPrizes] = useState<Prize[]>([
     { name: '一等奖', weight: 5, emoji: '🏆' },
     { name: '二等奖', weight: 15, emoji: '🥈' },
