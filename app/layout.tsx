@@ -47,7 +47,7 @@ export default function RootLayout({
         />
         <script charSet="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
         <script dangerouslySetInnerHTML={{ __html: "LA.init({id:'LBnlcELKHTZlDEIf',ck:'LBnlcELKHTZlDEIf'})" }}></script>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7487473818971469" crossorigin="anonymous"></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7487473818971469" crossOrigin="anonymous"></script>
       </head>
       <body className="min-h-screen flex flex-col">
         <I18nProvider>
