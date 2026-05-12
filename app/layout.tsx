@@ -45,7 +45,7 @@ export default function RootLayout({
             `,
           }}
         />
-        <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+        <script charSet="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
         <script dangerouslySetInnerHTML={{ __html: "LA.init({id:'LBnlcELKHTZlDEIf',ck:'LBnlcELKHTZlDEIf'})" }}></script>
       </head>
       <body className="min-h-screen flex flex-col">
