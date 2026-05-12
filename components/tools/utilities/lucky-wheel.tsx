@@ -92,16 +92,27 @@ export function LuckyWheel() {
                 background: `conic-gradient(${prizes.map((p, i) => `${p.color} ${i * segmentAngle}deg ${(i + 1) * segmentAngle}deg`).join(', ')})`,
               }}
             >
-              {prizes.map((prize, i) => (
-                <div
-                  key={i}
-                  className="absolute w-full h-full flex flex-col items-center justify-center"
-                  style={{ transform: `rotate(${i * segmentAngle + segmentAngle / 2}deg)` }}
-                >
-                  <span className="text-2xl md:text-3xl" style={{ transform: 'rotate(90deg)' }}>{prize.emoji}</span>
-                  <span className="text-xs md:text-sm font-medium text-white drop-shadow-lg" style={{ transform: 'rotate(90deg)', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>{prize.name}</span>
-                </div>
-              ))}
+              {prizes.map((prize, i) => {
+                const angle = i * segmentAngle + segmentAngle / 2;
+                const angleRad = (angle * Math.PI) / 180;
+                const radiusPercent = 32;
+                const x = 50 + radiusPercent * Math.sin(angleRad);
+                const y = 50 - radiusPercent * Math.cos(angleRad);
+                return (
+                  <div
+                    key={i}
+                    className="absolute flex flex-col items-center"
+                    style={{
+                      left: `${x}%`,
+                      top: `${y}%`,
+                      transform: `rotate(${angle}deg) translateY(-8px)`,
+                    }}
+                  >
+                    <span className="text-2xl md:text-3xl">{prize.emoji}</span>
+                    <span className="text-xs font-medium whitespace-nowrap drop-shadow-md" style={{ color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{prize.name}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
