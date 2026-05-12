@@ -24,6 +24,7 @@ export const categories: Category[] = [
   { slug: 'generators', nameKey: 'cat.generators', icon: Zap, descriptionKey: 'cat.generatorsDesc' },
   { slug: 'validators', nameKey: 'cat.validators', icon: CheckCircle, descriptionKey: 'cat.validatorsDesc' },
   { slug: 'utilities', nameKey: 'cat.utilities', icon: Calculator, descriptionKey: 'cat.utilitiesDesc' },
+  { slug: 'network-tools', nameKey: 'cat.network', icon: Globe, descriptionKey: 'cat.networkDesc' },
 ];
 
 export const tools: Tool[] = [
@@ -109,6 +110,13 @@ export const tools: Tool[] = [
   { slug: 'lucky-wheel', category: 'utilities', nameKey: 'tool.luckyWheel', descriptionKey: 'tool.luckyWheelDesc', keywords: '转盘,抽奖,游戏,随机', icon: CircleDot },
   { slug: 'mortgage-calculator', category: 'utilities', nameKey: 'tool.mortgageCalculator', descriptionKey: 'tool.mortgageCalculatorDesc', keywords: '房贷,贷款,理财,计算,月供', icon: Calculator },
   { slug: 'programmer-daily', category: 'utilities', nameKey: 'tool.programmerDaily', descriptionKey: 'tool.programmerDailyDesc', keywords: '程序员,ASCII,时间戳,HTTP,进制,颜色', icon: Code },
+
+  // network-tools
+  { slug: 'ip-info', category: 'network-tools', nameKey: 'tool.ipInfo', descriptionKey: 'tool.ipInfoDesc', keywords: 'IP,地址,查询,位置,公网', icon: Globe },
+  { slug: 'dns-lookup', category: 'network-tools', nameKey: 'tool.dnsLookup', descriptionKey: 'tool.dnsLookupDesc', keywords: 'DNS,查询,域名解析,解析记录', icon: Globe2 },
+  { slug: 'latency-test', category: 'network-tools', nameKey: 'tool.latencyTest', descriptionKey: 'tool.latencyTestDesc', keywords: '延迟,Ping,测试,响应时间', icon: Timer },
+  { slug: 'http-headers', category: 'network-tools', nameKey: 'tool.httpHeaders', descriptionKey: 'tool.httpHeadersDesc', keywords: 'HTTP,Headers,响应头,请求头', icon: FileJson },
+  { slug: 'domain-info', category: 'network-tools', nameKey: 'tool.domainInfo', descriptionKey: 'tool.domainInfoDesc', keywords: '域名,WHOIS,注册信息,过期时间', icon: Globe },
 ];
 
 export function getTool(category: string, slug: string): Tool | undefined {

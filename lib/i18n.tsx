@@ -35,6 +35,8 @@ const translations = {
     "cat.validatorsDesc": "邮箱、手机号、身份证等格式验证工具",
     "cat.utilities": "实用工具",
     "cat.utilitiesDesc": "单位换算、计时器、计算器等日常生活工具",
+    "cat.network": "网络工具",
+    "cat.networkDesc": "IP查询、DNS查询、延迟测试、HTTP头查看等网络相关工具",
 
     // home
     "home.featured": "热门工具",
@@ -211,6 +213,18 @@ const translations = {
     "tool.mortgageCalculatorDesc": "计算房贷月供和投资收益",
     "tool.programmerDaily": "程序员日常",
     "tool.programmerDailyDesc": "时间戳、ASCII表、颜色转换、HTTP状态码等程序员常用工具",
+
+    // network-tools
+    "tool.ipInfo": "IP 信息查询",
+    "tool.ipInfoDesc": "查询本机公网 IP 地址和地理位置信息",
+    "tool.dnsLookup": "DNS 查询",
+    "tool.dnsLookupDesc": "查询域名的 DNS 解析记录，支持 A、MX、TXT 等记录类型",
+    "tool.latencyTest": "延迟测试",
+    "tool.latencyTestDesc": "测量到网站的响应延迟时间（模拟 Ping）",
+    "tool.httpHeaders": "HTTP 头查看",
+    "tool.httpHeadersDesc": "查看任意网站返回的 HTTP 响应头信息",
+    "tool.domainInfo": "域名信息查询",
+    "tool.domainInfoDesc": "查询域名的 WHOIS 注册信息和到期时间",
   },
   en: {
     // site
@@ -234,6 +248,8 @@ const translations = {
     "cat.validatorsDesc": "Email, Phone, ID card format validation and more",
     "cat.utilities": "Utilities",
     "cat.utilitiesDesc": "Unit converter, Countdown, World clock and more",
+    "cat.network": "Network Tools",
+    "cat.networkDesc": "IP lookup, DNS query, latency test, HTTP headers and more",
 
     // home
     "home.featured": "Featured Tools",
@@ -410,6 +426,18 @@ const translations = {
     "tool.mortgageCalculatorDesc": "Calculate mortgage monthly payment and investment returns",
     "tool.programmerDaily": "Programmer's Daily Tools",
     "tool.programmerDailyDesc": "Timestamp, ASCII table, color converter, HTTP status codes and more",
+
+    // network-tools
+    "tool.ipInfo": "IP Info Lookup",
+    "tool.ipInfoDesc": "Query your public IP address and geolocation information",
+    "tool.dnsLookup": "DNS Lookup",
+    "tool.dnsLookupDesc": "Query DNS resolution records for domains, supports A, MX, TXT records",
+    "tool.latencyTest": "Latency Test",
+    "tool.latencyTestDesc": "Measure response latency to websites (simulated Ping)",
+    "tool.httpHeaders": "HTTP Headers Viewer",
+    "tool.httpHeadersDesc": "View HTTP response headers from any website",
+    "tool.domainInfo": "Domain Info Lookup",
+    "tool.domainInfoDesc": "Query domain WHOIS registration info and expiry date",
   },
 };
 
