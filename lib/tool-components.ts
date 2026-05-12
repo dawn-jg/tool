@@ -52,6 +52,11 @@ import { DailyFortune } from '@/components/tools/utilities/daily-fortune';
 import { LuckyWheel } from '@/components/tools/utilities/lucky-wheel';
 import MortgageCalculator from '@/components/tools/utilities/mortgage-calculator';
 import ProgrammerDaily from '@/components/tools/utilities/programmer-daily';
+import IpInfoTool from '@/components/tools/network/ip-info';
+import DnsLookup from '@/components/tools/network/dns-lookup';
+import LatencyTest from '@/components/tools/network/latency-test';
+import HttpHeaders from '@/components/tools/network/http-headers';
+import DomainInfo from '@/components/tools/network/domain-info';
 
 const componentMap: Record<string, React.ComponentType> = {
   'developer-tools/json-formatter': JsonFormatter,
@@ -108,6 +113,11 @@ const componentMap: Record<string, React.ComponentType> = {
   'utilities/lucky-wheel': LuckyWheel,
   'utilities/mortgage-calculator': MortgageCalculator,
   'utilities/programmer-daily': ProgrammerDaily,
+  'network-tools/ip-info': IpInfoTool,
+  'network-tools/dns-lookup': DnsLookup,
+  'network-tools/latency-test': LatencyTest,
+  'network-tools/http-headers': HttpHeaders,
+  'network-tools/domain-info': DomainInfo,
 };
 
 export function getToolComponent(category: string, tool: string): React.ComponentType | undefined {
