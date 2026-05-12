@@ -83,24 +83,28 @@ export function GoldenEggLottery() {
                 onClick={roll}
                 title="点击砸金蛋"
               >
-                <div className="relative" style={{ width: '180px', height: '220px' }}>
+                <div className="relative cursor-pointer hover:scale-110 transition-transform" onClick={roll} title="点击砸金蛋">
                   <div 
-                    className="absolute inset-0 rounded-full" 
                     style={{ 
-                      background: `radial-gradient(ellipse at 30% 30%, ${eggColor}cc, ${eggColor}88 50%, ${eggColor}44)`,
-                      boxShadow: `0 8px 32px ${eggColor}60, inset 0 -10px 30px ${eggColor}40`,
-                      transform: 'scaleY(1.15)'
-                    }}
-                  />
-                  <div 
-                    className="absolute flex items-center justify-center w-full h-full text-8xl font-bold" 
-                    style={{ 
-                      color: '#fff',
-                      textShadow: `0 2px 4px ${eggColor}80`,
-                      fontFamily: 'system-ui'
+                      width: '160px', 
+                      height: '200px', 
+                      borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                      background: `linear-gradient(135deg, #fff7d6 0%, ${eggColor} 25%, ${eggColor}cc 50%, ${eggColor} 75%, #fff7d6 100%)`,
+                      boxShadow: `0 0 60px ${eggColor}, 0 0 120px ${eggColor}80, inset 0 -20px 60px ${eggColor}60, inset 0 20px 40px rgba(255,255,255,0.5)`,
+                      border: `4px solid ${eggColor}`,
+                      position: 'relative'
                     }}
                   >
-                    🥚
+                    <div style={{ 
+                      position: 'absolute', 
+                      top: '15%', 
+                      left: '20%', 
+                      width: '30%', 
+                      height: '20%', 
+                      background: 'radial-gradient(ellipse, rgba(255,255,255,0.8), transparent)',
+                      borderRadius: '50%',
+                      transform: 'rotate(-30deg)'
+                    }}/>
                   </div>
                 </div>
               </div>
