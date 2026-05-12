@@ -1,4 +1,4 @@
-import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop } from 'lucide-react';
+import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot } from 'lucide-react';
 
 export interface Tool {
   slug: string;
@@ -84,6 +84,14 @@ export const tools: Tool[] = [
   { slug: 'random-picker', category: 'utilities', nameKey: 'tool.randomPicker', descriptionKey: 'tool.randomPickerDesc', keywords: '随机,抽签,选择,抽取', icon: Shuffle },
   { slug: 'calculator', category: 'utilities', nameKey: 'tool.calculator', descriptionKey: 'tool.calculatorDesc', keywords: '计算器,科学计算,Calculator', icon: Calculator },
   { slug: 'bmi-calculator', category: 'utilities', nameKey: 'tool.bmiCalculator', descriptionKey: 'tool.bmiCalculatorDesc', keywords: 'BMI,身体质量指数,健康,计算', icon: Heart },
+  { slug: 'love-anniversary', category: 'utilities', nameKey: 'tool.loveAnniversary', descriptionKey: 'tool.loveAnniversaryDesc', keywords: '恋爱,纪念日,在一起,天数', icon: Heart },
+  { slug: 'password-generator', category: 'utilities', nameKey: 'tool.passwordGenerator', descriptionKey: 'tool.passwordGeneratorDesc', keywords: '密码,随机,安全,生成', icon: Lock },
+  { slug: 'golden-egg-lottery', category: 'utilities', nameKey: 'tool.goldenEggLottery', descriptionKey: 'tool.goldenEggLotteryDesc', keywords: '砸金蛋,抽奖,游戏,礼物', icon: Gift },
+  { slug: 'countdown-days', category: 'utilities', nameKey: 'tool.countdownDays', descriptionKey: 'tool.countdownDaysDesc', keywords: '倒计时,日期,天数,计时', icon: Clock },
+  { slug: 'pomodoro-timer', category: 'utilities', nameKey: 'tool.pomodoroTimer', descriptionKey: 'tool.pomodoroTimerDesc', keywords: '番茄钟,专注,工作,学习', icon: Timer },
+  { slug: 'text-to-poster', category: 'utilities', nameKey: 'tool.textToPoster', descriptionKey: 'tool.textToPosterDesc', keywords: '文字,海报,生成,图片', icon: ImageIcon },
+  { slug: 'daily-fortune', category: 'utilities', nameKey: 'tool.dailyFortune', descriptionKey: 'tool.dailyFortuneDesc', keywords: '运势,占卜,幸运,每日', icon: Sparkles },
+  { slug: 'lucky-wheel', category: 'utilities', nameKey: 'tool.luckyWheel', descriptionKey: 'tool.luckyWheelDesc', keywords: '转盘,抽奖,游戏,随机', icon: CircleDot },
 ];
 
 export function getTool(category: string, slug: string): Tool | undefined {
