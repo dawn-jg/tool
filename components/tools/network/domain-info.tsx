@@ -35,15 +35,11 @@ export default function DomainInfoTool() {
       cleanDomain = cleanDomain.replace(/^(https?:\/\/)?(www\.)?/, '');
       cleanDomain = cleanDomain.split('/')[0];
 
-      // Use Hackertarget API (free tier with CORS support)
-      const response = await fetch(`https://api.hackertarget.com/whois/?q=${encodeURIComponent(cleanDomain)}`);
+      // Use Domainr API (free, no auth required)
+      const domainrResult = await fetch(`https://api.domains.dev/api/v2/whois?domain=${encodeURIComponent(cleanDomain)}`);
+      const domainrData = await domainrResult.json();
       
-      if (!response.ok) throw new Error('查询失败');
-      
-      const text = await response.text();
-      
-      // Parse the whois text output
-      const lines = text.split('\n');
+      // Parse Domainr response
       const info: DomainInfo = {
         domain: cleanDomain,
         registrar: '',
@@ -53,22 +49,17 @@ export default function DomainInfoTool() {
         nameservers: [],
         status: [],
       };
-
-      for (const line of lines) {
-        if (line.toLowerCase().startsWith('registrar:')) {
-          info.registrar = line.substring(10).trim();
-        } else if (line.toLowerCase().includes('creation date') || line.toLowerCase().includes('created:')) {
-          info.createdDate = line.split(':').slice(1).join(':').trim();
-        } else if (line.toLowerCase().includes('expiry') || line.toLowerCase().includes('expires:')) {
-          info.expiryDate = line.split(':').slice(1).join(':').trim();
-        } else if (line.toLowerCase().includes('updated') || line.toLowerCase().includes('modified:')) {
-          info.updatedDate = line.split(':').slice(1).join(':').trim();
-        } else if (line.toLowerCase().includes('name server') || line.toLowerCase().includes('ns:')) {
-          const ns = line.split(':').slice(1).join(':').trim();
-          if (ns) info.nameservers.push(ns);
-        }
+      
+      if (domainrData && domainrData.whoIs) {
+        const whois = domainrData.whoIs;
+        info.registrar = whois.registrar || '';
+        info.createdDate = whois.createdDate || '';
+        info.expiryDate = whois.expiresAt || '';
+        info.updatedDate = whois.updatedAt || '';
+        info.nameservers = whois.nameServers || [];
+        info.status = whois.status || [];
       }
-
+      
       if (!info.registrar && !info.createdDate && !info.expiryDate) {
         throw new Error('未找到域名信息');
       }
@@ -90,7 +81,7 @@ export default function DomainInfoTool() {
     <ToolLayout
       title="域名信息查询"
       description="查询域名的 WHOIS 注册信息"
-      instructions="输入域名，查询域名的注册信息、到期时间、DNS 服务器等"
+      instructions="输入域名,查询域名的注册信息、到期时间、DNS 服务器等"
     >
       <div className="space-y-6">
         <form onSubmit={handleSubmit} className="flex gap-4">
@@ -98,7 +89,7 @@ export default function DomainInfoTool() {
             type="text"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
-            placeholder="输入域名，如 example.com"
+            placeholder="输入域名,如 example.com"
             className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800"
           />
           <button
