@@ -13,40 +13,42 @@ export async function GET(request: NextRequest) {
   cleanDomain = cleanDomain.split('/')[0];
 
   try {
-    // Use Domainr API from server-side (bypasses CORS)
+    // Use HackerTarget API (free tier, no auth required)
     const response = await fetch(
-      `https://api.domains.dev/api/v2/whois?domain=${encodeURIComponent(cleanDomain)}`,
-      {
-        headers: {
-          'Accept': 'application/json',
-        },
-      }
+      `https://api.hackertarget.com/whois/?q=${encodeURIComponent(cleanDomain)}`
     );
 
-    if (!response.ok) {
-      throw new Error(`API responded with status: ${response.status}`);
-    }
+    const text = await response.text();
 
-    const data = await response.json();
-
-    // Parse and return WHOIS data
-    const whois = data?.whoIs;
-
-    if (!whois) {
+    // HackerTarget returns error message as plain text when domain not found
+    if (!response.ok || text.startsWith('ERROR') || text.startsWith('DNS')) {
       return NextResponse.json({
-        error: '未找到域名信息',
+        error: '未找到域名信息或查询失败',
         domain: cleanDomain,
       });
     }
 
+    // Parse whois text response into structured data
+    const lines = text.split('\n');
+    const whoisData: Record<string, string> = {};
+    
+    for (const line of lines) {
+      const colonIndex = line.indexOf(':');
+      if (colonIndex > 0) {
+        const key = line.substring(0, colonIndex).trim();
+        const value = line.substring(colonIndex + 1).trim();
+        if (key) whoisData[key] = value;
+      }
+    }
+
     return NextResponse.json({
       domain: cleanDomain,
-      registrar: whois.registrar || '',
-      createdDate: whois.createdDate || '',
-      expiryDate: whois.expiresAt || '',
-      updatedDate: whois.updatedAt || '',
-      nameservers: whois.nameServers || [],
-      status: whois.status || [],
+      registrar: whoisData['Registrar'] || whoisData['Registrar Name'] || '',
+      createdDate: whoisData['Created Date'] || whoisData['Creation Date'] || '',
+      expiryDate: whoisData['Expires Date'] || whoisData['Expiration Date'] || whoisData['Registry Expiry Date'] || '',
+      updatedDate: whoisData['Updated Date'] || whoisData['Updated'] || '',
+      nameservers: whoisData['Name Server'] ? whoisData['Name Server'].split(',').map(ns => ns.trim()) : [],
+      rawText: text,
     });
   } catch (error) {
     console.error('WHOIS lookup error:', error);
