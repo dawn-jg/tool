@@ -12,73 +12,61 @@ export async function GET(request: NextRequest) {
   cleanDomain = cleanDomain.replace(/^(https?:\/\/)?(www\.)?/, '');
   cleanDomain = cleanDomain.split('/')[0];
 
+  // Ensure domain is in proper format (uppercase for RDAP)
+  const rdapDomain = cleanDomain.toUpperCase();
+
   try {
-    // Use HackerTarget API (free tier, no auth required)
+    // Use RDAP (Registration Data Access Protocol) - standardized, no auth required
     const response = await fetch(
-      `https://api.hackertarget.com/whois/?q=${encodeURIComponent(cleanDomain)}`
+      `https://rdap.org/domain/${encodeURIComponent(rdapDomain)}`,
+      {
+        headers: {
+          'Accept': 'application/json',
+        },
+      }
     );
 
-    const text = await response.text();
-
-    // Log raw response for debugging
-    console.log('HackerTarget WHOIS response for', cleanDomain, ':', text.substring(0, 500));
-
-    // HackerTarget returns error message as plain text when domain not found
-    if (!response.ok || text.startsWith('ERROR') || text.startsWith('DNS') || text.includes('API count')) {
-      return NextResponse.json({
-        error: '未找到域名信息或查询失败',
-        domain: cleanDomain,
-        rawText: text,
-      });
-    }
-
-    // Parse whois text response into structured data
-    const lines = text.split('\n');
-    const whoisData: Record<string, string> = {};
-    
-    for (const line of lines) {
-      if (line.trim()) {
-        const colonIndex = line.indexOf(':');
-        if (colonIndex > 0) {
-          const key = line.substring(0, colonIndex).trim().toLowerCase();
-          const value = line.substring(colonIndex + 1).trim();
-          if (key && value) {
-            whoisData[key] = value;
-          }
-        }
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json({
+          error: '未找到该域名的注册信息',
+          domain: cleanDomain,
+        });
       }
+      throw new Error(`RDAP API responded with status: ${response.status}`);
     }
 
-    console.log('Parsed whoisData:', whoisData);
+    const data = await response.json();
 
-    // If parsing failed (no keys found), return raw text for debugging
-    const hasData = Object.keys(whoisData).length > 0;
-    
-    if (!hasData) {
-      return NextResponse.json({
-        domain: cleanDomain,
-        registrar: '',
-        createdDate: '',
-        expiryDate: '',
-        updatedDate: '',
-        nameservers: [],
-        status: [],
-        rawText: text,
-        parseError: true,
-      });
-    }
+    // Extract dates from events array
+    const events = data.events || [];
+    const getEventDate = (action: string) => {
+      const event = events.find((e: any) => e.eventAction === action);
+      return event?.eventDate || '';
+    };
+
+    // Extract nameservers
+    const nameservers = (data.nameservers || []).map((ns: any) => ns.ldhName);
+
+    // Extract registrar from entities
+    const entities = data.entities || [];
+    const registrarEntity = entities.find((e: any) => 
+      e.roles?.includes('registrar') || e.objectClassName === 'entity'
+    );
+    const registrar = registrarEntity?.handle || 
+                      registrarEntity?.vcardArray?.[1]?.find((v: any) => v[0] === 'fn')?.[3] || '';
 
     return NextResponse.json({
       domain: cleanDomain,
-      registrar: whoisData['registrar'] || whoisData['registrar name'] || whoisData['registrar'] || '',
-      createdDate: whoisData['created date'] || whoisData['creation date'] || whoisData['created_date'] || '',
-      expiryDate: whoisData['expires date'] || whoisData['expiration date'] || whoisData['registry expiry date'] || whoisData['expiry date'] || '',
-      updatedDate: whoisData['updated date'] || whoisData['updated'] || whoisData['updated_date'] || '',
-      nameservers: whoisData['name server'] ? whoisData['name server'].split(',').map(ns => ns.trim()) : [],
-      rawText: text,
+      registrar: registrar,
+      createdDate: getEventDate('registration'),
+      expiryDate: getEventDate('expiration'),
+      updatedDate: getEventDate('last changed'),
+      nameservers: nameservers,
+      status: data.status || [],
     });
   } catch (error) {
-    console.error('WHOIS lookup error:', error);
+    console.error('RDAP WHOIS lookup error:', error);
     return NextResponse.json({
       error: '查询失败，请稍后重试',
       domain: cleanDomain,
