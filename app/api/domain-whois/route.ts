@@ -48,13 +48,10 @@ export async function GET(request: NextRequest) {
     // Extract nameservers
     const nameservers = (data.nameservers || []).map((ns: any) => ns.ldhName);
 
-    // Extract registrar from entities
-    const entities = data.entities || [];
-    const registrarEntity = entities.find((e: any) => 
-      e.roles?.includes('registrar') || e.objectClassName === 'entity'
-    );
-    const registrar = registrarEntity?.handle || 
-                      registrarEntity?.vcardArray?.[1]?.find((v: any) => v[0] === 'fn')?.[3] || '';
+    // Extract registrar - use top-level registrar field if available
+    const registrar = data.registrar || 
+                      data.handle || 
+                      '';
 
     return NextResponse.json({
       domain: cleanDomain,
