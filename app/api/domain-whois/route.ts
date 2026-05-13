@@ -48,14 +48,41 @@ export async function GET(request: NextRequest) {
     // Extract nameservers
     const nameservers = (data.nameservers || []).map((ns: any) => ns.ldhName);
 
-    // Extract registrar - use top-level registrar field if available
-    const registrar = data.registrar || 
-                      data.handle || 
-                      '';
+    // Extract registrar from entities or publicIds
+    let registrar = '';
+    
+    // Try to get registrar from publicIds (type=IANA Registrar ID)
+    const publicIds = data.publicIds || [];
+    const ianaRegistrar = publicIds.find((p: any) => p.type === 'IANA Registrar ID');
+    if (ianaRegistrar) {
+      registrar = ianaRegistrar.identifier || '';
+    }
+    
+    // If not found, try entities with registrar role
+    if (!registrar) {
+      const entities = data.entities || [];
+      const registrarEntity = entities.find((e: any) => 
+        e.roles?.includes('registrar')
+      );
+      if (registrarEntity) {
+        // Try to get name from vcardArray
+        const vcard = registrarEntity?.vcardArray;
+        if (vcard && Array.isArray(vcard)) {
+          const fn = vcard.find((v: any) => Array.isArray(v) && v[0] === 'fn');
+          if (fn && fn[3]) {
+            registrar = fn[3];
+          }
+        }
+        // Fallback to handle/identifier
+        if (!registrar) {
+          registrar = registrarEntity.handle || registrarEntity.identifier || '';
+        }
+      }
+    }
 
     return NextResponse.json({
       domain: cleanDomain,
-      registrar: registrar,
+      registrar: registrar && /^\d+$/.test(registrar) ? `IANA Registrar ID: ${registrar}` : registrar,
       createdDate: getEventDate('registration'),
       expiryDate: getEventDate('expiration'),
       updatedDate: getEventDate('last changed'),
