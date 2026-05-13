@@ -35,36 +35,23 @@ export default function DomainInfoTool() {
       cleanDomain = cleanDomain.replace(/^(https?:\/\/)?(www\.)?/, '');
       cleanDomain = cleanDomain.split('/')[0];
 
-      // Use Domainr API (free, no auth required)
-      const domainrResult = await fetch(`https://api.domains.dev/api/v2/whois?domain=${encodeURIComponent(cleanDomain)}`);
-      const domainrData = await domainrResult.json();
-      
-      // Parse Domainr response
-      const info: DomainInfo = {
-        domain: cleanDomain,
-        registrar: '',
-        createdDate: '',
-        expiryDate: '',
-        updatedDate: '',
-        nameservers: [],
-        status: [],
-      };
-      
-      if (domainrData && domainrData.whoIs) {
-        const whois = domainrData.whoIs;
-        info.registrar = whois.registrar || '';
-        info.createdDate = whois.createdDate || '';
-        info.expiryDate = whois.expiresAt || '';
-        info.updatedDate = whois.updatedAt || '';
-        info.nameservers = whois.nameServers || [];
-        info.status = whois.status || [];
-      }
-      
-      if (!info.registrar && !info.createdDate && !info.expiryDate) {
-        throw new Error('未找到域名信息');
+      // Use our API route (server-side proxy to bypass CORS)
+      const response = await fetch(`/api/domain-whois?domain=${encodeURIComponent(cleanDomain)}`);
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error || '查询失败');
       }
 
-      setResult(info);
+      setResult({
+        domain: data.domain,
+        registrar: data.registrar,
+        createdDate: data.createdDate,
+        expiryDate: data.expiryDate,
+        updatedDate: data.updatedDate,
+        nameservers: data.nameservers,
+        status: data.status,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : '查询失败');
     } finally {
