@@ -20,11 +20,15 @@ export async function GET(request: NextRequest) {
 
     const text = await response.text();
 
+    // Log raw response for debugging
+    console.log('HackerTarget WHOIS response for', cleanDomain, ':', text.substring(0, 500));
+
     // HackerTarget returns error message as plain text when domain not found
-    if (!response.ok || text.startsWith('ERROR') || text.startsWith('DNS')) {
+    if (!response.ok || text.startsWith('ERROR') || text.startsWith('DNS') || text.includes('API count')) {
       return NextResponse.json({
         error: '未找到域名信息或查询失败',
         domain: cleanDomain,
+        rawText: text,
       });
     }
 
@@ -33,21 +37,44 @@ export async function GET(request: NextRequest) {
     const whoisData: Record<string, string> = {};
     
     for (const line of lines) {
-      const colonIndex = line.indexOf(':');
-      if (colonIndex > 0) {
-        const key = line.substring(0, colonIndex).trim();
-        const value = line.substring(colonIndex + 1).trim();
-        if (key) whoisData[key] = value;
+      if (line.trim()) {
+        const colonIndex = line.indexOf(':');
+        if (colonIndex > 0) {
+          const key = line.substring(0, colonIndex).trim().toLowerCase();
+          const value = line.substring(colonIndex + 1).trim();
+          if (key && value) {
+            whoisData[key] = value;
+          }
+        }
       }
+    }
+
+    console.log('Parsed whoisData:', whoisData);
+
+    // If parsing failed (no keys found), return raw text for debugging
+    const hasData = Object.keys(whoisData).length > 0;
+    
+    if (!hasData) {
+      return NextResponse.json({
+        domain: cleanDomain,
+        registrar: '',
+        createdDate: '',
+        expiryDate: '',
+        updatedDate: '',
+        nameservers: [],
+        status: [],
+        rawText: text,
+        parseError: true,
+      });
     }
 
     return NextResponse.json({
       domain: cleanDomain,
-      registrar: whoisData['Registrar'] || whoisData['Registrar Name'] || '',
-      createdDate: whoisData['Created Date'] || whoisData['Creation Date'] || '',
-      expiryDate: whoisData['Expires Date'] || whoisData['Expiration Date'] || whoisData['Registry Expiry Date'] || '',
-      updatedDate: whoisData['Updated Date'] || whoisData['Updated'] || '',
-      nameservers: whoisData['Name Server'] ? whoisData['Name Server'].split(',').map(ns => ns.trim()) : [],
+      registrar: whoisData['registrar'] || whoisData['registrar name'] || whoisData['registrar'] || '',
+      createdDate: whoisData['created date'] || whoisData['creation date'] || whoisData['created_date'] || '',
+      expiryDate: whoisData['expires date'] || whoisData['expiration date'] || whoisData['registry expiry date'] || whoisData['expiry date'] || '',
+      updatedDate: whoisData['updated date'] || whoisData['updated'] || whoisData['updated_date'] || '',
+      nameservers: whoisData['name server'] ? whoisData['name server'].split(',').map(ns => ns.trim()) : [],
       rawText: text,
     });
   } catch (error) {
