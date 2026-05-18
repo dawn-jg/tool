@@ -37,6 +37,8 @@ const translations = {
     "cat.utilitiesDesc": "单位换算、计时器、计算器等日常生活工具",
     "cat.network": "网络工具",
     "cat.networkDesc": "IP查询、DNS查询、延迟测试、HTTP头查看等网络相关工具",
+    "cat.fun": "趣味工具",
+    "cat.funDesc": "MBTI人格测试、SBTI测试等趣味实用工具",
 
     // home
     "home.featured": "热门工具",
@@ -225,6 +227,10 @@ const translations = {
     "tool.httpHeadersDesc": "查看任意网站返回的 HTTP 响应头信息",
     "tool.domainInfo": "域名信息查询",
     "tool.domainInfoDesc": "查询域名的 WHOIS 注册信息和到期时间",
+    "tool.mbtiTest": "MBTI 人格测试",
+    "tool.mbtiTestDesc": "基于荣格心理类型的16型人格测评，发现真实的自己",
+    "tool.sbtiTest": "SBTI 社交行为测试",
+    "tool.sbtiTestDesc": "全新的社交行为类型测评，了解你的社交和职场风格",
   },
   en: {
     // site
@@ -250,6 +256,8 @@ const translations = {
     "cat.utilitiesDesc": "Unit converter, Countdown, World clock and more",
     "cat.network": "Network Tools",
     "cat.networkDesc": "IP lookup, DNS query, latency test, HTTP headers and more",
+    "cat.fun": "Fun Tools",
+    "cat.funDesc": "MBTI personality test, SBTI test and more fun tools",
 
     // home
     "home.featured": "Featured Tools",
@@ -438,6 +446,10 @@ const translations = {
     "tool.httpHeadersDesc": "View HTTP response headers from any website",
     "tool.domainInfo": "Domain Info Lookup",
     "tool.domainInfoDesc": "Query domain WHOIS registration info and expiry date",
+    "tool.mbtiTest": "MBTI Personality Test",
+    "tool.mbtiTestDesc": "16-type personality assessment based on Jungian psychology",
+    "tool.sbtiTest": "SBTI Behavior Type Test",
+    "tool.sbtiTestDesc": "Discover your social behavior and workplace style",
   },
 };
 

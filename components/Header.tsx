@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon, Wrench, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Globe } from "lucide-react";
+import { Menu, X, Sun, Moon, Wrench, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Globe, Sparkles } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SearchDialog } from "./SearchDialog";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ const categories = [
   { name: "验证器", href: "/validators", icon: CheckCircle },
   { name: "实用工具", href: "/utilities", icon: Calculator },
   { name: "网络工具", href: "/network-tools", icon: Globe },
+  { name: "趣味测试", href: "/fun-tests", icon: Sparkles },
 ];
 
 export function Header() {

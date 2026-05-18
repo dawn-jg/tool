@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, ArrowRight, Globe } from "lucide-react";
+import { Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, ArrowRight, Globe, Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 const categories = [
@@ -68,6 +68,14 @@ const categories = [
     icon: Globe,
     count: 5,
     color: "bg-indigo-500",
+  },
+  {
+    nameKey: "cat.fun",
+    nameDescKey: "cat.funDesc",
+    href: "/fun-tests",
+    icon: Sparkles,
+    count: 2,
+    color: "bg-rose-500",
   },
 ];
 

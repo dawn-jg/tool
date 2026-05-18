@@ -57,6 +57,8 @@ import DnsLookup from '@/components/tools/network/dns-lookup';
 import LatencyTest from '@/components/tools/network/latency-test';
 import HttpHeaders from '@/components/tools/network/http-headers';
 import DomainInfo from '@/components/tools/network/domain-info';
+import MbtiTest from '@/components/tools/fun/mbti-test';
+import SbtiTest from '@/components/tools/fun/sbti-test';
 
 const componentMap: Record<string, React.ComponentType> = {
   'developer-tools/json-formatter': JsonFormatter,
@@ -118,6 +120,8 @@ const componentMap: Record<string, React.ComponentType> = {
   'network-tools/latency-test': LatencyTest,
   'network-tools/http-headers': HttpHeaders,
   'network-tools/domain-info': DomainInfo,
+  'fun-tools/mbti-test': MbtiTest,
+  'fun-tools/sbti-test': SbtiTest,
 };
 
 export function getToolComponent(category: string, tool: string): React.ComponentType | undefined {

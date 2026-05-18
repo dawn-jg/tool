@@ -1,4 +1,4 @@
-import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline } from 'lucide-react';
+import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain } from 'lucide-react';
 
 export interface Tool {
   slug: string;
@@ -25,6 +25,7 @@ export const categories: Category[] = [
   { slug: 'validators', nameKey: 'cat.validators', icon: CheckCircle, descriptionKey: 'cat.validatorsDesc' },
   { slug: 'utilities', nameKey: 'cat.utilities', icon: Calculator, descriptionKey: 'cat.utilitiesDesc' },
   { slug: 'network-tools', nameKey: 'cat.network', icon: Globe, descriptionKey: 'cat.networkDesc' },
+  { slug: 'fun-tools', nameKey: 'cat.fun', icon: Sparkles, descriptionKey: 'cat.funDesc' },
 ];
 
 export const tools: Tool[] = [
@@ -117,6 +118,10 @@ export const tools: Tool[] = [
   { slug: 'latency-test', category: 'network-tools', nameKey: 'tool.latencyTest', descriptionKey: 'tool.latencyTestDesc', keywords: '延迟,Ping,测试,响应时间', icon: Timer },
   { slug: 'http-headers', category: 'network-tools', nameKey: 'tool.httpHeaders', descriptionKey: 'tool.httpHeadersDesc', keywords: 'HTTP,Headers,响应头,请求头', icon: FileJson },
   { slug: 'domain-info', category: 'network-tools', nameKey: 'tool.domainInfo', descriptionKey: 'tool.domainInfoDesc', keywords: '域名,WHOIS,注册信息,过期时间', icon: Globe },
+
+  // fun-tools
+  { slug: 'mbti-test', category: 'fun-tools', nameKey: 'tool.mbtiTest', descriptionKey: 'tool.mbtiTestDesc', keywords: 'MBTI,人格,性格,测试,16型', icon: Brain },
+  { slug: 'sbti-test', category: 'fun-tools', nameKey: 'tool.sbtiTest', descriptionKey: 'tool.sbtiTestDesc', keywords: 'SBTI,社交,行为,性格,测试', icon: Brain },
 ];
 
 export function getTool(category: string, slug: string): Tool | undefined {
