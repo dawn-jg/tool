@@ -72,7 +72,7 @@ const categories = [
   {
     nameKey: "cat.fun",
     nameDescKey: "cat.funDesc",
-    href: "/fun-tests",
+    href: "/fun-tools",
     icon: Sparkles,
     count: 2,
     color: "bg-rose-500",

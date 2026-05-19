@@ -17,7 +17,7 @@ const categories = [
   { name: "验证器", href: "/validators", icon: CheckCircle },
   { name: "实用工具", href: "/utilities", icon: Calculator },
   { name: "网络工具", href: "/network-tools", icon: Globe },
-  { name: "趣味测试", href: "/fun-tests", icon: Sparkles },
+  { name: "趣味工具", href: "/fun-tools", icon: Sparkles },
 ];
 
 export function Header() {
