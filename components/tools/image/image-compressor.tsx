@@ -106,10 +106,12 @@ export function ImageCompressor() {
 
   const compress = useCallback(async () => {
     if (!file) return;
-    if (getDailyCount() >= FREE_LIMIT) {
+    if (dailyCount >= FREE_LIMIT) {
       setShowPaywall(true);
       return;
     }
+    incrementDailyCount();
+    setDailyCount(prev => prev + 1);
     setProcessing(true);
     setError('');
     try {
