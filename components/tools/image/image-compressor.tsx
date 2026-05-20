@@ -158,7 +158,7 @@ export function ImageCompressor() {
     } finally {
       setProcessing(false);
     }
-  }, [file, originalUrl, outputFormat, quality, maxW, maxH, t]);
+  }, [file, originalUrl, outputFormat, quality, maxW, maxH, t, dailyCount]);
 
   const outputExt = FORMATS.find(f => f.value === outputFormat)!.ext;
   const outputName = file ? file.name.replace(/\.[^.]+$/, '') + outputExt : 'output' + outputExt;
