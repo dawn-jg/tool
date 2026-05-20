@@ -240,7 +240,7 @@ export function ImageCompressor() {
       {file && (
         <>
           <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 px-1">
-            <span>{t('imgc.remaining')} {Math.max(0, FREE_LIMIT - dailyCount)}/{FREE_LIMIT} {t('imgc.remainingTimes')}</span>
+            <span suppressHydrationWarning>{t('imgc.remaining')} {Math.max(0, FREE_LIMIT - dailyCount)}/{FREE_LIMIT} {t('imgc.remainingTimes')}</span>
           </div>
           <button
             onClick={compress}
