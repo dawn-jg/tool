@@ -298,6 +298,19 @@ export function ImageCompressor() {
 
       <canvas ref={canvasRef} className="hidden" />
 
+      {/* 打赏 */}
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-6 mt-8">
+        <div className="text-center space-y-3">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            如果觉得好用，请我喝杯咖啡 ☕
+          </p>
+          <div className="mx-auto w-32 h-32 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-600">
+            <img src="/qr-donate.jpg" alt="赞赏码" className="w-full h-full object-contain" />
+          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500">微信扫码赞赏</p>
+        </div>
+      </div>
+
       {/* Paywall Modal */}
       {showPaywall && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowPaywall(false)}>
