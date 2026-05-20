@@ -229,8 +229,8 @@ const translations = {
     "tool.domainInfoDesc": "查询域名的 WHOIS 注册信息和到期时间",
     "tool.mbtiTest": "MBTI 人格测试",
     "tool.mbtiTestDesc": "基于荣格心理类型的16型人格测评，发现真实的自己",
-    "tool.sbtiTest": "SBTI 社交行为测试",
-    "tool.sbtiTestDesc": "全新的社交行为类型测评，了解你的社交和职场风格",
+    "tool.sbtiTest": "SBTI 人格测试",
+    "tool.sbtiTestDesc": "五大模型十五维度交叉分析，匹配27种独特人格标签。娱乐向，请勿当真。",
   },
   en: {
     // site
@@ -448,8 +448,8 @@ const translations = {
     "tool.domainInfoDesc": "Query domain WHOIS registration info and expiry date",
     "tool.mbtiTest": "MBTI Personality Test",
     "tool.mbtiTestDesc": "16-type personality assessment based on Jungian psychology",
-    "tool.sbtiTest": "SBTI Behavior Type Test",
-    "tool.sbtiTestDesc": "Discover your social behavior and workplace style",
+    "tool.sbtiTest": "SBTI Personality Test",
+    "tool.sbtiTestDesc": "5-model 15-dimension analysis matching 27 unique personality labels. For entertainment only.",
   },
 };
 

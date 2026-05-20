@@ -121,7 +121,7 @@ export const tools: Tool[] = [
 
   // fun-tools
   { slug: 'mbti-test', category: 'fun-tools', nameKey: 'tool.mbtiTest', descriptionKey: 'tool.mbtiTestDesc', keywords: 'MBTI,人格,性格,测试,16型', icon: Brain },
-  { slug: 'sbti-test', category: 'fun-tools', nameKey: 'tool.sbtiTest', descriptionKey: 'tool.sbtiTestDesc', keywords: 'SBTI,社交,行为,性格,测试', icon: Brain },
+  { slug: 'sbti-test', category: 'fun-tools', nameKey: 'tool.sbtiTest', descriptionKey: 'tool.sbtiTestDesc', keywords: 'SBTI,人格,性格,测试,娱乐,自我行为类型,十五维度,27种人格', icon: Brain },
 ];
 
 export function getTool(category: string, slug: string): Tool | undefined {
