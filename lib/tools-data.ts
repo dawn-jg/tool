@@ -1,4 +1,4 @@
-import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain } from 'lucide-react';
+import { type LucideIcon, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain, Files } from 'lucide-react';
 
 export interface Tool {
   slug: string;
@@ -118,6 +118,9 @@ export const tools: Tool[] = [
   { slug: 'latency-test', category: 'network-tools', nameKey: 'tool.latencyTest', descriptionKey: 'tool.latencyTestDesc', keywords: '延迟,Ping,测试,响应时间', icon: Timer },
   { slug: 'http-headers', category: 'network-tools', nameKey: 'tool.httpHeaders', descriptionKey: 'tool.httpHeadersDesc', keywords: 'HTTP,Headers,响应头,请求头', icon: FileJson },
   { slug: 'domain-info', category: 'network-tools', nameKey: 'tool.domainInfo', descriptionKey: 'tool.domainInfoDesc', keywords: '域名,WHOIS,注册信息,过期时间', icon: Globe },
+
+  // utilities
+  { slug: 'pdf-tool', category: 'utilities', nameKey: 'tool.pdfTool', descriptionKey: 'tool.pdfToolDesc', keywords: 'PDF,合并,拆分,旋转,加密,pdf-lib,merge,split,rotate,encrypt', icon: Files },
 
   // fun-tools
   { slug: 'mbti-test', category: 'fun-tools', nameKey: 'tool.mbtiTest', descriptionKey: 'tool.mbtiTestDesc', keywords: 'MBTI,人格,性格,测试,16型', icon: Brain },

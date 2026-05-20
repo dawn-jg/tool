@@ -215,6 +215,8 @@ const translations = {
     "tool.mortgageCalculatorDesc": "计算房贷月供和投资收益",
     "tool.programmerDaily": "程序员日常",
     "tool.programmerDailyDesc": "时间戳、ASCII表、颜色转换、HTTP状态码等程序员常用工具",
+    "tool.pdfTool": "PDF 工具",
+    "tool.pdfToolDesc": "合并、拆分、旋转、加密 PDF 文件 — 所有操作均在浏览器本地完成",
 
     // network-tools
     "tool.ipInfo": "IP 信息查询",
@@ -434,6 +436,8 @@ const translations = {
     "tool.mortgageCalculatorDesc": "Calculate mortgage monthly payment and investment returns",
     "tool.programmerDaily": "Programmer's Daily Tools",
     "tool.programmerDailyDesc": "Timestamp, ASCII table, color converter, HTTP status codes and more",
+    "tool.pdfTool": "PDF Tools",
+    "tool.pdfToolDesc": "Merge, split, rotate and encrypt PDF files — all processed locally in your browser",
 
     // network-tools
     "tool.ipInfo": "IP Info Lookup",
