@@ -65,8 +65,7 @@ export const tools: Tool[] = [
   { slug: 'barcode-generator', category: 'image-tools', nameKey: 'tool.barcodeGenerator', descriptionKey: 'tool.barcodeGeneratorDesc', keywords: '条形码,Barcode,Code128,生成', icon: Barcode },
   { slug: 'svg-to-jsx', category: 'image-tools', nameKey: 'tool.svgToJsx', descriptionKey: 'tool.svgToJsxDesc', keywords: 'SVG,JSX,React,转换', icon: FileCode },
   { slug: 'exif-viewer', category: 'image-tools', nameKey: 'tool.exifViewer', descriptionKey: 'tool.exifViewerDesc', keywords: 'Exif,元数据,图片信息,GPS', icon: Camera },
-  { slug: 'image-compressor', category: 'image-tools', nameKey: 'tool.imageCompressor', descriptionKey: 'tool.imageCompressorDesc', keywords: 'Image,Compress,压缩,图片压缩,优化', icon: Archive },
-  { slug: 'image-resizer', category: 'image-tools', nameKey: 'tool.imageResizer', descriptionKey: 'tool.imageResizerDesc', keywords: 'Image,Resize,调整大小,尺寸,图片缩放', icon: Scale },
+  { slug: 'image-compressor', category: 'image-tools', nameKey: 'tool.imageCompressor', descriptionKey: 'tool.imageCompressorDesc', keywords: '图片压缩,格式转换,图片优化,JPG转PNG,PNG转WebP,WebP转换,AVIF,在线压缩,图片瘦身,减小图片体积,photo compress,image converter', icon: Archive },
 
   // data-tools
   { slug: 'random-password', category: 'data-tools', nameKey: 'tool.randomPassword', descriptionKey: 'tool.randomPasswordDesc', keywords: '密码,随机,安全,生成', icon: Lock },

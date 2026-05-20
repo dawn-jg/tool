@@ -131,8 +131,8 @@ const translations = {
     "tool.svgToJsxDesc": "将SVG代码转换为React JSX格式",
     "tool.exifViewer": "Exif查看器",
     "tool.exifViewerDesc": "查看图片Exif元数据信息",
-    "tool.imageCompressor": "图片压缩",
-    "tool.imageCompressorDesc": "在线图片压缩工具，支持PNG、JPG、WebP",
+    "tool.imageCompressor": "图片压缩/格式转换",
+    "tool.imageCompressorDesc": "在线图片压缩与格式转换工具，支持PNG/JPG/WebP/AVIF互转、质量调节、尺寸调整，纯浏览器端处理",
     "tool.imageResizer": "图片调整大小",
     "tool.imageResizerDesc": "在线调整图片尺寸大小工具",
 
@@ -392,8 +392,8 @@ const translations = {
     "tool.svgToJsxDesc": "Convert SVG code to React JSX format",
     "tool.exifViewer": "Exif Viewer",
     "tool.exifViewerDesc": "View image Exif metadata information",
-    "tool.imageCompressor": "Image Compressor",
-    "tool.imageCompressorDesc": "Online image compression tool supporting PNG, JPG, WebP",
+    "tool.imageCompressor": "Image Compress & Convert",
+    "tool.imageCompressorDesc": "Online image compression & format converter — PNG/JPG/WebP/AVIF, quality slider, resize, 100% client-side",
     "tool.imageResizer": "Image Resizer",
     "tool.imageResizerDesc": "Online tool to resize image dimensions",
 

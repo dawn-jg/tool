@@ -21,6 +21,7 @@ import { QrcodeGenerator } from '@/components/tools/image/qrcode-generator';
 import { BarcodeGenerator } from '@/components/tools/image/barcode-generator';
 import { SvgToJsx } from '@/components/tools/image/svg-to-jsx';
 import { ExifViewer } from '@/components/tools/image/exif-viewer';
+import { ImageCompressor } from '@/components/tools/image/image-compressor';
 import { RandomPassword } from '@/components/tools/data/random-password';
 import { CronGenerator } from '@/components/tools/data/cron-generator';
 import { BaseConverter } from '@/components/tools/data/base-converter';
@@ -85,6 +86,7 @@ const componentMap: Record<string, React.ComponentType> = {
   'image-tools/barcode-generator': BarcodeGenerator,
   'image-tools/svg-to-jsx': SvgToJsx,
   'image-tools/exif-viewer': ExifViewer,
+  'image-tools/image-compressor': ImageCompressor,
   'data-tools/random-password': RandomPassword,
   'data-tools/cron-generator': CronGenerator,
   'data-tools/base-converter': BaseConverter,
