@@ -9,7 +9,7 @@ export function Footer() {
         {/* 打赏 */}
         <div className="text-center mb-6">
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">如果觉得好用，请我喝杯咖啡 ☕</p>
-          <div className="mx-auto" style={{width:99,height:99}}>
+          <div className="mx-auto" style={{width:178,height:178}}>
             <img src="/qr-donate.jpg" alt="赞赏码" className="w-full h-full object-contain rounded-xl border border-gray-200 dark:border-gray-600" />
           </div>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">微信扫码赞赏</p>
