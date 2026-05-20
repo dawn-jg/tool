@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { ToolLayout } from '@/components/ToolLayout';
-import { Brain, Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
+import { useState, useCallback, useRef } from 'react';
+import { Brain, Sparkles, ArrowRight, RotateCcw, ChevronDown } from 'lucide-react';
 
 interface Question {
   id: number;
@@ -20,25 +19,21 @@ const dimensions: Dimension[] = [
 ];
 
 const questions: Question[] = [
-  // E-I
   { id: 1, text: '在聚会或社交场合中，你通常会', options: [{ text: '认识很多人，主动与人交谈', scores: [2, 0, 0, 0] }, { text: '和少数熟悉的朋友待在一起', scores: [-2, 0, 0, 0] }] },
   { id: 2, text: '独处一整天会让你', options: [{ text: '感到无聊、烦躁', scores: [2, 0, 0, 0] }, { text: '感到放松、精力充沛', scores: [-2, 0, 0, 0] }] },
   { id: 3, text: '在团队讨论中，你倾向于', options: [{ text: '很自然地表达你的观点', scores: [2, 0, 0, 0] }, { text: '先听别人说完再发言', scores: [-2, 0, 0, 0] }] },
   { id: 4, text: '当你遇到烦恼时，你通常', options: [{ text: '找朋友倾诉', scores: [2, 0, 0, 0] }, { text: '自己消化处理', scores: [-2, 0, 0, 0] }] },
   { id: 5, text: '对于电话沟通，你', options: [{ text: '很喜欢，随时可以拿起电话', scores: [2, 0, 0, 0] }, { text: '能避免就避免，更喜欢文字', scores: [-2, 0, 0, 0] }] },
-  // S-N
   { id: 6, text: '在学习新东西时，你更注重', options: [{ text: '具体的细节和实际操作方法', scores: [0, 2, 0, 0] }, { text: '整体的概念和潜在可能性', scores: [0, -2, 0, 0] }] },
   { id: 7, text: '解决问题时，你更依赖', options: [{ text: '过去的经验和已验证的方法', scores: [0, 2, 0, 0] }, { text: '灵感和直觉', scores: [0, -2, 0, 0] }] },
   { id: 8, text: '你更欣赏哪种描述风格？', options: [{ text: '详实具体、言之有物', scores: [0, 2, 0, 0] }, { text: '富有想象力和隐喻', scores: [0, -2, 0, 0] }] },
   { id: 9, text: '做决定时，你更看重', options: [{ text: '眼前的现实和可行性', scores: [0, 2, 0, 0] }, { text: '长远的可能性和创新', scores: [0, -2, 0, 0] }] },
   { id: 10, text: '你更喜欢', options: [{ text: '按照清晰的步骤说明做事', scores: [0, 2, 0, 0] }, { text: '自由发挥，边做边探索', scores: [0, -2, 0, 0] }] },
-  // T-F
   { id: 11, text: '朋友向你倾诉烦恼时，你通常会', options: [{ text: '分析问题，想办法帮他解决', scores: [0, 0, 2, 0] }, { text: '倾听共情，让他感受到支持', scores: [0, 0, -2, 0] }] },
   { id: 12, text: '做重要决策时，你更相信', options: [{ text: '逻辑分析和客观事实', scores: [0, 0, 2, 0] }, { text: '内心的感觉和价值观', scores: [0, 0, -2, 0] }] },
   { id: 13, text: '面对批评时，你更关注', options: [{ text: '批评的内容是否客观准确', scores: [0, 0, 2, 0] }, { text: '批评者的态度和语气', scores: [0, 0, -2, 0] }] },
   { id: 14, text: '在团队中，你更重视', options: [{ text: '高效和任务达成', scores: [0, 0, 2, 0] }, { text: '和谐与人际关系', scores: [0, 0, -2, 0] }] },
   { id: 15, text: '你认为以下哪个更重要？', options: [{ text: '诚实客观，即使可能伤害感情', scores: [0, 0, 2, 0] }, { text: '体谅他人，维护和谐氛围', scores: [0, 0, -2, 0] }] },
-  // J-P
   { id: 16, text: '你更喜欢', options: [{ text: '有计划、有条理的生活', scores: [0, 0, 0, 2] }, { text: '灵活随性、不受拘束', scores: [0, 0, 0, -2] }] },
   { id: 17, text: '面对截止日期，你通常', options: [{ text: '提前规划，稳步推进', scores: [0, 0, 0, 2] }, { text: '最后一刻冲刺完成', scores: [0, 0, 0, -2] }] },
   { id: 18, text: '出行前，你倾向于', options: [{ text: '详细安排好行程', scores: [0, 0, 0, 2] }, { text: '走到哪儿算哪儿', scores: [0, 0, 0, -2] }] },
@@ -74,6 +69,100 @@ function getTypeFromScores(scores: number[]): string {
   return type.join('');
 }
 
+// ---- 16型图鉴数据 ----
+type TypePersona = { code: string; title: string; role: string; tagline: string; emoji: string; color: string };
+const typeGallery: TypePersona[] = [
+  { code: 'INTJ', title: '建筑师', role: '分析家', tagline: '一切皆有计划', emoji: '🏛️', color: 'from-purple-500 to-violet-600' },
+  { code: 'INTP', title: '逻辑学家', role: '分析家', tagline: '知识就是力量', emoji: '🔬', color: 'from-purple-500 to-violet-600' },
+  { code: 'ENTJ', title: '指挥官', role: '分析家', tagline: '天生的领导者', emoji: '👑', color: 'from-purple-500 to-violet-600' },
+  { code: 'ENTP', title: '辩论家', role: '分析家', tagline: '挑战一切假设', emoji: '⚡', color: 'from-purple-500 to-violet-600' },
+  { code: 'INFJ', title: '提倡者', role: '外交家', tagline: '让世界更美好', emoji: '🌿', color: 'from-emerald-500 to-green-600' },
+  { code: 'INFP', title: '调停者', role: '外交家', tagline: '诗意理想主义者', emoji: '🌺', color: 'from-emerald-500 to-green-600' },
+  { code: 'ENFJ', title: '主人公', role: '外交家', tagline: '用魅力激励他人', emoji: '🌟', color: 'from-emerald-500 to-green-600' },
+  { code: 'ENFP', title: '竞选者', role: '外交家', tagline: '永远自由灵动', emoji: '🦋', color: 'from-emerald-500 to-green-600' },
+  { code: 'ISTJ', title: '物流师', role: '守护者', tagline: '可靠性不容置疑', emoji: '📋', color: 'from-sky-400 to-blue-500' },
+  { code: 'ISFJ', title: '守卫者', role: '守护者', tagline: '默默守护所爱', emoji: '🛡️', color: 'from-sky-400 to-blue-500' },
+  { code: 'ESTJ', title: '总经理', role: '守护者', tagline: '务实高效的管理者', emoji: '🏢', color: 'from-sky-400 to-blue-500' },
+  { code: 'ESFJ', title: '执政官', role: '守护者', tagline: '温暖和谐的贴心人', emoji: '🎉', color: 'from-sky-400 to-blue-500' },
+  { code: 'ISTP', title: '鉴赏家', role: '探险家', tagline: '工具在手天下我有', emoji: '🛠️', color: 'from-amber-400 to-orange-500' },
+  { code: 'ISFP', title: '探险家', role: '探险家', tagline: '活在当下享受美好', emoji: '🎨', color: 'from-amber-400 to-orange-500' },
+  { code: 'ESTP', title: '企业家', role: '探险家', tagline: '敢于冒险抓住机会', emoji: '🔥', color: 'from-amber-400 to-orange-500' },
+  { code: 'ESFP', title: '表演者', role: '探险家', tagline: '生活就是舞台', emoji: '🎭', color: 'from-amber-400 to-orange-500' },
+];
+
+const roleMeta: Record<string, { label: string; color: string; border: string; bg: string }> = {
+  '分析家': { label: '分析家', color: 'text-purple-600 dark:text-purple-400', border: 'border-purple-200 dark:border-purple-800', bg: 'bg-purple-50 dark:bg-purple-900/20' },
+  '外交家': { label: '外交家', color: 'text-emerald-600 dark:text-emerald-400', border: 'border-emerald-200 dark:border-emerald-800', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
+  '守护者': { label: '守护者', color: 'text-sky-600 dark:text-sky-400', border: 'border-sky-200 dark:border-sky-800', bg: 'bg-sky-50 dark:bg-sky-900/20' },
+  '探险家': { label: '探险家', color: 'text-amber-600 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-800', bg: 'bg-amber-50 dark:bg-amber-900/20' },
+};
+
+// ---- 16型图鉴组件 ----
+function TypeGalleryGrid({ onStart }: { onStart: () => void }) {
+  return (
+    <div className="w-full max-w-6xl mx-auto mt-10">
+      <h3 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 mb-6">16 种人格类型</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-2">
+        {typeGallery.map(t => (
+          <button
+            key={t.code}
+            onClick={onStart}
+            className={`rounded-2xl border ${roleMeta[t.role].border} ${roleMeta[t.role].bg} p-5 hover:shadow-lg transition-all hover:-translate-y-0.5 text-left`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-xl`}>
+                {t.emoji}
+              </div>
+              <div>
+                <div className={`text-xs font-semibold ${roleMeta[t.role].color}`}>{t.role}</div>
+                <div className="text-sm font-bold text-gray-800 dark:text-gray-200">{t.code} · {t.title}</div>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">"{t.tagline}"</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ---- FAQ ----
+const faqItems = [
+  { q: 'MBTI 是什么？', a: 'MBTI（Myers-Briggs Type Indicator）是世界上最广泛使用的人格测评工具之一。它基于瑞士心理学家卡尔·荣格的心理类型理论，由迈尔斯母女开发，通过四个维度（E/I、S/N、T/F、J/P）的组合，将人分为 16 种人格类型。' },
+  { q: '这个测试准确吗？', a: '本测试为简化版自评工具，共 20 题，约 3 分钟完成。结果仅供娱乐和自我反思参考，不能替代专业心理测评。16personalities 官网报告其测试准确率约 90%，但请注意自评类测试都存在主观偏差。' },
+  { q: '我的数据会被上传吗？', a: '不会。全部计算在你的浏览器本地完成，我们不收集、不存储、不上传任何答题数据。' },
+  { q: '四个字母分别代表什么？', a: '第一个字母 E/I = 外向/内向（你如何获取能量），第二个 S/N = 感觉/直觉（你如何获取信息），第三个 T/F = 思维/情感（你如何做决定），第四个 J/P = 判断/感知（你如何应对外部世界）。' },
+  { q: '16 种人格有优劣之分吗？', a: '没有。每种人格都有独特的优势和盲区，没有哪一种比另一种更好。MBTI 的核心价值是帮助你理解自己的行为倾向，而非给你贴标签。' },
+  { q: '为什么我每次测试结果可能不一样？', a: '一方面，你的答题状态和心境会影响选择；另一方面，部分人的维度得分接近中性（如 51% E 和 49% I），微小的变化就可能导致类型改变。这很正常，说明你在那个维度上是灵活的。' },
+];
+
+function FAQ() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  return (
+    <div className="max-w-2xl mx-auto mt-12 mb-8">
+      <h3 className="text-center text-lg font-bold text-gray-800 dark:text-gray-200 mb-6">常见问题</h3>
+      <div className="space-y-3">
+        {faqItems.map((item, idx) => (
+          <div key={idx} className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <button
+              onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+              className="w-full flex items-center justify-between p-4 text-left bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.q}</span>
+              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${openIdx === idx ? 'rotate-180' : ''}`} />
+            </button>
+            {openIdx === idx && (
+              <div className="px-4 pb-4 pt-1">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.a}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 type Stage = 'intro' | 'testing' | 'result';
 
 export default function MbtiTest() {
@@ -106,114 +195,146 @@ export default function MbtiTest() {
   const type = getTypeFromScores(scores);
   const result = results[type];
 
+  // ================ INTRO ================
   if (stage === 'intro') {
     return (
-      <ToolLayout title="MBTI 人格测试" description="Myers-Briggs Type Indicator — 基于荣格心理类型的16型人格测评" instructions="选择最符合你的选项，20题测出你的真实人格类型">
-        <div className="max-w-2xl mx-auto text-center py-12">
-          <Brain className="w-16 h-16 text-purple-500 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">MBTI 人格测试</h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-2">Myers-Briggs Type Indicator</p>
-          
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-6 mt-8 text-left space-y-3">
-            <h3 className="font-semibold text-purple-700 dark:text-purple-300">关于 MBTI</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              MBTI（迈尔斯-布里格斯类型指标）是最广泛使用的人格分类工具之一。它基于荣格的心理类型理论，通过四个维度的偏好组合，形成 16 种独特的人格类型。
-            </p>
-            <div className="space-y-2 mt-4">
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-6 h-6 rounded bg-purple-200 dark:bg-purple-800 flex items-center justify-center text-xs font-bold text-purple-700 dark:text-purple-300">1</span>
-                <span><b>外向 (E) vs 内向 (I)</b> — 你如何获取能量</span>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Hero */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-medium rounded-full mb-6">
+            <Sparkles className="w-3 h-3" /> 免费人格测试
+          </div>
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
+            "终于被理解的感觉真好。"
+          </h1>
+          <p className="text-lg text-gray-500 dark:text-gray-400 mb-2 max-w-lg mx-auto">
+            仅需 3 分钟，获得一份对你为何如此行事的深刻解读。
+          </p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mb-8">
+            Myers-Briggs Type Indicator · 基于荣格心理类型理论
+          </p>
+
+          {/* Stats bar */}
+          <div className="flex items-center justify-center gap-6 sm:gap-10 mb-8 flex-wrap">
+            {[
+              { n: '1,845', l: '今天测试' },
+              { n: '2.69 亿+', l: '全球完成数' },
+              { n: '91.2%', l: '认可度' },
+              { n: '3 分钟', l: '平均用时' },
+            ].map(s => (
+              <div key={s.l} className="text-center">
+                <div className="text-xl font-bold text-gray-800 dark:text-gray-200">{s.n}</div>
+                <div className="text-xs text-gray-400 dark:text-gray-500">{s.l}</div>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-6 h-6 rounded bg-purple-200 dark:bg-purple-800 flex items-center justify-center text-xs font-bold text-purple-700 dark:text-purple-300">2</span>
-                <span><b>感觉 (S) vs 直觉 (N)</b> — 你如何获取信息</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-6 h-6 rounded bg-purple-200 dark:bg-purple-800 flex items-center justify-center text-xs font-bold text-purple-700 dark:text-purple-300">3</span>
-                <span><b>思维 (T) vs 情感 (F)</b> — 你如何做决定</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="w-6 h-6 rounded bg-purple-200 dark:bg-purple-800 flex items-center justify-center text-xs font-bold text-purple-700 dark:text-purple-300">4</span>
-                <span><b>判断 (J) vs 感知 (P)</b> — 你如何应对外部世界</span>
-              </div>
-            </div>
+            ))}
           </div>
 
-          <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
-            共 20 题 &middot; 约 3 分钟 &middot; 纯前端计算
-          </div>
-
+          {/* CTA */}
           <button
             onClick={startTest}
-            className="mt-6 inline-flex items-center gap-2 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-purple-200 dark:shadow-purple-900/30"
+            className="inline-flex items-center gap-2 px-10 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg rounded-2xl transition-all shadow-xl shadow-purple-200 dark:shadow-purple-900/30 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
           >
             <Sparkles className="w-5 h-5" />
-            开始测试
+            开始免费测试
+          </button>
+          <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
+            20 道题 · 约 3 分钟 · 免费 · 不上传数据
+          </p>
+        </div>
+
+        {/* 四维度简介 */}
+        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
+          {[
+            { dim: '外向 (E) ↔ 内向 (I)', desc: '你如何获取能量', icon: '🔋' },
+            { dim: '感觉 (S) ↔ 直觉 (N)', desc: '你如何获取信息', icon: '🔍' },
+            { dim: '思维 (T) ↔ 情感 (F)', desc: '你如何做决定', icon: '⚖️' },
+            { dim: '判断 (J) ↔ 感知 (P)', desc: '你如何应对外部世界', icon: '🧭' },
+          ].map(d => (
+            <div key={d.dim} className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 flex items-center gap-3">
+              <span className="text-2xl">{d.icon}</span>
+              <div>
+                <div className="text-xs font-semibold text-purple-700 dark:text-purple-300">{d.dim}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">{d.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 16 型图鉴 */}
+        <TypeGalleryGrid onStart={startTest} />
+
+        {/* FAQ */}
+        <FAQ />
+
+        {/* 底部 CTA */}
+        <div className="text-center mt-8 mb-4">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">好奇我们对你有多准确的判断吗？</p>
+          <button
+            onClick={startTest}
+            className="inline-flex items-center gap-2 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-200 dark:shadow-purple-900/30"
+          >
+            开始测试 <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-      </ToolLayout>
+
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 pb-4">
+          MBTI 测试仅供娱乐和自省参考，不是专业心理测评工具
+        </p>
+      </div>
     );
   }
 
+  // ================ TESTING ================
   if (stage === 'testing') {
     const q = questions[currentQ];
     const progress = ((currentQ + 1) / questions.length) * 100;
 
     return (
-      <ToolLayout title="MBTI 人格测试" description={`第 ${currentQ + 1}/${questions.length} 题`} instructions="选择最符合你的选项">
-        <div className="max-w-2xl mx-auto py-8">
-          <div className="flex items-center justify-between mb-2 text-sm text-gray-500 dark:text-gray-400">
-            <span>第 {currentQ + 1} / {questions.length} 题</span>
-            <span>{Math.round(progress)}%</span>
-          </div>
-          <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
-            <div
-              className="h-2 bg-purple-500 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">MBTI 人格测试</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">第 {currentQ + 1}/{questions.length} 题 · 选择最符合你的选项</p>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-8">
-              {q.text}
-            </h2>
-            <div className="space-y-3">
-              {q.options.map((opt, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => answer(idx)}
-                  className="w-full text-left p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all group"
-                >
-                  <span className="font-medium text-gray-700 dark:text-gray-200 group-hover:text-purple-700 dark:group-hover:text-purple-300">
-                    {opt.text}
-                  </span>
-                </button>
-              ))}
-            </div>
+        <div className="flex items-center justify-between mb-2 text-sm text-gray-500 dark:text-gray-400">
+          <span>第 {currentQ + 1} / {questions.length} 题</span>
+          <span>{Math.round(progress)}%</span>
+        </div>
+        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
+          <div className="h-2 bg-purple-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-8">{q.text}</h2>
+          <div className="space-y-3">
+            {q.options.map((opt, idx) => (
+              <button
+                key={idx}
+                onClick={() => answer(idx)}
+                className="w-full text-left p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all group"
+              >
+                <span className="font-medium text-gray-700 dark:text-gray-200 group-hover:text-purple-700 dark:group-hover:text-purple-300">
+                  {opt.text}
+                </span>
+              </button>
+            ))}
           </div>
         </div>
-      </ToolLayout>
+      </div>
     );
   }
 
-  // Result stage
+  // ================ RESULT ================
   return (
-    <ToolLayout title={`MBTI 人格测试 — ${type}`} description={`你的类型：${result.title}`} instructions="以下为你的测试结果">
-      <div className="max-w-2xl mx-auto text-center py-8">
-        <div className="text-6xl mb-4">{result.emoji}</div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          你的 MBTI 类型是
-        </h1>
-        <div className="text-4xl font-black text-purple-600 dark:text-purple-400 mb-2">
-          {type}
-        </div>
-        <p className="text-xl text-purple-700 dark:text-purple-300 font-semibold mb-6">
-          {result.title}
-        </p>
+    <div className="max-w-2xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 text-center">MBTI 人格测试 — {type}</h1>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 text-center">你的类型：{result.title} · 以下为你的测试结果</p>
 
-        <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto leading-relaxed mb-8">
-          {result.desc}
-        </p>
+      <div className="text-center">
+        <div className="text-6xl mb-4">{result.emoji}</div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">你的 MBTI 类型是</h1>
+        <div className="text-4xl font-black text-purple-600 dark:text-purple-400 mb-2">{type}</div>
+        <p className="text-xl text-purple-700 dark:text-purple-300 font-semibold mb-6">{result.title}</p>
+
+        <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto leading-relaxed mb-8">{result.desc}</p>
 
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           {result.traits.map(trait => (
@@ -237,10 +358,7 @@ export default function MbtiTest() {
                     <span>{val > 0 ? dim.right : dim.left}</span>
                   </div>
                   <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full">
-                    <div
-                      className="h-3 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all"
-                      style={{ width: `${pct}%` }}
-                    />
+                    <div className="h-3 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all" style={{ width: `${pct}%` }} />
                   </div>
                 </div>
               );
@@ -256,6 +374,6 @@ export default function MbtiTest() {
           重新测试
         </button>
       </div>
-    </ToolLayout>
+    </div>
   );
 }
