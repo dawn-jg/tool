@@ -66,6 +66,7 @@ export const tools: Tool[] = [
   { slug: 'svg-to-jsx', category: 'image-tools', nameKey: 'tool.svgToJsx', descriptionKey: 'tool.svgToJsxDesc', keywords: 'SVG,JSX,React,转换', icon: FileCode },
   { slug: 'exif-viewer', category: 'image-tools', nameKey: 'tool.exifViewer', descriptionKey: 'tool.exifViewerDesc', keywords: 'Exif,元数据,图片信息,GPS', icon: Camera },
   { slug: 'image-compressor', category: 'image-tools', nameKey: 'tool.imageCompressor', descriptionKey: 'tool.imageCompressorDesc', keywords: '图片压缩,格式转换,图片优化,JPG转PNG,PNG转WebP,WebP转换,AVIF,在线压缩,图片瘦身,减小图片体积,photo compress,image converter', icon: Archive },
+  { slug: 'meme-generator', category: 'image-tools', nameKey: 'tool.memeGenerator', descriptionKey: 'tool.memeGeneratorDesc', keywords: '表情包,生成器,Meme,图片加字,搞笑,表情,Meme Generator', icon: Sparkles },
 
   // data-tools
   { slug: 'random-password', category: 'data-tools', nameKey: 'tool.randomPassword', descriptionKey: 'tool.randomPasswordDesc', keywords: '密码,随机,安全,生成', icon: Lock },

@@ -133,6 +133,8 @@ const translations = {
     "tool.exifViewerDesc": "查看图片Exif元数据信息",
     "tool.imageCompressor": "图片压缩/格式转换",
     "tool.imageCompressorDesc": "在线图片压缩与格式转换工具，支持PNG/JPG/WebP/AVIF互转、质量调节、尺寸调整，纯浏览器端处理",
+    "tool.memeGenerator": "表情包生成器",
+    "tool.memeGeneratorDesc": "上传图片添加文字，快速生成搞笑表情包，支持微信/抖音分享",
 
     // image compressor i18n
     "imgc.dropzone": "拖放图片到此处（或点击选择）",
@@ -418,6 +420,8 @@ const translations = {
     "tool.exifViewerDesc": "View image Exif metadata information",
     "tool.imageCompressor": "Image Compress & Convert",
     "tool.imageCompressorDesc": "Online image compression & format converter — PNG/JPG/WebP/AVIF, quality slider, resize, 100% client-side",
+    "tool.memeGenerator": "Meme Generator",
+    "tool.memeGeneratorDesc": "Add text to images, create funny memes instantly, share on WeChat & Douyin",
 
     // image compressor i18n
     "imgc.dropzone": "Drop an image here (or click to browse)",

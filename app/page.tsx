@@ -26,7 +26,7 @@ const categories = [
     nameDescKey: "cat.imageDesc",
     href: "/image-tools",
     icon: ImageIcon,
-    count: 6,
+    count: 7,
     color: "bg-purple-500",
   },
   {
