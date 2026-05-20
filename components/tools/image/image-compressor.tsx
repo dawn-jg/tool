@@ -3,6 +3,24 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 
+const FREE_LIMIT = 5;
+
+function getDailyKey(): string {
+  return `img-compress-${new Date().toISOString().slice(0, 10)}`;
+}
+
+function getDailyCount(): number {
+  if (typeof window === 'undefined') return 0;
+  return parseInt(localStorage.getItem(getDailyKey()) || '0');
+}
+
+function incrementDailyCount(): number {
+  const key = getDailyKey();
+  const n = parseInt(localStorage.getItem(key) || '0') + 1;
+  localStorage.setItem(key, String(n));
+  return n;
+}
+
 type OutputFormat = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif';
 
 const FORMATS: { value: OutputFormat; ext: string; lossy: boolean }[] = [
@@ -39,6 +57,8 @@ export function ImageCompressor() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
   const [avifSupported, setAvifSupported] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [dailyCount, setDailyCount] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +67,7 @@ export function ImageCompressor() {
     const c = document.createElement('canvas');
     c.width = 1; c.height = 1;
     c.toBlob(b => setAvifSupported(!!b), 'image/avif');
+    setDailyCount(getDailyCount());
   }, []);
 
   const availableFormats = FORMATS.filter(f => f.value !== 'image/avif' || avifSupported);
@@ -85,6 +106,10 @@ export function ImageCompressor() {
 
   const compress = useCallback(async () => {
     if (!file) return;
+    if (getDailyCount() >= FREE_LIMIT) {
+      setShowPaywall(true);
+      return;
+    }
     setProcessing(true);
     setError('');
     try {
@@ -116,6 +141,7 @@ export function ImageCompressor() {
       const url = URL.createObjectURL(blob);
       setResultUrl(url);
       setResultSize(blob.size);
+      setDailyCount(incrementDailyCount());
     } catch (err: any) {
       setError(err.message || 'Compression failed');
     } finally {
@@ -212,17 +238,22 @@ export function ImageCompressor() {
 
       {/* Action button */}
       {file && (
-        <button
-          onClick={compress}
-          disabled={processing}
-          className="w-full py-3 px-6 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-        >
-          {processing ? (
-            <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Processing...</>
-          ) : (
-            'Compress & Convert'
-          )}
-        </button>
+        <>
+          <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 px-1">
+            <span>剩余 {Math.max(0, FREE_LIMIT - dailyCount)}/{FREE_LIMIT} 次</span>
+          </div>
+          <button
+            onClick={compress}
+            disabled={processing}
+            className="w-full py-3 px-6 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+          >
+            {processing ? (
+              <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Processing...</>
+            ) : (
+              'Compress & Convert'
+            )}
+          </button>
+        </>
       )}
 
       {/* Result */}
@@ -255,6 +286,40 @@ export function ImageCompressor() {
       )}
 
       <canvas ref={canvasRef} className="hidden" />
+
+      {/* Paywall Modal */}
+      {showPaywall && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowPaywall(false)}>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6 text-center space-y-4" onClick={e => e.stopPropagation()}>
+            <div className="text-5xl">😅</div>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">今日免费次数已用完</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              每天 {FREE_LIMIT} 次免费压缩，扫码赞赏即可继续使用
+            </p>
+            
+            {/* QR Code — replace src with your actual payment code image */}
+            <div className="mx-auto w-48 h-48 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <span className="text-gray-400 dark:text-gray-500 text-sm px-2 text-center">
+                替换为个人收款码图片
+              </span>
+            </div>
+
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              微信/支付宝扫码赞赏任意金额
+            </p>
+
+            <button
+              onClick={() => { setShowPaywall(false); setDailyCount(0); }}
+              className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition-colors"
+            >
+              已赞赏，继续使用
+            </button>
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              纯信任模式 · 点击按钮即重置次数
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
