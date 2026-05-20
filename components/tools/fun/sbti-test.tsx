@@ -210,6 +210,16 @@ const typeColors: Record<string, string> = {
 };
 
 // ---- 图鉴画廊组件 ----
+const typeEmoji: Record<string, string> = {
+  CTRL: '🎮', 'ATM-er': '💰', 'Dior-s': '🧘', BOSS: '👑',
+  'THAN-K': '🙏', 'OH-NO': '😱', GOGO: '🏃', SEXY: '💋',
+  'LOVE-R': '💌', MUM: '🤱', FAKE: '🎭', OJBK: '🗿',
+  MALO: '🐒', 'JOKE-R': '🤡', 'WOC!': '🤯', 'THIN-K': '🧠',
+  SHIT: '💩', ZZZZ: '😴', POOR: '🎯', MONK: '🛕',
+  IMSB: '🤪', SOLO: '🦔', FUCK: '🔥', DEAD: '🪦',
+  IMFW: '🐣', HHHH: '😂', DRUNK: '🍺',
+};
+
 function TypeGallery({ onStart }: { onStart: () => void }) {
   const allTypes = Object.entries(typeLibrary);
 
@@ -225,8 +235,8 @@ function TypeGallery({ onStart }: { onStart: () => void }) {
             onClick={onStart}
             className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md transition-all text-center"
           >
-            <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${typeColors[code] || 'from-gray-400 to-gray-600'} flex items-center justify-center text-white text-lg font-black`}>
-              {code.slice(0, 2)}
+            <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${typeColors[code] || 'from-gray-400 to-gray-600'} flex items-center justify-center text-2xl`}>
+              {typeEmoji[code] || '❓'}
             </div>
             <div className="text-xs font-bold text-gray-800 dark:text-gray-200">{code}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t.cn}</div>
@@ -427,8 +437,7 @@ export default function SbtiTest() {
 
           {/* Footer */}
           <p className="text-center text-xs text-gray-400 dark:text-gray-500 pb-4">
-            SBTI 仅供娱乐，不是专业心理测评工具 ·
-            参考 <a href="https://www.sbti.ai" target="_blank" rel="noopener" className="underline hover:text-indigo-500">sbti.ai</a>
+            SBTI 仅供娱乐，不是专业心理测评工具
           </p>
         </div>
       </div>
@@ -583,7 +592,7 @@ export default function SbtiTest() {
         </div>
 
         <p className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500">
-          参考 <a href="https://www.sbti.ai" target="_blank" rel="noopener" className="underline hover:text-indigo-500">sbti.ai</a> · 测试仅供娱乐，请勿当真 · 纯前端计算，不上传数据
+          测试仅供娱乐，请勿当真 · 纯前端计算，不上传数据
         </p>
       </div>
   );
