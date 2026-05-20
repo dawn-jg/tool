@@ -1,44 +1,93 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Brain, Sparkles, ArrowRight, RotateCcw, ChevronDown } from 'lucide-react';
 
-interface Question {
+// ============================
+// 数据定义
+// ============================
+
+interface Statement {
   id: number;
   text: string;
-  options: { text: string; scores: number[] }[];
+  /** 维度索引 0=E/I, 1=S/N, 2=T/F, 3=J/P */
+  dim: number;
+  /** true=同意加正分(偏向E/S/T/J), false=同意加负分(偏向I/N/F/P) */
+  forward: boolean;
+  /** 所属题库分类 */
+  module: string;
 }
 
-interface Dimension { key: number; label: string; left: string; right: string }
+/** 7 级量表标签 */
+const scaleLabels = ['非常不同意', '不同意', '有点不同意', '中立', '有点同意', '同意', '非常同意'];
 
-const dimensions: Dimension[] = [
-  { key: 0, label: 'E ↔ I (外向/内向)', left: '外向 (E)', right: '内向 (I)' },
-  { key: 1, label: 'S ↔ N (感觉/直觉)', left: '感觉 (S)', right: '直觉 (N)' },
-  { key: 2, label: 'T ↔ F (思维/情感)', left: '思维 (T)', right: '情感 (F)' },
-  { key: 3, label: 'J ↔ P (判断/感知)', left: '判断 (J)', right: '感知 (P)' },
+/** 4 种题库类型 */
+const modules = [
+  { key: 'social', label: '社交风格', sub: 'E ↔ I 能量来源', icon: '🔋' },
+  { key: 'cognitive', label: '认知方式', sub: 'S ↔ N 信息获取', icon: '🔍' },
+  { key: 'decision', label: '决策倾向', sub: 'T ↔ F 决策依据', icon: '⚖️' },
+  { key: 'lifestyle', label: '生活方式', sub: 'J ↔ P 应对外部世界', icon: '🧭' },
 ];
 
-const questions: Question[] = [
-  { id: 1, text: '在聚会或社交场合中，你通常会', options: [{ text: '认识很多人，主动与人交谈', scores: [2, 0, 0, 0] }, { text: '和少数熟悉的朋友待在一起', scores: [-2, 0, 0, 0] }] },
-  { id: 2, text: '独处一整天会让你', options: [{ text: '感到无聊、烦躁', scores: [2, 0, 0, 0] }, { text: '感到放松、精力充沛', scores: [-2, 0, 0, 0] }] },
-  { id: 3, text: '在团队讨论中，你倾向于', options: [{ text: '很自然地表达你的观点', scores: [2, 0, 0, 0] }, { text: '先听别人说完再发言', scores: [-2, 0, 0, 0] }] },
-  { id: 4, text: '当你遇到烦恼时，你通常', options: [{ text: '找朋友倾诉', scores: [2, 0, 0, 0] }, { text: '自己消化处理', scores: [-2, 0, 0, 0] }] },
-  { id: 5, text: '对于电话沟通，你', options: [{ text: '很喜欢，随时可以拿起电话', scores: [2, 0, 0, 0] }, { text: '能避免就避免，更喜欢文字', scores: [-2, 0, 0, 0] }] },
-  { id: 6, text: '在学习新东西时，你更注重', options: [{ text: '具体的细节和实际操作方法', scores: [0, 2, 0, 0] }, { text: '整体的概念和潜在可能性', scores: [0, -2, 0, 0] }] },
-  { id: 7, text: '解决问题时，你更依赖', options: [{ text: '过去的经验和已验证的方法', scores: [0, 2, 0, 0] }, { text: '灵感和直觉', scores: [0, -2, 0, 0] }] },
-  { id: 8, text: '你更欣赏哪种描述风格？', options: [{ text: '详实具体、言之有物', scores: [0, 2, 0, 0] }, { text: '富有想象力和隐喻', scores: [0, -2, 0, 0] }] },
-  { id: 9, text: '做决定时，你更看重', options: [{ text: '眼前的现实和可行性', scores: [0, 2, 0, 0] }, { text: '长远的可能性和创新', scores: [0, -2, 0, 0] }] },
-  { id: 10, text: '你更喜欢', options: [{ text: '按照清晰的步骤说明做事', scores: [0, 2, 0, 0] }, { text: '自由发挥，边做边探索', scores: [0, -2, 0, 0] }] },
-  { id: 11, text: '朋友向你倾诉烦恼时，你通常会', options: [{ text: '分析问题，想办法帮他解决', scores: [0, 0, 2, 0] }, { text: '倾听共情，让他感受到支持', scores: [0, 0, -2, 0] }] },
-  { id: 12, text: '做重要决策时，你更相信', options: [{ text: '逻辑分析和客观事实', scores: [0, 0, 2, 0] }, { text: '内心的感觉和价值观', scores: [0, 0, -2, 0] }] },
-  { id: 13, text: '面对批评时，你更关注', options: [{ text: '批评的内容是否客观准确', scores: [0, 0, 2, 0] }, { text: '批评者的态度和语气', scores: [0, 0, -2, 0] }] },
-  { id: 14, text: '在团队中，你更重视', options: [{ text: '高效和任务达成', scores: [0, 0, 2, 0] }, { text: '和谐与人际关系', scores: [0, 0, -2, 0] }] },
-  { id: 15, text: '你认为以下哪个更重要？', options: [{ text: '诚实客观，即使可能伤害感情', scores: [0, 0, 2, 0] }, { text: '体谅他人，维护和谐氛围', scores: [0, 0, -2, 0] }] },
-  { id: 16, text: '你更喜欢', options: [{ text: '有计划、有条理的生活', scores: [0, 0, 0, 2] }, { text: '灵活随性、不受拘束', scores: [0, 0, 0, -2] }] },
-  { id: 17, text: '面对截止日期，你通常', options: [{ text: '提前规划，稳步推进', scores: [0, 0, 0, 2] }, { text: '最后一刻冲刺完成', scores: [0, 0, 0, -2] }] },
-  { id: 18, text: '出行前，你倾向于', options: [{ text: '详细安排好行程', scores: [0, 0, 0, 2] }, { text: '走到哪儿算哪儿', scores: [0, 0, 0, -2] }] },
-  { id: 19, text: '你更喜欢的工作方式是', options: [{ text: '按照既定的流程和规范', scores: [0, 0, 0, 2] }, { text: '根据当时情况灵活调整', scores: [0, 0, 0, -2] }] },
-  { id: 20, text: '事情完成后，你更倾向于', options: [{ text: '确认完成，然后开始下一件', scores: [0, 0, 0, 2] }, { text: '边做边改，不断优化', scores: [0, 0, 0, -2] }] },
+const statements: Statement[] = [
+  // ===== 社交风格 (E ↔ I) =====
+  { id: 1, dim: 0, forward: true, module: 'social', text: '在聚会或社交场合中，你会主动结识新朋友' },
+  { id: 2, dim: 0, forward: true, module: 'social', text: '和一大群人在一起让你感到精力充沛' },
+  { id: 3, dim: 0, forward: true, module: 'social', text: '你更愿意通过与他人交谈来理清自己的想法' },
+  { id: 4, dim: 0, forward: true, module: 'social', text: '你喜欢成为众人关注的焦点' },
+  { id: 5, dim: 0, forward: false, module: 'social', text: '长时间独处不会让你感到无聊或烦躁' },
+  { id: 6, dim: 0, forward: false, module: 'social', text: '比起说，你更擅长倾听' },
+  { id: 7, dim: 0, forward: false, module: 'social', text: '你需要独处的时间来恢复精力' },
+  { id: 8, dim: 0, forward: false, module: 'social', text: '在一对一的深度对话中，你比在群体讨论中更自在' },
+  { id: 9, dim: 0, forward: true, module: 'social', text: '你喜欢结识许多不同的人，而不是只和几个密友来往' },
+
+  // ===== 认知方式 (S ↔ N) =====
+  { id: 10, dim: 1, forward: true, module: 'cognitive', text: '你更看重事实和细节，而非抽象概念' },
+  { id: 11, dim: 1, forward: true, module: 'cognitive', text: '你对那些不切实际的理论讨论缺乏耐心' },
+  { id: 12, dim: 1, forward: true, module: 'cognitive', text: '你更相信亲身经验，而不是直觉判断' },
+  { id: 13, dim: 1, forward: false, module: 'cognitive', text: '你经常沉浸在对未来的设想和可能性之中' },
+  { id: 14, dim: 1, forward: false, module: 'cognitive', text: '比起具体的操作方法，你对抽象的理论更感兴趣' },
+  { id: 15, dim: 1, forward: false, module: 'cognitive', text: '你在看到事物之间的隐藏联系时会感到兴奋' },
+  { id: 16, dim: 1, forward: true, module: 'cognitive', text: '你喜欢有清晰步骤和实际案例的学习材料' },
+  { id: 17, dim: 1, forward: false, module: 'cognitive', text: '你经常会冒出新的创意和点子，哪怕它们还不成熟' },
+  { id: 18, dim: 1, forward: true, module: 'cognitive', text: '你更习惯按照既定的流程做事，不太喜欢频繁改变计划' },
+
+  // ===== 决策倾向 (T ↔ F) =====
+  { id: 19, dim: 2, forward: true, module: 'decision', text: '在做重要决定时，你更依赖逻辑分析而非情感直觉' },
+  { id: 20, dim: 2, forward: true, module: 'decision', text: '你认为公平比同情更重要' },
+  { id: 21, dim: 2, forward: true, module: 'decision', text: '你能接受别人对你工作的直接批评，只要批评是客观的' },
+  { id: 22, dim: 2, forward: false, module: 'decision', text: '当朋友向你倾诉烦恼时，你更倾向于提供情感支持而非解决方案' },
+  { id: 23, dim: 2, forward: false, module: 'decision', text: '你很容易感受到他人的情绪变化' },
+  { id: 24, dim: 2, forward: false, module: 'decision', text: '在做决定时，你很难忽视对他人的影响' },
+  { id: 25, dim: 2, forward: true, module: 'decision', text: '你习惯于通过数据和事实来说服别人' },
+  { id: 26, dim: 2, forward: false, module: 'decision', text: '维护团队和谐往往比坚持正确的观点更重要' },
+  { id: 27, dim: 2, forward: true, module: 'decision', text: '你认为效率比人际关系更重要' },
+
+  // ===== 生活方式 (J ↔ P) =====
+  { id: 28, dim: 3, forward: true, module: 'lifestyle', text: '你喜欢有计划、有条理的生活方式' },
+  { id: 29, dim: 3, forward: true, module: 'lifestyle', text: '你倾向于提前完成任务，而不是拖到最后一刻' },
+  { id: 30, dim: 3, forward: true, module: 'lifestyle', text: '你更喜欢列清单、定日程，按部就班地工作' },
+  { id: 31, dim: 3, forward: false, module: 'lifestyle', text: '你喜欢保持选择的开放性，不喜欢过早做出决定' },
+  { id: 32, dim: 3, forward: false, module: 'lifestyle', text: '计划赶不上变化，所以你更喜欢随性而为' },
+  { id: 33, dim: 3, forward: false, module: 'lifestyle', text: '你在截止日期临近时的压力下工作效果最好' },
+  { id: 34, dim: 3, forward: true, module: 'lifestyle', text: '你倾向于先完成任务再放松，而不是先享受后补救' },
+  { id: 35, dim: 3, forward: false, module: 'lifestyle', text: '你觉得严格的时间表限制了你的自由和创造力' },
+  { id: 36, dim: 3, forward: true, module: 'lifestyle', text: '杂乱无序的环境会让你感到焦虑' },
+];
+
+interface DimensionMeta {
+  key: number;
+  label: string;
+  left: string;
+  right: string;
+  icon: string;
+}
+
+const dimensionMeta: DimensionMeta[] = [
+  { key: 0, label: '外向 (E) ↔ 内向 (I)', left: '外向', right: '内向', icon: '🔋' },
+  { key: 1, label: '感觉 (S) ↔ 直觉 (N)', left: '感觉', right: '直觉', icon: '🔍' },
+  { key: 2, label: '思维 (T) ↔ 情感 (F)', left: '思维', right: '情感', icon: '⚖️' },
+  { key: 3, label: '判断 (J) ↔ 感知 (P)', left: '判断', right: '感知', icon: '🧭' },
 ];
 
 const results: Record<string, { title: string; emoji: string; desc: string; traits: string[] }> = {
@@ -60,16 +109,20 @@ const results: Record<string, { title: string; emoji: string; desc: string; trai
   'ESFP': { title: '表演者', emoji: '🎭', desc: '自发而动感的表演者，生活永远围绕着你。你热爱生活，乐于把快乐传递给每个人。', traits: ['活力四射', '善于表达', '乐观开朗', '感染力强'] },
 };
 
+/** 根据累积分数计算 MBTI 类型 */
 function getTypeFromScores(scores: number[]): string {
-  const type = [];
-  type.push(scores[0] > 0 ? 'E' : 'I');
-  type.push(scores[1] > 0 ? 'S' : 'N');
-  type.push(scores[2] > 0 ? 'T' : 'F');
-  type.push(scores[3] > 0 ? 'J' : 'P');
+  const type = [
+    scores[0] > 0 ? 'E' : 'I',
+    scores[1] > 0 ? 'S' : 'N',
+    scores[2] > 0 ? 'T' : 'F',
+    scores[3] > 0 ? 'J' : 'P',
+  ];
   return type.join('');
 }
 
-// ---- 16型图鉴数据 ----
+// ============================
+// 16 型图鉴
+// ============================
 type TypePersona = { code: string; title: string; role: string; tagline: string; emoji: string; color: string };
 const typeGallery: TypePersona[] = [
   { code: 'INTJ', title: '建筑师', role: '分析家', tagline: '一切皆有计划', emoji: '🏛️', color: 'from-purple-500 to-violet-600' },
@@ -97,7 +150,6 @@ const roleMeta: Record<string, { label: string; color: string; border: string; b
   '探险家': { label: '探险家', color: 'text-amber-600 dark:text-amber-400', border: 'border-amber-200 dark:border-amber-800', bg: 'bg-amber-50 dark:bg-amber-900/20' },
 };
 
-// ---- 16型图鉴组件 ----
 function TypeGalleryGrid({ onStart }: { onStart: () => void }) {
   return (
     <div className="w-full max-w-6xl mx-auto mt-10">
@@ -126,10 +178,12 @@ function TypeGalleryGrid({ onStart }: { onStart: () => void }) {
   );
 }
 
-// ---- FAQ ----
+// ============================
+// FAQ
+// ============================
 const faqItems = [
   { q: 'MBTI 是什么？', a: 'MBTI（Myers-Briggs Type Indicator）是世界上最广泛使用的人格测评工具之一。它基于瑞士心理学家卡尔·荣格的心理类型理论，由迈尔斯母女开发，通过四个维度（E/I、S/N、T/F、J/P）的组合，将人分为 16 种人格类型。' },
-  { q: '这个测试准确吗？', a: '本测试为简化版自评工具，共 20 题，约 3 分钟完成。结果仅供娱乐和自我反思参考，不能替代专业心理测评。16personalities 官网报告其测试准确率约 90%，但请注意自评类测试都存在主观偏差。' },
+  { q: '这个测试准确吗？', a: '本测试为简化版自评工具，共 36 道题，约 5 分钟完成。结果仅供娱乐和自我反思参考，不能替代专业心理测评。16personalities 官网报告其测试准确率约 90%，但请注意自评类测试都存在主观偏差。' },
   { q: '我的数据会被上传吗？', a: '不会。全部计算在你的浏览器本地完成，我们不收集、不存储、不上传任何答题数据。' },
   { q: '四个字母分别代表什么？', a: '第一个字母 E/I = 外向/内向（你如何获取能量），第二个 S/N = 感觉/直觉（你如何获取信息），第三个 T/F = 思维/情感（你如何做决定），第四个 J/P = 判断/感知（你如何应对外部世界）。' },
   { q: '16 种人格有优劣之分吗？', a: '没有。每种人格都有独特的优势和盲区，没有哪一种比另一种更好。MBTI 的核心价值是帮助你理解自己的行为倾向，而非给你贴标签。' },
@@ -163,34 +217,54 @@ function FAQ() {
   );
 }
 
+// ============================
+// 主组件
+// ============================
 type Stage = 'intro' | 'testing' | 'result';
 
 export default function MbtiTest() {
   const [stage, setStage] = useState<Stage>('intro');
-  const [currentQ, setCurrentQ] = useState(0);
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [scores, setScores] = useState([0, 0, 0, 0]);
+
+  /** 每个题库模块内随机打乱 */
+  const shuffled = useMemo(() => {
+    const groups: Record<string, Statement[]> = {};
+    for (const s of statements) {
+      if (!groups[s.module]) groups[s.module] = [];
+      groups[s.module].push(s);
+    }
+    const order: Statement[] = [];
+    for (const m of modules) {
+      const items = (groups[m.key] || []).slice().sort(() => Math.random() - 0.5);
+      order.push(...items);
+    }
+    return order;
+  }, []);
 
   const startTest = useCallback(() => {
     setStage('testing');
-    setCurrentQ(0);
+    setCurrentIdx(0);
     setScores([0, 0, 0, 0]);
   }, []);
 
-  const answer = useCallback((optionIndex: number) => {
-    const q = questions[currentQ];
-    const selected = q.options[optionIndex];
+  /** 处理 7 级量表选择 */
+  const handleAnswer = useCallback((scaleValue: number) => {
+    const stmt = shuffled[currentIdx];
+    // scaleValue 0~6 → 映射为 -3 ~ +3
+    const weight = scaleValue - 3;
     const newScores = [...scores];
-    for (let i = 0; i < 4; i++) {
-      newScores[i] += selected.scores[i];
-    }
+    // forward: 同意加分，反向则取反
+    const impact = stmt.forward ? weight : -weight;
+    newScores[stmt.dim] += impact;
     setScores(newScores);
 
-    if (currentQ + 1 < questions.length) {
-      setCurrentQ(currentQ + 1);
+    if (currentIdx + 1 < shuffled.length) {
+      setCurrentIdx(currentIdx + 1);
     } else {
       setStage('result');
     }
-  }, [currentQ, scores]);
+  }, [currentIdx, scores, shuffled]);
 
   const type = getTypeFromScores(scores);
   const result = results[type];
@@ -208,7 +282,7 @@ export default function MbtiTest() {
             "终于被理解的感觉真好。"
           </h1>
           <p className="text-lg text-gray-500 dark:text-gray-400 mb-2 max-w-lg mx-auto">
-            仅需 3 分钟，获得一份对你为何如此行事的深刻解读。
+            仅需 5 分钟，获得一份对你为何如此行事的深刻解读。
           </p>
           <p className="text-sm text-gray-400 dark:text-gray-500 mb-8">
             Myers-Briggs Type Indicator · 基于荣格心理类型理论
@@ -220,7 +294,7 @@ export default function MbtiTest() {
               { n: '1,845', l: '今天测试' },
               { n: '2.69 亿+', l: '全球完成数' },
               { n: '91.2%', l: '认可度' },
-              { n: '3 分钟', l: '平均用时' },
+              { n: '5 分钟', l: '平均用时' },
             ].map(s => (
               <div key={s.l} className="text-center">
                 <div className="text-xl font-bold text-gray-800 dark:text-gray-200">{s.n}</div>
@@ -238,23 +312,18 @@ export default function MbtiTest() {
             开始免费测试
           </button>
           <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-            20 道题 · 约 3 分钟 · 免费 · 不上传数据
+            36 道题 · 约 5 分钟 · 7 级量表 · 免费 · 不上传数据
           </p>
         </div>
 
         {/* 四维度简介 */}
         <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
-          {[
-            { dim: '外向 (E) ↔ 内向 (I)', desc: '你如何获取能量', icon: '🔋' },
-            { dim: '感觉 (S) ↔ 直觉 (N)', desc: '你如何获取信息', icon: '🔍' },
-            { dim: '思维 (T) ↔ 情感 (F)', desc: '你如何做决定', icon: '⚖️' },
-            { dim: '判断 (J) ↔ 感知 (P)', desc: '你如何应对外部世界', icon: '🧭' },
-          ].map(d => (
-            <div key={d.dim} className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 flex items-center gap-3">
-              <span className="text-2xl">{d.icon}</span>
+          {modules.map(m => (
+            <div key={m.key} className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 flex items-center gap-3">
+              <span className="text-2xl">{m.icon}</span>
               <div>
-                <div className="text-xs font-semibold text-purple-700 dark:text-purple-300">{d.dim}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">{d.desc}</div>
+                <div className="text-xs font-semibold text-purple-700 dark:text-purple-300">{m.label}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">{m.sub}</div>
               </div>
             </div>
           ))}
@@ -286,38 +355,71 @@ export default function MbtiTest() {
 
   // ================ TESTING ================
   if (stage === 'testing') {
-    const q = questions[currentQ];
-    const progress = ((currentQ + 1) / questions.length) * 100;
+    const stmt = shuffled[currentIdx];
+    const progress = ((currentIdx + 1) / shuffled.length) * 100;
+    const currentModule = modules.find(m => m.key === stmt.module)!;
+    // 计算当前是第几道属于该模块的题
+    const moduleIdx = shuffled.slice(0, currentIdx + 1).filter(s => s.module === stmt.module).length;
+    const moduleTotal = shuffled.filter(s => s.module === stmt.module).length;
 
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">MBTI 人格测试</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">第 {currentQ + 1}/{questions.length} 题 · 选择最符合你的选项</p>
-
-        <div className="flex items-center justify-between mb-2 text-sm text-gray-500 dark:text-gray-400">
-          <span>第 {currentQ + 1} / {questions.length} 题</span>
-          <span>{Math.round(progress)}%</span>
-        </div>
-        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
-          <div className="h-2 bg-purple-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+      <div className="max-w-xl mx-auto px-4 py-8">
+        {/* 顶部导航 */}
+        <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
+          <span className="flex items-center gap-1.5">
+            <span>{currentModule.icon}</span>
+            <span className="font-medium">{currentModule.label}</span>
+          </span>
+          <span>{currentIdx + 1} / {shuffled.length}</span>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-8">{q.text}</h2>
-          <div className="space-y-3">
-            {q.options.map((opt, idx) => (
+        {/* 进度条 */}
+        <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full mb-8">
+          <div className="h-1.5 bg-purple-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+        </div>
+
+        {/* 陈述句卡片 */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 border border-gray-200 dark:border-gray-700 mb-6 text-center">
+          <div className="text-xs text-gray-400 dark:text-gray-500 mb-2">
+            {currentModule.label} · 第 {moduleIdx}/{moduleTotal} 道
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white leading-relaxed mb-1">
+            {stmt.text}
+          </h2>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-4">
+            请根据你的实际情况选择同意程度
+          </p>
+        </div>
+
+        {/* 7 级量表 */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-7 gap-1.5">
+            {scaleLabels.map((label, i) => (
               <button
-                key={idx}
-                onClick={() => answer(idx)}
-                className="w-full text-left p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all group"
+                key={i}
+                onClick={() => handleAnswer(i)}
+                className="group flex flex-col items-center gap-2 p-2 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all"
               >
-                <span className="font-medium text-gray-700 dark:text-gray-200 group-hover:text-purple-700 dark:group-hover:text-purple-300">
-                  {opt.text}
+                <div className={`w-5 h-5 rounded-full border-2 group-hover:border-purple-400 group-hover:bg-purple-100 dark:group-hover:bg-purple-900/40 transition-all ${
+                  i <= 2 ? 'border-red-300' : i === 3 ? 'border-gray-300' : 'border-green-300'
+                }`} />
+                <span className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight text-center">
+                  {label}
                 </span>
               </button>
             ))}
           </div>
+          {/* 两端标签 */}
+          <div className="flex justify-between mt-3 text-xs text-gray-400 dark:text-gray-500">
+            <span>非常不同意</span>
+            <span>非常同意</span>
+          </div>
         </div>
+
+        {/* 键盘提示 */}
+        <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-4">
+          点击圆圈选择 · 共 36 道题
+        </p>
       </div>
     );
   }
@@ -347,15 +449,17 @@ export default function MbtiTest() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-8 text-left">
           <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-center">维度得分</h3>
           <div className="space-y-4">
-            {dimensions.map(dim => {
-              const val = scores[dim.key];
-              const pct = ((val + 10) / 20) * 100;
+            {dimensionMeta.map((dim, i) => {
+              const val = scores[i];
+              const maxAbs = 27;
+              const pct = Math.max(5, Math.min(95, ((val + maxAbs) / (2 * maxAbs)) * 100));
+              const isLeft = val > 0;
               return (
                 <div key={dim.label}>
                   <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
-                    <span>{val > 0 ? dim.left : dim.right}</span>
-                    <span>{dim.label}</span>
-                    <span>{val > 0 ? dim.right : dim.left}</span>
+                    <span className={isLeft ? 'font-semibold text-purple-600' : ''}>{dim.left}</span>
+                    <span className="text-xs">{dim.label}</span>
+                    <span className={!isLeft ? 'font-semibold text-purple-600' : ''}>{dim.right}</span>
                   </div>
                   <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full">
                     <div className="h-3 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full transition-all" style={{ width: `${pct}%` }} />
