@@ -312,9 +312,6 @@ export function ImageCompressor() {
             >
               {t('imgc.paywallBtn')}
             </button>
-            <p className="text-xs text-gray-400 dark:text-gray-500">
-              {t('imgc.paywallTrust')}
-            </p>
           </div>
         </div>
       )}
