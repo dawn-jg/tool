@@ -316,17 +316,70 @@ export default function MbtiTest() {
           </p>
         </div>
 
-        {/* 四维度简介 */}
-        <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
-          {modules.map(m => (
-            <div key={m.key} className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 flex items-center gap-3">
-              <span className="text-2xl">{m.icon}</span>
-              <div>
-                <div className="text-xs font-semibold text-purple-700 dark:text-purple-300">{m.label}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">{m.sub}</div>
+        {/* 四种角色组（图库入口） */}
+        <div className="max-w-5xl mx-auto mb-10">
+          <h3 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 mb-5">选择你想了解的方向（题库相同，描述不同）</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 分析家 NT */}
+            <button
+              onClick={startTest}
+              className="group rounded-2xl border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-b from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-900/10 p-6 text-left hover:shadow-xl hover:border-purple-400 dark:hover:border-purple-600 transition-all hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🧠</div>
+              <div className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-1">分析家</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">理性主义者，追求知识与能力</div>
+              <div className="flex flex-wrap gap-1.5">
+                {['INTJ','INTP','ENTJ','ENTP'].map(c => (
+                  <span key={c} className="px-2 py-0.5 rounded-md bg-purple-200/50 dark:bg-purple-800/50 text-[10px] font-semibold text-purple-700 dark:text-purple-300">{c}</span>
+                ))}
               </div>
-            </div>
-          ))}
+            </button>
+
+            {/* 外交家 NF */}
+            <button
+              onClick={startTest}
+              className="group rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 bg-gradient-to-b from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-900/10 p-6 text-left hover:shadow-xl hover:border-emerald-400 dark:hover:border-emerald-600 transition-all hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🌿</div>
+              <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300 mb-1">外交家</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">理想主义者，追求意义与和谐</div>
+              <div className="flex flex-wrap gap-1.5">
+                {['INFJ','INFP','ENFJ','ENFP'].map(c => (
+                  <span key={c} className="px-2 py-0.5 rounded-md bg-emerald-200/50 dark:bg-emerald-800/50 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">{c}</span>
+                ))}
+              </div>
+            </button>
+
+            {/* 守护者 SJ */}
+            <button
+              onClick={startTest}
+              className="group rounded-2xl border-2 border-sky-200 dark:border-sky-800 bg-gradient-to-b from-sky-50 to-sky-100/50 dark:from-sky-900/20 dark:to-sky-900/10 p-6 text-left hover:shadow-xl hover:border-sky-400 dark:hover:border-sky-600 transition-all hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🛡️</div>
+              <div className="text-sm font-bold text-sky-700 dark:text-sky-300 mb-1">守护者</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">务实主义者，追求秩序与安全</div>
+              <div className="flex flex-wrap gap-1.5">
+                {['ISTJ','ISFJ','ESTJ','ESFJ'].map(c => (
+                  <span key={c} className="px-2 py-0.5 rounded-md bg-sky-200/50 dark:bg-sky-800/50 text-[10px] font-semibold text-sky-700 dark:text-sky-300">{c}</span>
+                ))}
+              </div>
+            </button>
+
+            {/* 探险家 SP */}
+            <button
+              onClick={startTest}
+              className="group rounded-2xl border-2 border-amber-200 dark:border-amber-800 bg-gradient-to-b from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10 p-6 text-left hover:shadow-xl hover:border-amber-400 dark:hover:border-amber-600 transition-all hover:-translate-y-1"
+            >
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🔥</div>
+              <div className="text-sm font-bold text-amber-700 dark:text-amber-300 mb-1">探险家</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">体验主义者，追求自由与刺激</div>
+              <div className="flex flex-wrap gap-1.5">
+                {['ISTP','ISFP','ESTP','ESFP'].map(c => (
+                  <span key={c} className="px-2 py-0.5 rounded-md bg-amber-200/50 dark:bg-amber-800/50 text-[10px] font-semibold text-amber-700 dark:text-amber-300">{c}</span>
+                ))}
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* 16 型图鉴 */}
