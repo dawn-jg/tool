@@ -110,8 +110,6 @@ export function ImageCompressor() {
       setShowPaywall(true);
       return;
     }
-    incrementDailyCount();
-    setDailyCount(prev => prev + 1);
     setProcessing(true);
     setError('');
     try {
@@ -309,7 +307,7 @@ export function ImageCompressor() {
             </p>
 
             <button
-              onClick={() => { setShowPaywall(false); }}
+              onClick={() => { setShowPaywall(false); const c = incrementDailyCount(); setDailyCount(c); if (c >= FREE_LIMIT) return; compress(); }}
               className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               {t('imgc.paywallBtn')}
