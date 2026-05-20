@@ -297,11 +297,9 @@ export function ImageCompressor() {
               每天 {FREE_LIMIT} 次免费压缩，扫码赞赏即可继续使用
             </p>
             
-            {/* QR Code — replace src with your actual payment code image */}
-            <div className="mx-auto w-48 h-48 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
-              <span className="text-gray-400 dark:text-gray-500 text-sm px-2 text-center">
-                替换为个人收款码图片
-              </span>
+            {/* QR Code */}
+            <div className="mx-auto w-48 h-48 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+              <img src="/qr-donate.jpg" alt="赞赏码" className="w-full h-full object-contain" />
             </div>
 
             <p className="text-xs text-gray-400 dark:text-gray-500">
