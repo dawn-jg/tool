@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import { ToolLayout } from '@/components/ToolLayout';
 import { Brain, Sparkles, RotateCcw, ChevronDown } from 'lucide-react';
 
 // ============================================================
@@ -358,8 +357,8 @@ export default function SbtiTest() {
   // ================ INTRO ================
   if (stage === 'intro') {
     return (
-      <ToolLayout title="SBTI 人格测试" description="Self-Behavioral Type Indicator — 娱乐向人格测试" instructions="">
-        <div className="max-w-4xl mx-auto py-4">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
           {/* Hero */}
           <div className="text-center mb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-medium rounded-full mb-6">
@@ -432,15 +431,16 @@ export default function SbtiTest() {
             参考 <a href="https://www.sbti.ai" target="_blank" rel="noopener" className="underline hover:text-indigo-500">sbti.ai</a>
           </p>
         </div>
-      </ToolLayout>
+      </div>
     );
   }
 
   // ================ TESTING ================
   if (stage === 'testing') {
     return (
-      <ToolLayout title="SBTI 人格测试" description={`第 ${currentIdx + 1}/${effectiveQuestions.length} 题`} instructions="选择最符合你的选项">
-        <div className="max-w-2xl mx-auto py-8">
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">SBTI 人格测试</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">第 {currentIdx + 1}/{effectiveQuestions.length} 题 · 选择最符合你的选项</p>
           <div className="flex items-center justify-between mb-2 text-sm text-gray-500 dark:text-gray-400">
             <span>第 {currentIdx + 1} / {effectiveQuestions.length} 题</span>
             <span>{Math.round(progress)}%</span>
@@ -506,8 +506,7 @@ export default function SbtiTest() {
               </button>
             )}
           </div>
-        </div>
-      </ToolLayout>
+      </div>
     );
   }
 
@@ -523,8 +522,9 @@ export default function SbtiTest() {
   ];
 
   return (
-    <ToolLayout title={`SBTI 人格测试 — ${type.code} ${type.cn}`} description={`你的类型：${type.code} ${type.cn}`} instructions="以下为你的测试结果">
-      <div className="max-w-3xl mx-auto py-8">
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">SBTI 人格测试 — {type.code} {type.cn}</h1>
+      <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">你的类型：{type.code} {type.cn} · 以下为你的测试结果</p>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">你的 SBTI 人格类型是</h1>
           <div className="text-5xl font-black text-indigo-600 dark:text-indigo-400 mb-1">{type.code}</div>
@@ -586,6 +586,5 @@ export default function SbtiTest() {
           参考 <a href="https://www.sbti.ai" target="_blank" rel="noopener" className="underline hover:text-indigo-500">sbti.ai</a> · 测试仅供娱乐，请勿当真 · 纯前端计算，不上传数据
         </p>
       </div>
-    </ToolLayout>
   );
 }
