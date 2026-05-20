@@ -307,7 +307,7 @@ export function ImageCompressor() {
             </p>
 
             <button
-              onClick={() => { setShowPaywall(false); setDailyCount(0); }}
+              onClick={() => { incrementDailyCount(); setShowPaywall(false); }}
               className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               {t('imgc.paywallBtn')}
