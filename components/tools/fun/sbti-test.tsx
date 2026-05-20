@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
-import { Brain, Sparkles, RotateCcw, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Brain, Sparkles, RotateCcw, ChevronDown } from 'lucide-react';
 
 // ============================================================
 // SBTI 数据
@@ -212,51 +212,27 @@ const typeColors: Record<string, string> = {
 
 // ---- 图鉴画廊组件 ----
 function TypeGallery({ onStart }: { onStart: () => void }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const allTypes = Object.entries(typeLibrary).filter(([k]) => k !== 'HHHH' && k !== 'DRUNK');
-
-  const scroll = (dir: 'left' | 'right') => {
-    if (!scrollRef.current) return;
-    scrollRef.current.scrollBy({ left: dir === 'left' ? -280 : 280, behavior: 'smooth' });
-  };
+  const allTypes = Object.entries(typeLibrary);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto mt-10">
+    <div className="w-full max-w-4xl mx-auto mt-10">
       <h3 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4">
         人格图鉴 · 共 {allTypes.length} 种
       </h3>
-      <div className="relative group">
-        <button
-          onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-        </button>
-        <div
-          ref={scrollRef}
-          className="flex gap-3 overflow-x-auto pb-4 px-2 scrollbar-hide"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
-          {allTypes.map(([code, t]) => (
-            <button
-              key={code}
-              onClick={onStart}
-              className="shrink-0 w-32 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md transition-all text-center"
-            >
-              <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${typeColors[code] || 'from-gray-400 to-gray-600'} flex items-center justify-center text-white text-lg font-black`}>
-                {code.slice(0, 2)}
-              </div>
-              <div className="text-xs font-bold text-gray-800 dark:text-gray-200">{code}</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t.cn}</div>
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
-        </button>
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 px-2">
+        {allTypes.map(([code, t]) => (
+          <button
+            key={code}
+            onClick={onStart}
+            className="p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md transition-all text-center"
+          >
+            <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${typeColors[code] || 'from-gray-400 to-gray-600'} flex items-center justify-center text-white text-lg font-black`}>
+              {code.slice(0, 2)}
+            </div>
+            <div className="text-xs font-bold text-gray-800 dark:text-gray-200">{code}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t.cn}</div>
+          </button>
+        ))}
       </div>
     </div>
   );
