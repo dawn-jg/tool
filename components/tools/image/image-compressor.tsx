@@ -309,7 +309,7 @@ export function ImageCompressor() {
             </p>
             
             {/* QR Code */}
-            <div className="mx-auto w-48 h-48 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
+            <div className="mx-auto w-64 h-64 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-gray-600">
               <img src="/qr-donate.jpg" alt="赞赏码" className="w-full h-full object-contain" />
             </div>
 
