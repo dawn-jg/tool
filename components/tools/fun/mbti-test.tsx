@@ -73,6 +73,74 @@ const statements: Statement[] = [
   { id: 34, dim: 3, forward: true, module: 'lifestyle', text: '你倾向于先完成任务再放松，而不是先享受后补救' },
   { id: 35, dim: 3, forward: false, module: 'lifestyle', text: '你觉得严格的时间表限制了你的自由和创造力' },
   { id: 36, dim: 3, forward: true, module: 'lifestyle', text: '杂乱无序的环境会让你感到焦虑' },
+
+  // ===== 社交风格补充 (E ↔ I) =====
+  { id: 37, dim: 0, forward: true, module: 'social', text: '在团队讨论中，你通常是第一个表达观点的人' },
+  { id: 38, dim: 0, forward: true, module: 'social', text: '和不同的人打交道让你感到兴奋而非疲惫' },
+  { id: 39, dim: 0, forward: true, module: 'social', text: '你喜欢参加各种社交活动，哪怕不认识任何人' },
+  { id: 40, dim: 0, forward: true, module: 'social', text: '你觉得独处太久会感到无聊和烦躁' },
+  { id: 41, dim: 0, forward: true, module: 'social', text: '有新消息或未接来电时，你会立刻查看和回复' },
+  { id: 42, dim: 0, forward: true, module: 'social', text: '你更容易通过大声说出来来理清思路' },
+  { id: 43, dim: 0, forward: true, module: 'social', text: '即使没有明确的计划，你也喜欢和朋友一起出去玩' },
+  { id: 44, dim: 0, forward: false, module: 'social', text: '你觉得在会议上汇报比写一份详细的书面报告更令你紧张' },
+  { id: 45, dim: 0, forward: false, module: 'social', text: '你更倾向于深思熟虑后再发表意见' },
+  { id: 46, dim: 0, forward: false, module: 'social', text: '比起认识许多人，你更愿意维护少数深厚的关系' },
+  { id: 47, dim: 0, forward: false, module: 'social', text: '在一群人面前即兴发言会让你感到不安' },
+  { id: 48, dim: 0, forward: false, module: 'social', text: '周末你更愿意待在家里，而不是参加热闹的聚会' },
+  { id: 49, dim: 0, forward: false, module: 'social', text: '你的内心世界比外部社交活动更丰富多彩' },
+  { id: 50, dim: 0, forward: false, module: 'social', text: '你倾向于用文字而不是口头交流来表达深层想法' },
+  { id: 51, dim: 0, forward: false, module: 'social', text: '你乐于被动等待别人先来联系你' },
+
+  // ===== 认知方式补充 (S ↔ N) =====
+  { id: 52, dim: 1, forward: true, module: 'cognitive', text: '你更信任数据和统计，而非直觉和预感' },
+  { id: 53, dim: 1, forward: true, module: 'cognitive', text: '面对新工具或软件时，你喜欢得到具体的操作指南' },
+  { id: 54, dim: 1, forward: true, module: 'cognitive', text: '你关注当下正在发生的事，而不是未来可能的走向' },
+  { id: 55, dim: 1, forward: true, module: 'cognitive', text: '你喜欢按步骤逐项完成工作，而不是随意跳转' },
+  { id: 56, dim: 1, forward: true, module: 'cognitive', text: '你不喜欢含糊不清的表述，更希望获得明确具体的信息' },
+  { id: 57, dim: 1, forward: true, module: 'cognitive', text: '你更容易记住具体的事实，而不是抽象的概念' },
+  { id: 58, dim: 1, forward: true, module: 'cognitive', text: '你喜欢使用经过验证的方法，而不是尝试新思路' },
+  { id: 59, dim: 1, forward: false, module: 'cognitive', text: '你对假设性问题很感兴趣，喜欢探讨各种可能性' },
+  { id: 60, dim: 1, forward: false, module: 'cognitive', text: '比起具体细节，你更关注事物背后的大局和趋势' },
+  { id: 61, dim: 1, forward: false, module: 'cognitive', text: '你喜欢用比喻和类比来解释复杂的概念' },
+  { id: 62, dim: 1, forward: false, module: 'cognitive', text: '你常常沉浸在想象中，甚至忽略了周围的环境' },
+  { id: 63, dim: 1, forward: false, module: 'cognitive', text: '你相信万物相互关联，喜欢寻找各种现象背后的统一原理' },
+  { id: 64, dim: 1, forward: false, module: 'cognitive', text: '你更喜欢学习理论框架而不是具体的操作步骤' },
+  { id: 65, dim: 1, forward: false, module: 'cognitive', text: '你觉得快速尝试多种可能性比按部就班更有收获' },
+  { id: 66, dim: 1, forward: false, module: 'cognitive', text: '你的思维常常在多个想法之间跳跃' },
+
+  // ===== 决策倾向补充 (T ↔ F) =====
+  { id: 67, dim: 2, forward: true, module: 'decision', text: '你相信客观标准比主观感受更能做出正确的判断' },
+  { id: 68, dim: 2, forward: true, module: 'decision', text: '当团队出现分歧时，你倾向于找出最合理的方案' },
+  { id: 69, dim: 2, forward: true, module: 'decision', text: '你不会因为怕伤感情而回避指出别人的错误' },
+  { id: 70, dim: 2, forward: true, module: 'decision', text: '你认为竞争能促进成长，冲突有时是必要的' },
+  { id: 71, dim: 2, forward: true, module: 'decision', text: '做决定时你更看重性价比而非情感因素' },
+  { id: 72, dim: 2, forward: true, module: 'decision', text: '对事不对人的处事方式让你感到舒适' },
+  { id: 73, dim: 2, forward: true, module: 'decision', text: '你认为所有人在规则面前应该一视同仁' },
+  { id: 74, dim: 2, forward: false, module: 'decision', text: '你经常设身处地为他人着想，哪怕是陌生人' },
+  { id: 75, dim: 2, forward: false, module: 'decision', text: '一段音乐或一个故事很容易让你产生情感波动' },
+  { id: 76, dim: 2, forward: false, module: 'decision', text: '你很难对需要帮助的人说不' },
+  { id: 77, dim: 2, forward: false, module: 'decision', text: '你更关心决定是否让每个人满意，而非是否最高效' },
+  { id: 78, dim: 2, forward: false, module: 'decision', text: '你倾向于用温度而非纯逻辑来判断他人的建议' },
+  { id: 79, dim: 2, forward: false, module: 'decision', text: '你觉得自己是个非常容易理解别人处境的人' },
+  { id: 80, dim: 2, forward: false, module: 'decision', text: '你认为善良和同理心是最重要的品质' },
+  { id: 81, dim: 2, forward: false, module: 'decision', text: '你会为了一场感人的电影而流泪' },
+
+  // ===== 生活方式补充 (J ↔ P) =====
+  { id: 82, dim: 3, forward: true, module: 'lifestyle', text: '你每天早上很清楚自己要完成什么' },
+  { id: 83, dim: 3, forward: true, module: 'lifestyle', text: '你喜欢在开始一个项目前制定详细的计划' },
+  { id: 84, dim: 3, forward: true, module: 'lifestyle', text: '遇到临时变动时，你会感到很烦躁' },
+  { id: 85, dim: 3, forward: true, module: 'lifestyle', text: '你喜欢把每个物品都放在固定的位置' },
+  { id: 86, dim: 3, forward: true, module: 'lifestyle', text: '你倾向于做完一件事再开始下一件' },
+  { id: 87, dim: 3, forward: true, module: 'lifestyle', text: '你的旅行通常有详细的行程表，而不是到了再说' },
+  { id: 88, dim: 3, forward: true, module: 'lifestyle', text: '设定明确的截止日期能让你效率倍增' },
+  { id: 89, dim: 3, forward: false, module: 'lifestyle', text: '你更享受探索过程，而非达成既定目标' },
+  { id: 90, dim: 3, forward: false, module: 'lifestyle', text: '你经常会同时开展好几个项目，在不同任务间切换' },
+  { id: 91, dim: 3, forward: false, module: 'lifestyle', text: '你觉得太详细的计划会扼杀灵感和创造力' },
+  { id: 92, dim: 3, forward: false, module: 'lifestyle', text: '你倾向于在出发前一晚才收拾行李' },
+  { id: 93, dim: 3, forward: false, module: 'lifestyle', text: '比起按部就班执行计划，你更喜欢即兴发挥' },
+  { id: 94, dim: 3, forward: false, module: 'lifestyle', text: '你觉得不断调整方向比坚持原计划更明智' },
+  { id: 95, dim: 3, forward: false, module: 'lifestyle', text: '你倾向于先做了再说，而不是等到完美才行动' },
+  { id: 96, dim: 3, forward: false, module: 'lifestyle', text: '允许临时起意的旅行比提前规划的旅行更吸引你' },
 ];
 
 interface DimensionMeta {
@@ -231,10 +299,10 @@ export default function MbtiTest() {
 
   /** 4 个题量等级 */
   const levels = useMemo(() => [
-    { id: 0, name: '极简', perModule: 2, total: 8, icon: '⚡', tagline: '快速了解一下', time: '~1 分钟', color: 'from-sky-400 to-blue-500', border: 'border-sky-200 dark:border-sky-800', bg: 'from-sky-50 to-blue-50 dark:from-sky-900/20' },
-    { id: 1, name: '快速', perModule: 4, total: 16, icon: '🔍', tagline: '了解大致倾向', time: '~2 分钟', color: 'from-emerald-400 to-green-500', border: 'border-emerald-200 dark:border-emerald-800', bg: 'from-emerald-50 to-green-50 dark:from-emerald-900/20' },
-    { id: 2, name: '标准', perModule: 6, total: 24, icon: '📋', tagline: '比较全面的分析', time: '~4 分钟', color: 'from-amber-400 to-orange-500', border: 'border-amber-200 dark:border-amber-800', bg: 'from-amber-50 to-orange-50 dark:from-amber-900/20' },
-    { id: 3, name: '深度', perModule: 9, total: 36, icon: '🧠', tagline: '最精准的判断', time: '~5 分钟', color: 'from-purple-500 to-violet-600', border: 'border-purple-200 dark:border-purple-800', bg: 'from-purple-50 to-violet-50 dark:from-purple-900/20' },
+    { id: 0, name: '极速', perModule: 4, total: 16, icon: '⚡', tagline: '快速了解一下', time: '~1 分钟', color: 'from-sky-400 to-blue-500', border: 'border-sky-200 dark:border-sky-800', bg: 'from-sky-50 to-blue-50 dark:from-sky-900/20' },
+    { id: 1, name: '快速', perModule: 6, total: 24, icon: '🔍', tagline: '了解大致倾向', time: '~2 分钟', color: 'from-emerald-400 to-green-500', border: 'border-emerald-200 dark:border-emerald-800', bg: 'from-emerald-50 to-green-50 dark:from-emerald-900/20' },
+    { id: 2, name: '标准', perModule: 9, total: 36, icon: '📋', tagline: '比较全面的分析', time: '~3 分钟', color: 'from-amber-400 to-orange-500', border: 'border-amber-200 dark:border-amber-800', bg: 'from-amber-50 to-orange-50 dark:from-amber-900/20' },
+    { id: 3, name: '深度', perModule: 24, total: 93, icon: '🧠', tagline: '最精准的判断', time: '~8 分钟', color: 'from-purple-500 to-violet-600', border: 'border-purple-200 dark:border-purple-800', bg: 'from-purple-50 to-violet-50 dark:from-purple-900/20' },
   ], []);
 
   /** 根据等级过滤题目 */
@@ -250,6 +318,12 @@ export default function MbtiTest() {
     for (const m of modules) {
       const pool = (groups[m.key] || []).slice().sort(() => Math.random() - 0.5);
       order.push(...pool.slice(0, per));
+    }
+    // 深度版：最多 96 题中随机剔除 3 题，精确凑 93
+    if (level === 3 && order.length > 93) {
+      const indices = order.map((_, i) => i).sort(() => Math.random() - 0.5).slice(0, order.length - 93);
+      const dropSet = new Set(indices);
+      return order.filter((_, i) => !dropSet.has(i));
     }
     return order;
   }, [level, levels]);
@@ -327,7 +401,7 @@ export default function MbtiTest() {
             className="inline-flex items-center gap-2 px-10 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg rounded-2xl transition-all shadow-xl shadow-purple-200 dark:shadow-purple-900/30 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
           >
             <Sparkles className="w-5 h-5" />
-            开始深度测试（36 题）
+            开始深度测试（93 题）
           </button>
           <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
             4 种题量可选 · 7 级量表 · 免费 · 不上传数据
