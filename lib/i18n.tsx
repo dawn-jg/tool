@@ -136,6 +136,25 @@ const translations = {
     "tool.memeGenerator": "表情包生成器",
     "tool.memeGeneratorDesc": "上传图片添加文字，快速生成搞笑表情包，支持微信/抖音分享",
 
+    // meme generator i18n
+    "meme.dropzone": "点击或拖拽上传图片",
+    "meme.dropzoneTip": "纯本地处理，不上传服务器",
+    "meme.topText": "顶部文字",
+    "meme.bottomText": "底部文字",
+    "meme.fontSize": "字号",
+    "meme.strokeSize": "描边粗细",
+    "meme.textColor": "文字颜色",
+    "meme.strokeColor": "描边颜色",
+    "meme.generate": "生成表情包",
+    "meme.preview": "生成结果",
+    "meme.download": "下载",
+    "meme.share": "分享",
+    "meme.copied": "图片已复制到剪贴板",
+    "meme.blank": "空白",
+    "meme.blackBg": "黑底",
+    "meme.title": "表情包生成器",
+    "meme.instructions": "上传图片，添加顶部和底部文字，调整字体大小和颜色，点击生成。纯浏览器端处理，不上传服务器。",
+
     // image compressor i18n
     "imgc.dropzone": "拖放图片到此处（或点击选择）",
     "imgc.dropzoneTip": "完全在浏览器内处理，不上传服务器",
@@ -422,6 +441,25 @@ const translations = {
     "tool.imageCompressorDesc": "Online image compression & format converter — PNG/JPG/WebP/AVIF, quality slider, resize, 100% client-side",
     "tool.memeGenerator": "Meme Generator",
     "tool.memeGeneratorDesc": "Add text to images, create funny memes instantly, share on WeChat & Douyin",
+
+    // meme generator i18n
+    "meme.dropzone": "Click or drag to upload an image",
+    "meme.dropzoneTip": "100% client-side, no upload to server",
+    "meme.topText": "Top text",
+    "meme.bottomText": "Bottom text",
+    "meme.fontSize": "Font size",
+    "meme.strokeSize": "Stroke width",
+    "meme.textColor": "Text color",
+    "meme.strokeColor": "Stroke color",
+    "meme.generate": "Generate Meme",
+    "meme.preview": "Preview",
+    "meme.download": "Download",
+    "meme.share": "Share",
+    "meme.copied": "Image copied to clipboard",
+    "meme.blank": "Blank",
+    "meme.blackBg": "Black BG",
+    "meme.title": "Meme Generator",
+    "meme.instructions": "Upload an image, add top and bottom text, adjust font size and colors, click generate. 100% client-side, no server upload.",
 
     // image compressor i18n
     "imgc.dropzone": "Drop an image here (or click to browse)",
