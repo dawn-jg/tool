@@ -117,7 +117,7 @@ export function ImageCompressor() {
       img.src = originalUrl;
       await new Promise<void>((resolve, reject) => {
         img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Image load failed'));
+        img.onerror = () => reject(new Error(t('imgc.loadError')));
       });
 
       const canvas = canvasRef.current!;
@@ -143,11 +143,11 @@ export function ImageCompressor() {
       setResultSize(blob.size);
       setDailyCount(incrementDailyCount());
     } catch (err: any) {
-      setError(err.message || 'Compression failed');
+      setError(err.message || t('imgc.error'));
     } finally {
       setProcessing(false);
     }
-  }, [file, originalUrl, outputFormat, quality, maxW, maxH]);
+  }, [file, originalUrl, outputFormat, quality, maxW, maxH, t]);
 
   const outputExt = FORMATS.find(f => f.value === outputFormat)!.ext;
   const outputName = file ? file.name.replace(/\.[^.]+$/, '') + outputExt : 'output' + outputExt;
@@ -177,10 +177,10 @@ export function ImageCompressor() {
           <div className="space-y-2">
             <p className="text-4xl">🖼️</p>
             <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
-              Drag & drop an image here (or click to browse)
+              {t('imgc.dropzone')}
             </p>
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              Processed entirely in your browser. No uploads.
+              {t('imgc.dropzoneTip')}
             </p>
           </div>
         )}
@@ -190,7 +190,7 @@ export function ImageCompressor() {
       {file && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
           <div>
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Output format</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{t('imgc.outputFormat')}</label>
             <select
               value={outputFormat}
               onChange={e => setOutputFormat(e.target.value as OutputFormat)}
@@ -203,7 +203,7 @@ export function ImageCompressor() {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-              Quality: {quality}%
+              {t('imgc.quality')}: {quality}%
             </label>
             <input
               type="range"
@@ -214,7 +214,7 @@ export function ImageCompressor() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Max width (px)</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{t('imgc.maxWidth')}</label>
             <input
               type="number"
               value={maxW || ''}
@@ -224,7 +224,7 @@ export function ImageCompressor() {
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Max height (px)</label>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{t('imgc.maxHeight')}</label>
             <input
               type="number"
               value={maxH || ''}
@@ -240,7 +240,7 @@ export function ImageCompressor() {
       {file && (
         <>
           <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500 px-1">
-            <span>剩余 {Math.max(0, FREE_LIMIT - dailyCount)}/{FREE_LIMIT} 次</span>
+            <span>{t('imgc.remaining')} {Math.max(0, FREE_LIMIT - dailyCount)}/{FREE_LIMIT} {t('imgc.remainingTimes')}</span>
           </div>
           <button
             onClick={compress}
@@ -248,9 +248,9 @@ export function ImageCompressor() {
             className="w-full py-3 px-6 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-400 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {processing ? (
-              <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Processing...</>
+              <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> {t('imgc.processing')}</>
             ) : (
-              'Compress & Convert'
+              t('imgc.compress')
             )}
           </button>
         </>
@@ -260,12 +260,12 @@ export function ImageCompressor() {
       {resultUrl && (
         <div className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl space-y-3">
           <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-medium">
-            <span>✓</span> Done!
+            <span>✓</span> {t('imgc.done')}
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-            <span>Before: <strong>{formatBytes(originalSize)}</strong></span>
+            <span>{t('imgc.before')}: <strong>{formatBytes(originalSize)}</strong></span>
             <span>→</span>
-            <span>After: <strong className="text-emerald-600 dark:text-emerald-400">{formatBytes(resultSize)}</strong></span>
+            <span>{t('imgc.after')}: <strong className="text-emerald-600 dark:text-emerald-400">{formatBytes(resultSize)}</strong></span>
             <span className="text-emerald-600 dark:text-emerald-400 font-semibold">(-{ratio}%)</span>
           </div>
           <div className="w-48 h-32 mx-auto bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -276,7 +276,7 @@ export function ImageCompressor() {
             download={outputName}
             className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
           >
-            Download {outputExt} ({formatBytes(resultSize)})
+            {t('imgc.download')} {outputExt} ({formatBytes(resultSize)})
           </a>
         </div>
       )}
@@ -292,9 +292,9 @@ export function ImageCompressor() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowPaywall(false)}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-sm w-full mx-4 p-6 text-center space-y-4" onClick={e => e.stopPropagation()}>
             <div className="text-5xl">😅</div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">今日免费次数已用完</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">{t('imgc.paywallTitle')}</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              每天 {FREE_LIMIT} 次免费压缩，扫码赞赏即可继续使用
+              {t('imgc.paywallDesc').replace('{limit}', String(FREE_LIMIT))}
             </p>
             
             {/* QR Code */}
@@ -303,17 +303,17 @@ export function ImageCompressor() {
             </div>
 
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              微信/支付宝扫码赞赏任意金额
+              {t('imgc.paywallTip')}
             </p>
 
             <button
               onClick={() => { setShowPaywall(false); setDailyCount(0); }}
               className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition-colors"
             >
-              已赞赏，继续使用
+              {t('imgc.paywallBtn')}
             </button>
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              纯信任模式 · 点击按钮即重置次数
+              {t('imgc.paywallTrust')}
             </p>
           </div>
         </div>
