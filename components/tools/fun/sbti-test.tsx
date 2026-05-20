@@ -1,15 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
-import { Brain, Sparkles, RotateCcw, Share2 } from 'lucide-react';
+import { Brain, Sparkles, RotateCcw, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ============================================================
-// SBTI 数据：参考 sbti.ai，纯前端娱乐向人格测试
-// 5大模型 × 15维度 × 27种人格 + 1隐藏人格 + 1兜底人格
+// SBTI 数据
 // ============================================================
 
-// ---- 15维度元数据 ----
 const dimensionMeta: Record<string, { name: string; model: string; L: string; M: string; H: string }> = {
   S1: { name: 'S1 自尊自信', model: '自我模型', L: '对自己下手比别人还狠，夸你两句你都想先验明真伪。', M: '自信值随天气波动，顺风能飞，逆风先缩。', H: '心里对自己大致有数，不太会被路人一句话打散。' },
   S2: { name: 'S2 自我清晰度', model: '自我模型', L: '内心频道雪花较多，常在"我是谁"里循环缓存。', M: '平时还能认出自己，偶尔也会被情绪临时换号。', H: '对自己的脾气、欲望和底线都算门儿清。' },
@@ -30,7 +28,6 @@ const dimensionMeta: Record<string, { name: string; model: string; L: string; M:
 
 const dimensionOrder = ['S1','S2','S3','E1','E2','E3','A1','A2','A3','Ac1','Ac2','Ac3','So1','So2','So3'];
 
-// ---- 题目（30道主线 + 2道隐藏触发） ----
 interface Question {
   id: string;
   dim?: string;
@@ -50,35 +47,30 @@ const specialQuestions: Question[] = [
 ];
 
 const questions: Question[] = [
-  // 自我模型 S1-S3
   { id: 'q1', dim: 'S1', text: '我不仅是屌丝，我还是joker,我还是咸鱼，这辈子没谈过一场恋爱，胆怯又自卑，我的青春就是一场又一场的意淫，每一天幻想着我也能有一个女孩子和我一起压马路，一起逛街，一起玩，现实却是爆了父母金币，读了个烂学校，混日子之后找班上，没有理想，没有目标，没有能力的三无人员，每次看到你能在网上开屌丝的玩笑，我都想哭，我就是地底下的老鼠，透过下水井的缝隙，窥探地上的各种美好，每一次看到这种都是对我心灵的一次伤害，对我生存空间的一次压缩，求求哥们给我们这种小丑一点活路吧，我真的不想在白天把枕巾哭湿一大片', options: [{ label: '我哭了。。', value: 1 }, { label: '这是什么。。', value: 2 }, { label: '这不是我！', value: 3 }] },
   { id: 'q2', dim: 'S1', text: '我不够好，周围的人都比我优秀', options: [{ label: '确实', value: 1 }, { label: '有时', value: 2 }, { label: '不是', value: 3 }] },
   { id: 'q3', dim: 'S2', text: '我很清楚真正的自己是什么样的', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
   { id: 'q4', dim: 'S2', text: '我内心有真正追求的东西', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
   { id: 'q5', dim: 'S3', text: '我一定要不断往上爬、变得更厉害', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
   { id: 'q6', dim: 'S3', text: '外人的评价对我来说无所吊谓。', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
-  // 情感模型 E1-E3
   { id: 'q7', dim: 'E1', text: '对象超过5小时没回消息，说自己窜稀了，你会怎么想？', options: [{ label: '拉稀不可能5小时，也许ta隐瞒了我。', value: 1 }, { label: '在信任和怀疑之间摇摆。', value: 2 }, { label: '也许今天ta真的不太舒服。', value: 3 }] },
   { id: 'q8', dim: 'E1', text: '我在感情里经常担心被对方抛弃', options: [{ label: '是的', value: 1 }, { label: '偶尔', value: 2 }, { label: '不是', value: 3 }] },
   { id: 'q9', dim: 'E2', text: '我对天发誓，我对待每一份感情都是认真的！', options: [{ label: '并没有', value: 1 }, { label: '也许？', value: 2 }, { label: '是的！（问心无愧骄傲脸）', value: 3 }] },
   { id: 'q10', dim: 'E2', text: '你的恋爱对象是一个尊老爱幼，温柔敦厚，洁身自好，光明磊落，大义凛然，能言善辩，口才流利，观察入微，见多识广，博学多才，诲人不倦，和蔼可亲，平易近人，心地善良，慈眉善目，积极进取，意气风发，玉树临风，国色天香，倾国倾城，花容月貌的人，此时你会？', options: [{ label: '就算ta再优秀我也不会陷入太深。', value: 1 }, { label: '会介于A和C之间。', value: 2 }, { label: '会非常珍惜ta，也许会变成恋爱脑。', value: 3 }] },
   { id: 'q11', dim: 'E3', text: '恋爱后，对象非常黏人，你作何感想？', options: [{ label: '那很爽了', value: 1 }, { label: '都行无所谓', value: 2 }, { label: '我更喜欢保留独立空间', value: 3 }] },
   { id: 'q12', dim: 'E3', text: '我在任何关系里都很重视个人空间', options: [{ label: '我更喜欢依赖与被依赖', value: 1 }, { label: '看情况', value: 2 }, { label: '是的！（斩钉截铁地说道）', value: 3 }] },
-  // 态度模型 A1-A3
   { id: 'q13', dim: 'A1', text: '大多数人是善良的', options: [{ label: '其实邪恶的人心比世界上的痔疮更多。', value: 1 }, { label: '也许吧。', value: 2 }, { label: '是的，我愿相信好人更多。', value: 3 }] },
   { id: 'q14', dim: 'A1', text: '你走在街上，一位萌萌的小女孩蹦蹦跳跳地朝你走来（正脸、侧脸看都萌，用vivo、苹果、华为、OPPO手机看都萌，实在是非常萌的那种），她递给你一根棒棒糖，此时你作何感想？', options: [{ label: '呜呜她真好真可爱！居然给我棒棒糖！', value: 3 }, { label: '一脸懵逼，作挠头状', value: 2 }, { label: '这也许是一种新型诈骗？还是走开为好。', value: 1 }] },
   { id: 'q15', dim: 'A2', text: '快考试了，学校规定必须上晚自习，请假会扣分，但今晚你约了女/男神一起玩《绝地求生：刺激战场》（一款刺激的游戏），你怎么办？', options: [{ label: '翘了！反正就一次！', value: 1 }, { label: '干脆请个假吧。', value: 2 }, { label: '都快考试了还去啥。', value: 3 }] },
   { id: 'q16', dim: 'A2', text: '我喜欢打破常规，不喜欢被束缚', options: [{ label: '认同', value: 1 }, { label: '保持中立', value: 2 }, { label: '不认同', value: 3 }] },
   { id: 'q17', dim: 'A3', text: '我做事通常有目标。', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
   { id: 'q18', dim: 'A3', text: '突然某一天，我意识到人生哪有什么他妈的狗屁意义，人不过是和动物一样被各种欲望支配着，纯纯是被激素控制的东西，饿了就吃，困了就睡，一发情就想交配，我们简直和猪狗一样没什么区别。', options: [{ label: '是这样的。', value: 1 }, { label: '也许是，也许不是。', value: 2 }, { label: '这简直是胡扯', value: 3 }] },
-  // 行动驱力模型 Ac1-Ac3
   { id: 'q19', dim: 'Ac1', text: '我做事主要为了取得成果和进步，而不是避免麻烦和风险。', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
   { id: 'q20', dim: 'Ac1', text: '你因便秘坐在马桶上（已长达30分钟），拉不出很难受。此时你更像', options: [{ label: '再坐三十分钟看看，说不定就有了。', value: 1 }, { label: '用力拍打自己的屁股并说："死屁股，快拉啊！"', value: 2 }, { label: '使用开塞露，快点拉出来才好。', value: 3 }] },
   { id: 'q21', dim: 'Ac2', text: '我做决定比较果断，不喜欢犹豫', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
   { id: 'q22', dim: 'Ac2', text: '此题没有题目，请盲选', options: [{ label: '反复思考后感觉应该选A？', value: 1 }, { label: '啊，要不选B？', value: 2 }, { label: '不会就选C？', value: 3 }] },
   { id: 'q23', dim: 'Ac3', text: '别人说你"执行力强"，你内心更接近哪句？', options: [{ label: '我被逼到最后确实执行力超强。。。', value: 1 }, { label: '啊，有时候吧。', value: 2 }, { label: '是的，事情本来就该被推进', value: 3 }] },
   { id: 'q24', dim: 'Ac3', text: '我做事常常有计划，____', options: [{ label: '然而计划不如变化快。', value: 1 }, { label: '有时能完成，有时不能。', value: 2 }, { label: '我讨厌被打破计划。', value: 3 }] },
-  // 社交模型 So1-So3
   { id: 'q25', dim: 'So1', text: '你因玩《第五人格》（一款刺激的游戏）而结识许多网友，并被邀请线下见面，你的想法是？', options: [{ label: '网上口嗨下就算了，真见面还是有点忐忑。', value: 1 }, { label: '见网友也挺好，反正谁来聊我就聊两句。', value: 2 }, { label: '我会打扮一番并热情聊天，万一呢，我是说万一呢？', value: 3 }] },
   { id: 'q26', dim: 'So1', text: '朋友带了ta的朋友一起来玩，你最可能的状态是', options: [{ label: '对"朋友的朋友"天然有点距离感，怕影响二人关系', value: 1 }, { label: '看对方，能玩就玩。', value: 2 }, { label: '朋友的朋友应该也算我的朋友！要热情聊天', value: 3 }] },
   { id: 'q27', dim: 'So2', text: '我和人相处主打一个电子围栏，靠太近会自动报警。', options: [{ label: '认同', value: 3 }, { label: '中立', value: 2 }, { label: '不认同', value: 1 }] },
@@ -87,13 +79,12 @@ const questions: Question[] = [
   { id: 'q30', dim: 'So3', text: '我在不同人面前会表现出不一样的自己', options: [{ label: '不认同', value: 1 }, { label: '中立', value: 2 }, { label: '认同', value: 3 }] },
 ];
 
-// ---- 27种人格类型 ----
 interface TypeData {
   code: string;
   cn: string;
   intro: string;
   desc: string;
-  pattern: string; // 15-char H/M/L pattern
+  pattern: string;
 }
 
 const typeLibrary: Record<string, TypeData> = {
@@ -153,9 +144,7 @@ const typeLibrary: Record<string, TypeData> = {
     desc: '您为什么走路摇摇晃晃？您为什么总是情绪高涨？您为什么看东西是重影的？因为您体内流淌的不是血液，是美味的五粮液！是国窖1573！是江小白！是陕西五粮液！哦，美味的白酒，每一滴都在燃烧，都在沸腾。您是否已经习惯了将白酒灌入保温杯，当作白开水一饮而下？多么伟大的白酒！它让您在饭桌上谈笑风生，在厕所里抱着马桶忏悔人生；它让您觉得自己是夜场诗人，是宇宙中心那团不灭的火，直到第二天上午十点，您的头像裂开的核桃，嘴角挂着食物残渣，灵魂缩在角落里。您终于明白，昨晚那个高谈阔论、拍桌怒吼的人，已经成为了一个酒鬼。' },
 };
 
-// ---- 评分逻辑 ----
-
-// 需要反转 value 的问题（原始 value:1=高, value:3=低 → 翻转使得 value 越高=越高）
+// ---- 评分 ----
 const reversedQuestions = new Set(['q14', 'q27']);
 
 function computePattern(answers: Record<string, number>): string {
@@ -168,12 +157,11 @@ function computePattern(answers: Record<string, number>): string {
       const raw = answers[q.id];
       if (raw === undefined) continue;
       if (reversedQuestions.has(q.id)) {
-        sum += 4 - raw; // reverse: 3→1, 2→2, 1→3
+        sum += 4 - raw;
       } else {
         sum += raw;
       }
     }
-    // 2 questions: sum 2-3→L, 4→M, 5-6→H
     if (sum <= 3) pattern.push('L');
     else if (sum <= 4) pattern.push('M');
     else pattern.push('H');
@@ -182,12 +170,10 @@ function computePattern(answers: Record<string, number>): string {
 }
 
 function matchType(pattern: string): { type: TypeData; matchRate: number } | null {
-  // Exact match
   for (const t of Object.values(typeLibrary)) {
-    if (!t.pattern) continue; // skip HHHH, DRUNK
+    if (!t.pattern) continue;
     if (t.pattern === pattern) return { type: t, matchRate: 1 };
   }
-  // Best partial match
   let bestType: TypeData | null = null;
   let bestScore = 0;
   const userParts = pattern.split('-');
@@ -198,10 +184,7 @@ function matchType(pattern: string): { type: TypeData; matchRate: number } | nul
     for (let i = 0; i < 15; i++) {
       if (userParts[i] === typeParts[i]) matches++;
     }
-    if (matches > bestScore) {
-      bestScore = matches;
-      bestType = t;
-    }
+    if (matches > bestScore) { bestScore = matches; bestType = t; }
   }
   if (bestType && bestScore / 15 >= 0.6) {
     return { type: bestType, matchRate: bestScore / 15 };
@@ -209,7 +192,117 @@ function matchType(pattern: string): { type: TypeData; matchRate: number } | nul
   return null;
 }
 
-// ---- 组件 ----
+// ---- 颜色映射 ----
+const typeColors: Record<string, string> = {
+  CTRL: 'from-violet-500 to-purple-600', 'ATM-er': 'from-emerald-500 to-teal-600',
+  'Dior-s': 'from-gray-400 to-gray-600', BOSS: 'from-amber-500 to-orange-600',
+  'THAN-K': 'from-sky-400 to-blue-500', 'OH-NO': 'from-rose-400 to-pink-500',
+  GOGO: 'from-lime-400 to-green-500', SEXY: 'from-pink-400 to-rose-500',
+  'LOVE-R': 'from-red-400 to-rose-500', MUM: 'from-yellow-400 to-amber-500',
+  FAKE: 'from-indigo-400 to-indigo-600', OJBK: 'from-stone-400 to-stone-600',
+  MALO: 'from-orange-400 to-amber-500', 'JOKE-R': 'from-fuchsia-400 to-pink-500',
+  'WOC!': 'from-cyan-400 to-teal-500', 'THIN-K': 'from-blue-400 to-indigo-500',
+  SHIT: 'from-yellow-500 to-amber-600', ZZZZ: 'from-slate-400 to-gray-500',
+  POOR: 'from-stone-300 to-stone-500', MONK: 'from-teal-400 to-cyan-500',
+  IMSB: 'from-rose-300 to-pink-400', SOLO: 'from-gray-300 to-gray-500',
+  FUCK: 'from-red-500 to-orange-600', DEAD: 'from-neutral-400 to-neutral-600',
+  IMFW: 'from-amber-300 to-yellow-500', HHHH: 'from-yellow-300 to-lime-400',
+  DRUNK: 'from-amber-600 to-red-700',
+};
+
+// ---- 图鉴画廊组件 ----
+function TypeGallery({ onStart }: { onStart: () => void }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const allTypes = Object.entries(typeLibrary).filter(([k]) => k !== 'HHHH' && k !== 'DRUNK');
+
+  const scroll = (dir: 'left' | 'right') => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollBy({ left: dir === 'left' ? -280 : 280, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="relative w-full max-w-4xl mx-auto mt-10">
+      <h3 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4">
+        人格图鉴 · 共 {allTypes.length} 种
+      </h3>
+      <div className="relative group">
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+        </button>
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto pb-4 px-2 scrollbar-hide"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {allTypes.map(([code, t]) => (
+            <button
+              key={code}
+              onClick={onStart}
+              className="shrink-0 w-32 p-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-md transition-all text-center"
+            >
+              <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${typeColors[code] || 'from-gray-400 to-gray-600'} flex items-center justify-center text-white text-lg font-black`}>
+                {code.slice(0, 2)}
+              </div>
+              <div className="text-xs font-bold text-gray-800 dark:text-gray-200">{code}</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{t.cn}</div>
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---- FAQ 手风琴组件 ----
+const faqItems = [
+  { q: 'SBTI 是什么？和 MBTI 有什么区别？', a: 'SBTI（Self-Behavioral Type Indicator）是一个娱乐向人格测试，基于五大模型、十五维度交叉计算，匹配 27 种独特人格标签。与 MBTI 的四维度二分法不同，SBTI 采用更细的三级评估（H/M/L），并加入隐藏支线和特殊触发机制，结果更具戏剧性和趣味性。它不是心理学工具，纯粹为了好玩。' },
+  { q: '测试需要多长时间？', a: '约 30 道主线题 + 1 道隐藏支线触发题，通常 5–8 分钟即可完成。题目每次随机排列，所以每次体验略有不同。' },
+  { q: '测试结果准确吗？', a: '本测试仅供娱乐，不构成任何心理学、医学或职业建议。所有人格描述均为戏谑风格，请勿当真。如果你觉得结果像你，那是巧合；如果觉得不像，那也是巧合。' },
+  { q: '我的数据会被上传吗？', a: '不会。所有计算都在你的浏览器本地完成（纯前端），我们不收集、不存储、不上传任何答题数据。你的人格秘密只有你自己知道。' },
+  { q: '什么是隐藏人格？怎么触发？', a: '测试中包含 1 道特殊触发题，如果你的回答满足特定条件，系统会跳过常规人格匹配，直接为你分配一个隐藏人格。具体触发条件是秘密，答题时请跟随直觉。' },
+  { q: '为什么我每次测出来的结果不一样？', a: '题目顺序每次随机排列，不同的答题节奏可能影响你的选择。另外，如果你的维度得分处于边界值附近，微小的变化就可能匹配到不同的人格类型。这也是测试有趣的地方。' },
+];
+
+function FAQ() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  return (
+    <div className="max-w-2xl mx-auto mt-12 mb-8">
+      <h3 className="text-center text-lg font-bold text-gray-800 dark:text-gray-200 mb-6">常见问题</h3>
+      <div className="space-y-3">
+        {faqItems.map((item, idx) => (
+          <div key={idx} className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <button
+              onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+              className="w-full flex items-center justify-between p-4 text-left bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.q}</span>
+              <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${openIdx === idx ? 'rotate-180' : ''}`} />
+            </button>
+            {openIdx === idx && (
+              <div className="px-4 pb-4 pt-1">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{item.a}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================
+// 主组件
+// ============================
 type Stage = 'intro' | 'testing' | 'result';
 
 export default function SbtiTest() {
@@ -224,27 +317,17 @@ export default function SbtiTest() {
   }, []);
 
   const answer = useCallback((qId: string, value: number) => {
-    setAnswers(prev => {
-      const next = { ...prev, [qId]: value };
-      return next;
-    });
+    setAnswers(prev => ({ ...prev, [qId]: value }));
   }, []);
 
-  // Check if all 30 main questions are answered
   const allMainAnswered = questions.every(q => answers[q.id] !== undefined);
-
-  // Determine if drink gate should be shown
   const showDrink = answers['drink_gate_q1'] === 3;
 
   const submit = useCallback(() => {
     const pattern = computePattern(answers);
     const dimensionLevels: Record<string, string> = {};
-    const parts = pattern.split('-');
-    for (let i = 0; i < dimensionOrder.length; i++) {
-      dimensionLevels[dimensionOrder[i]] = parts[i];
-    }
+    pattern.split('-').forEach((p, i) => { dimensionLevels[dimensionOrder[i]] = p; });
 
-    // Check drink trigger (hidden personality)
     if (answers['drink_gate_q2'] === 2) {
       setResult({ type: typeLibrary.DRUNK, matchRate: 1, pattern, dimensionLevels });
       setStage('result');
@@ -252,36 +335,30 @@ export default function SbtiTest() {
     }
 
     const match = matchType(pattern);
-    if (match) {
-      setResult({ type: match.type, matchRate: match.matchRate, pattern, dimensionLevels });
-    } else {
-      // Fallback to HHHH
-      setResult({ type: typeLibrary.HHHH, matchRate: 0.4, pattern, dimensionLevels });
-    }
+    setResult(match
+      ? { type: match.type, matchRate: match.matchRate, pattern, dimensionLevels }
+      : { type: typeLibrary.HHHH, matchRate: 0.4, pattern, dimensionLevels }
+    );
     setStage('result');
   }, [answers]);
 
-  // Build shuffled question list
   const [questionOrder] = useState<Question[]>(() => {
     const shuffled = [...questions].sort(() => Math.random() - 0.5);
-    // Insert special questions at the beginning
     return [...specialQuestions, ...shuffled];
   });
 
   const [currentIdx, setCurrentIdx] = useState(0);
-  // Compute effective question list based on drink gate
   const effectiveQuestions = (() => {
     const list = [...questionOrder];
     if (showDrink) {
-      // drink_gate_q2 should be right after drink_gate_q1
       const gateIdx = list.findIndex(q => q.id === 'drink_gate_q1');
       const triggerIdx = list.findIndex(q => q.id === 'drink_gate_q2');
       if (gateIdx !== -1 && triggerIdx !== -1 && triggerIdx !== gateIdx + 1) {
         list.splice(triggerIdx, 1);
-        list.splice(gateIdx + 1, 0, questionOrder.find(q => q.id === 'drink_gate_q2')!);
+        const triggerQ = questionOrder.find(q => q.id === 'drink_gate_q2')!;
+        list.splice(gateIdx + 1, 0, triggerQ);
       }
     } else {
-      // Remove drink_gate_q2
       const idx = list.findIndex(q => q.id === 'drink_gate_q2');
       if (idx !== -1) list.splice(idx, 1);
     }
@@ -292,9 +369,7 @@ export default function SbtiTest() {
   const isAnswered = currentQ && answers[currentQ.id] !== undefined;
 
   const goNext = useCallback(() => {
-    if (currentIdx + 1 < effectiveQuestions.length) {
-      setCurrentIdx(currentIdx + 1);
-    }
+    if (currentIdx + 1 < effectiveQuestions.length) setCurrentIdx(currentIdx + 1);
   }, [currentIdx, effectiveQuestions]);
 
   const goPrev = useCallback(() => {
@@ -302,58 +377,90 @@ export default function SbtiTest() {
   }, [currentIdx]);
 
   const progress = effectiveQuestions.length ? ((currentIdx + 1) / effectiveQuestions.length) * 100 : 0;
+  const mainQsDone = questions.filter(q => answers[q.id] !== undefined).length;
 
-  // ---- INTRO ----
+  // ================ INTRO ================
   if (stage === 'intro') {
     return (
-      <ToolLayout title="SBTI 人格测试" description="Self-Behavioral Type Indicator — 五大模型十五维度交叉分析" instructions="选择最符合你的选项，约31题测出你的专属人格标签">
-        <div className="max-w-2xl mx-auto text-center py-12">
-          <Brain className="w-16 h-16 text-indigo-500 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">SBTI 人格测试</h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-2">Self-Behavioral Type Indicator</p>
+      <ToolLayout title="SBTI 人格测试" description="Self-Behavioral Type Indicator — 娱乐向人格测试" instructions="">
+        <div className="max-w-4xl mx-auto py-4">
+          {/* Hero */}
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 text-xs font-medium rounded-full mb-6">
+              <Sparkles className="w-3 h-3" /> 娱乐向 · 请勿当真
+            </div>
+            <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-3 tracking-tight">
+              SBTI 人格测试
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400 mb-1">Self-Behavioral Type Indicator</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm">自我觉察不再困惑</p>
 
-          <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-6 mt-8 text-left space-y-3">
-            <h3 className="font-semibold text-indigo-700 dark:text-indigo-300">关于 SBTI</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              SBTI（Self-Behavioral Type Indicator）是一个娱乐向人格测试，基于五大模型、十五维度交叉计算，匹配 27 种独特人格标签。与 MBTI 的四维度二分法不同，SBTI 采用更细的三级评估（H/M/L），并加入隐藏支线和特殊触发机制，结果更具戏剧性和趣味性。
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-6 max-w-lg mx-auto leading-relaxed">
+              30 道主线题 + 隐藏支线，五大模型十五维度交叉分析，<br />
+              为你匹配最贴合的人格标签。
+              <span className="text-gray-400 dark:text-gray-500"> 测试仅供娱乐，请勿当真。</span>
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
-              {[
-                { model: '自我模型', dims: 'S1 自尊自信 · S2 自我清晰度 · S3 核心价值', color: 'bg-rose-200 dark:bg-rose-800' },
-                { model: '情感模型', dims: 'E1 依恋安全感 · E2 情感投入度 · E3 边界与依赖', color: 'bg-pink-200 dark:bg-pink-800' },
-                { model: '态度模型', dims: 'A1 世界观倾向 · A2 规则与灵活度 · A3 人生意义感', color: 'bg-purple-200 dark:bg-purple-800' },
-                { model: '行动驱力模型', dims: 'Ac1 动机导向 · Ac2 决策风格 · Ac3 执行模式', color: 'bg-blue-200 dark:bg-blue-800' },
-                { model: '社交模型', dims: 'So1 社交主动性 · So2 人际边界感 · So3 表达与真实度', color: 'bg-green-200 dark:bg-green-800' },
-              ].map(m => (
-                <div key={m.model} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${m.color}`} />
-                  <span><b>{m.model}</b><br />{m.dims}</span>
-                </div>
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="flex -space-x-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className={`w-8 h-8 rounded-full bg-gradient-to-br ${['from-rose-400 to-pink-500','from-blue-400 to-indigo-500','from-amber-400 to-orange-500','from-emerald-400 to-teal-500','from-purple-400 to-violet-500'][i]} border-2 border-white dark:border-gray-900`} />
               ))}
             </div>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              已有 <b className="text-gray-700 dark:text-gray-300">160,451</b> 位探索者完成测试
+            </span>
           </div>
 
-          <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
-            共 ~31 题（含隐藏触发题）&middot; 约 5–8 分钟 &middot; 纯前端计算 · 不上传数据
+          {/* Start Button */}
+          <div className="text-center mb-4">
+            <button
+              onClick={startTest}
+              className="inline-flex items-center gap-2 px-10 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg rounded-2xl transition-all shadow-xl shadow-indigo-200 dark:shadow-indigo-900/30 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <Sparkles className="w-5 h-5" />
+              开始测试
+            </button>
+            <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
+              约 7 分钟 · 31 道情景题 · 免费 · 不上传数据
+            </p>
           </div>
 
-          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-            参考 <a href="https://www.sbti.ai" target="_blank" rel="noopener" className="underline hover:text-indigo-500">sbti.ai</a> · 仅供娱乐，请勿当真
+          {/* Models Overview */}
+          <div className="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-2 mb-10 px-4">
+            {[
+              { m: '自我模型', d: 'S1 自尊自信 · S2 自我清晰度 · S3 核心价值', c: 'bg-rose-100 dark:bg-rose-900/30', t: 'text-rose-600 dark:text-rose-400' },
+              { m: '情感模型', d: 'E1 依恋安全感 · E2 情感投入度 · E3 边界与依赖', c: 'bg-pink-100 dark:bg-pink-900/30', t: 'text-pink-600 dark:text-pink-400' },
+              { m: '态度模型', d: 'A1 世界观倾向 · A2 规则与灵活度 · A3 人生意义感', c: 'bg-purple-100 dark:bg-purple-900/30', t: 'text-purple-600 dark:text-purple-400' },
+              { m: '行动驱力', d: 'Ac1 动机导向 · Ac2 决策风格 · Ac3 执行模式', c: 'bg-blue-100 dark:bg-blue-900/30', t: 'text-blue-600 dark:text-blue-400' },
+              { m: '社交模型', d: 'So1 社交主动性 · So2 人际边界感 · So3 表达与真实度', c: 'bg-green-100 dark:bg-green-900/30', t: 'text-green-600 dark:text-green-400' },
+            ].map(x => (
+              <div key={x.m} className={`${x.c} rounded-xl p-3`}>
+                <div className={`text-xs font-bold ${x.t} mb-1`}>{x.m}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">{x.d}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Type Gallery */}
+          <TypeGallery onStart={startTest} />
+
+          {/* FAQ */}
+          <FAQ />
+
+          {/* Footer */}
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500 pb-4">
+            SBTI 仅供娱乐，不是专业心理测评工具 ·
+            参考 <a href="https://www.sbti.ai" target="_blank" rel="noopener" className="underline hover:text-indigo-500">sbti.ai</a>
           </p>
-
-          <button
-            onClick={startTest}
-            className="mt-6 inline-flex items-center gap-2 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors shadow-lg shadow-indigo-200 dark:shadow-indigo-900/30"
-          >
-            <Sparkles className="w-5 h-5" />
-            开始测试
-          </button>
         </div>
       </ToolLayout>
     );
   }
 
-  // ---- TESTING ----
+  // ================ TESTING ================
   if (stage === 'testing') {
     return (
       <ToolLayout title="SBTI 人格测试" description={`第 ${currentIdx + 1}/${effectiveQuestions.length} 题`} instructions="选择最符合你的选项">
@@ -369,12 +476,11 @@ export default function SbtiTest() {
           <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-2 mb-6 text-xs text-gray-400 dark:text-gray-500">
               <span className="px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">第 {currentIdx + 1} 题</span>
-              {currentQ.dim && <span className="text-gray-400">维度已隐藏</span>}
+              {currentQ.dim && <span>维度已隐藏</span>}
             </div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-8 leading-relaxed">{currentQ.text}</h2>
             <div className="space-y-3">
               {currentQ.options.map((opt, idx) => {
-                const label = String.fromCharCode(65 + idx);
                 const selected = answers[currentQ.id] === opt.value;
                 return (
                   <button
@@ -387,7 +493,7 @@ export default function SbtiTest() {
                     }`}
                   >
                     <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-bold text-gray-600 dark:text-gray-300 mr-3">
-                      {label}
+                      {String.fromCharCode(65 + idx)}
                     </span>
                     <span className={`font-medium ${selected ? 'text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-200'}`}>
                       {opt.label}
@@ -429,7 +535,7 @@ export default function SbtiTest() {
     );
   }
 
-  // ---- RESULT ----
+  // ================ RESULT ================
   if (!result) return null;
   const { type, matchRate, dimensionLevels } = result;
   const modelGroups = [
@@ -443,25 +549,20 @@ export default function SbtiTest() {
   return (
     <ToolLayout title={`SBTI 人格测试 — ${type.code} ${type.cn}`} description={`你的类型：${type.code} ${type.cn}`} instructions="以下为你的测试结果">
       <div className="max-w-3xl mx-auto py-8">
-        {/* Type Hero */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">你的 SBTI 人格类型是</h1>
           <div className="text-5xl font-black text-indigo-600 dark:text-indigo-400 mb-1">{type.code}</div>
           <p className="text-2xl text-indigo-700 dark:text-indigo-300 font-semibold mb-2">{type.cn}</p>
           <p className="text-lg text-gray-500 dark:text-gray-400 italic">"{type.intro}"</p>
           {matchRate < 1 && (
-            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-              匹配率 {Math.round(matchRate * 100)}% · 仅供参考
-            </p>
+            <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">匹配率 {Math.round(matchRate * 100)}% · 仅供参考</p>
           )}
         </div>
 
-        {/* Description */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-8">
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{type.desc}</p>
         </div>
 
-        {/* 15 Dimension Scores */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 mb-8">
           <h3 className="font-semibold text-gray-900 dark:text-white mb-6 text-center text-lg">十五维度分析</h3>
           <div className="space-y-6">
@@ -471,14 +572,16 @@ export default function SbtiTest() {
                 <div className="space-y-3">
                   {group.dims.map(dim => {
                     const meta = dimensionMeta[dim];
-                    const level = dimensionLevels[dim];
+                    const level = dimensionLevels[dim] || 'M';
                     const levelDesc = level === 'H' ? meta.H : level === 'M' ? meta.M : meta.L;
                     const pct = level === 'H' ? 100 : level === 'M' ? 50 : 15;
                     return (
                       <div key={dim}>
                         <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
                           <span>{meta.name}</span>
-                          <span>{level === 'H' ? '高' : level === 'M' ? '中' : '低'}</span>
+                          <span className={`font-semibold ${level === 'H' ? 'text-green-600 dark:text-green-400' : level === 'M' ? 'text-amber-600 dark:text-amber-400' : 'text-red-500 dark:text-red-400'}`}>
+                            {level === 'H' ? '高' : level === 'M' ? '中' : '低'}
+                          </span>
                         </div>
                         <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
                           <div className={`h-2 bg-gradient-to-r ${group.color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
@@ -493,7 +596,6 @@ export default function SbtiTest() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex justify-center gap-4">
           <button
             onClick={() => setStage('intro')}
