@@ -21,6 +21,10 @@ function incrementDailyCount(): number {
   return n;
 }
 
+function resetDailyCount(): void {
+  localStorage.setItem(getDailyKey(), '0');
+}
+
 type OutputFormat = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif';
 
 const FORMATS: { value: OutputFormat; ext: string; lossy: boolean }[] = [
@@ -67,7 +71,14 @@ export function ImageCompressor() {
     const c = document.createElement('canvas');
     c.width = 1; c.height = 1;
     c.toBlob(b => setAvifSupported(!!b), 'image/avif');
-    setDailyCount(getDailyCount());
+    // 一次性迁移：修复旧双倍递增 bug 导致的脏数据（localStorage 值 > FREE_LIMIT）
+    const stored = getDailyCount();
+    if (stored >= FREE_LIMIT) {
+      localStorage.setItem(getDailyKey(), String(FREE_LIMIT - 1));
+      setDailyCount(FREE_LIMIT - 1);
+    } else {
+      setDailyCount(stored);
+    }
   }, []);
 
   const availableFormats = FORMATS.filter(f => f.value !== 'image/avif' || avifSupported);
@@ -307,7 +318,7 @@ export function ImageCompressor() {
             </p>
 
             <button
-              onClick={() => { setShowPaywall(false); const c = incrementDailyCount(); setDailyCount(c); if (c >= FREE_LIMIT) return; compress(); }}
+              onClick={() => { resetDailyCount(); setDailyCount(0); setShowPaywall(false); }}
               className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               {t('imgc.paywallBtn')}
