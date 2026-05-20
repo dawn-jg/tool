@@ -226,9 +226,21 @@ export default function MbtiTest() {
   const [stage, setStage] = useState<Stage>('intro');
   const [currentIdx, setCurrentIdx] = useState(0);
   const [scores, setScores] = useState([0, 0, 0, 0]);
+  /** 选中的题量等级 */
+  const [level, setLevel] = useState<number | null>(null);
 
-  /** 每个题库模块内随机打乱 */
+  /** 4 个题量等级 */
+  const levels = useMemo(() => [
+    { id: 0, name: '极简', perModule: 2, total: 8, icon: '⚡', tagline: '快速了解一下', time: '~1 分钟', color: 'from-sky-400 to-blue-500', border: 'border-sky-200 dark:border-sky-800', bg: 'from-sky-50 to-blue-50 dark:from-sky-900/20' },
+    { id: 1, name: '快速', perModule: 4, total: 16, icon: '🔍', tagline: '了解大致倾向', time: '~2 分钟', color: 'from-emerald-400 to-green-500', border: 'border-emerald-200 dark:border-emerald-800', bg: 'from-emerald-50 to-green-50 dark:from-emerald-900/20' },
+    { id: 2, name: '标准', perModule: 6, total: 24, icon: '📋', tagline: '比较全面的分析', time: '~4 分钟', color: 'from-amber-400 to-orange-500', border: 'border-amber-200 dark:border-amber-800', bg: 'from-amber-50 to-orange-50 dark:from-amber-900/20' },
+    { id: 3, name: '深度', perModule: 9, total: 36, icon: '🧠', tagline: '最精准的判断', time: '~5 分钟', color: 'from-purple-500 to-violet-600', border: 'border-purple-200 dark:border-purple-800', bg: 'from-purple-50 to-violet-50 dark:from-purple-900/20' },
+  ], []);
+
+  /** 根据等级过滤题目 */
   const shuffled = useMemo(() => {
+    if (level === null) return [];
+    const per = levels[level].perModule;
     const groups: Record<string, Statement[]> = {};
     for (const s of statements) {
       if (!groups[s.module]) groups[s.module] = [];
@@ -236,16 +248,22 @@ export default function MbtiTest() {
     }
     const order: Statement[] = [];
     for (const m of modules) {
-      const items = (groups[m.key] || []).slice().sort(() => Math.random() - 0.5);
-      order.push(...items);
+      const pool = (groups[m.key] || []).slice().sort(() => Math.random() - 0.5);
+      order.push(...pool.slice(0, per));
     }
     return order;
-  }, []);
+  }, [level, levels]);
 
-  const startTest = useCallback(() => {
+  const startTest = useCallback((lvl: number) => {
+    setLevel(lvl);
     setStage('testing');
     setCurrentIdx(0);
     setScores([0, 0, 0, 0]);
+  }, []);
+
+  const restartTest = useCallback(() => {
+    setStage('intro');
+    setLevel(null);
   }, []);
 
   /** 处理 7 级量表选择 */
@@ -305,85 +323,40 @@ export default function MbtiTest() {
 
           {/* CTA */}
           <button
-            onClick={startTest}
+            onClick={() => startTest(3)}
             className="inline-flex items-center gap-2 px-10 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold text-lg rounded-2xl transition-all shadow-xl shadow-purple-200 dark:shadow-purple-900/30 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0"
           >
             <Sparkles className="w-5 h-5" />
-            开始免费测试
+            开始深度测试（36 题）
           </button>
           <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-            36 道题 · 约 5 分钟 · 7 级量表 · 免费 · 不上传数据
+            4 种题量可选 · 7 级量表 · 免费 · 不上传数据
           </p>
         </div>
 
-        {/* 四种角色组（图库入口） */}
+        {/* 四种题量等级入口 */}
         <div className="max-w-5xl mx-auto mb-10">
-          <h3 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 mb-5">选择你想了解的方向（题库相同，描述不同）</h3>
+          <h3 className="text-center text-sm font-semibold text-gray-500 dark:text-gray-400 mb-5">选择测试详细程度</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* 分析家 NT */}
-            <button
-              onClick={startTest}
-              className="group rounded-2xl border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-b from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-900/10 p-6 text-left hover:shadow-xl hover:border-purple-400 dark:hover:border-purple-600 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🧠</div>
-              <div className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-1">分析家</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">理性主义者，追求知识与能力</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['INTJ','INTP','ENTJ','ENTP'].map(c => (
-                  <span key={c} className="px-2 py-0.5 rounded-md bg-purple-200/50 dark:bg-purple-800/50 text-[10px] font-semibold text-purple-700 dark:text-purple-300">{c}</span>
-                ))}
-              </div>
-            </button>
-
-            {/* 外交家 NF */}
-            <button
-              onClick={startTest}
-              className="group rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 bg-gradient-to-b from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-900/10 p-6 text-left hover:shadow-xl hover:border-emerald-400 dark:hover:border-emerald-600 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🌿</div>
-              <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300 mb-1">外交家</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">理想主义者，追求意义与和谐</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['INFJ','INFP','ENFJ','ENFP'].map(c => (
-                  <span key={c} className="px-2 py-0.5 rounded-md bg-emerald-200/50 dark:bg-emerald-800/50 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">{c}</span>
-                ))}
-              </div>
-            </button>
-
-            {/* 守护者 SJ */}
-            <button
-              onClick={startTest}
-              className="group rounded-2xl border-2 border-sky-200 dark:border-sky-800 bg-gradient-to-b from-sky-50 to-sky-100/50 dark:from-sky-900/20 dark:to-sky-900/10 p-6 text-left hover:shadow-xl hover:border-sky-400 dark:hover:border-sky-600 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-blue-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🛡️</div>
-              <div className="text-sm font-bold text-sky-700 dark:text-sky-300 mb-1">守护者</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">务实主义者，追求秩序与安全</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['ISTJ','ISFJ','ESTJ','ESFJ'].map(c => (
-                  <span key={c} className="px-2 py-0.5 rounded-md bg-sky-200/50 dark:bg-sky-800/50 text-[10px] font-semibold text-sky-700 dark:text-sky-300">{c}</span>
-                ))}
-              </div>
-            </button>
-
-            {/* 探险家 SP */}
-            <button
-              onClick={startTest}
-              className="group rounded-2xl border-2 border-amber-200 dark:border-amber-800 bg-gradient-to-b from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-900/10 p-6 text-left hover:shadow-xl hover:border-amber-400 dark:hover:border-amber-600 transition-all hover:-translate-y-1"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">🔥</div>
-              <div className="text-sm font-bold text-amber-700 dark:text-amber-300 mb-1">探险家</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mb-3">体验主义者，追求自由与刺激</div>
-              <div className="flex flex-wrap gap-1.5">
-                {['ISTP','ISFP','ESTP','ESFP'].map(c => (
-                  <span key={c} className="px-2 py-0.5 rounded-md bg-amber-200/50 dark:bg-amber-800/50 text-[10px] font-semibold text-amber-700 dark:text-amber-300">{c}</span>
-                ))}
-              </div>
-            </button>
+            {levels.map(l => (
+              <button
+                key={l.id}
+                onClick={() => startTest(l.id)}
+                className={`group rounded-2xl border-2 ${l.border} bg-gradient-to-b ${l.bg} p-6 text-center hover:shadow-xl hover:-translate-y-1 transition-all`}
+              >
+                <div className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${l.color} flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>{l.icon}</div>
+                <div className="text-base font-bold text-gray-800 dark:text-gray-200 mb-1">{l.name}版</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">{l.tagline}</div>
+                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-xs text-gray-500 dark:text-gray-400">
+                  {l.total} 题 · {l.time}
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
         {/* 16 型图鉴 */}
-        <TypeGalleryGrid onStart={startTest} />
+        <TypeGalleryGrid onStart={() => startTest(3)} />
 
         {/* FAQ */}
         <FAQ />
@@ -392,7 +365,7 @@ export default function MbtiTest() {
         <div className="text-center mt-8 mb-4">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">好奇我们对你有多准确的判断吗？</p>
           <button
-            onClick={startTest}
+            onClick={() => startTest(3)}
             className="inline-flex items-center gap-2 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-200 dark:shadow-purple-900/30"
           >
             开始测试 <ArrowRight className="w-4 h-4" />
@@ -504,7 +477,7 @@ export default function MbtiTest() {
           <div className="space-y-4">
             {dimensionMeta.map((dim, i) => {
               const val = scores[i];
-              const maxAbs = 27;
+              const maxAbs = level !== null ? levels[level].perModule * 3 : 27;
               const pct = Math.max(5, Math.min(95, ((val + maxAbs) / (2 * maxAbs)) * 100));
               const isLeft = val > 0;
               return (
@@ -524,7 +497,7 @@ export default function MbtiTest() {
         </div>
 
         <button
-          onClick={() => setStage('intro')}
+          onClick={restartTest}
           className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-xl transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
