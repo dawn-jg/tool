@@ -179,6 +179,13 @@ const translations = {
     "imgc.paywallTrust": "纯信任模式 · 点击按钮即重置次数",
     "imgc.donateCount": "已有 {n} 人赞赏 🎉",
 
+    // shared paywall
+    "paywall.title": "今日免费次数已用完",
+    "paywall.desc": "每天 {limit} 次免费使用，扫码赞赏即可继续",
+    "paywall.tip": "微信/支付宝扫码赞赏任意金额",
+    "paywall.btn": "已赞赏，继续使用",
+    "paywall.count": "已有 {n} 人赞赏 🎉",
+
     "tool.imageResizer": "图片调整大小",
     "tool.imageResizerDesc": "在线调整图片尺寸大小工具",
 
@@ -485,6 +492,13 @@ const translations = {
     "imgc.paywallBtn": "Done! Continue using",
     "imgc.paywallTrust": "Trust-based · click to reset count",
     "imgc.donateCount": "{n} people have donated 🎉",
+
+    // shared paywall
+    "paywall.title": "Daily free limit reached",
+    "paywall.desc": "{limit} free uses per day. Scan to support and continue.",
+    "paywall.tip": "Scan with WeChat/Alipay to support any amount",
+    "paywall.btn": "Done! Continue using",
+    "paywall.count": "{n} people have donated 🎉",
 
     "tool.imageResizer": "Image Resizer",
     "tool.imageResizerDesc": "Online tool to resize image dimensions",

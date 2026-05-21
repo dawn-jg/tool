@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState, useCallback, useRef } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { ToolLayout } from '@/components/ToolLayout';
+import { useToolLimiter, PaywallModal } from '@/lib/use-tool-limiter';
 import { PDFDocument, degrees } from 'pdf-lib';
 
 type Tab = 'merge' | 'split' | 'rotate' | 'encrypt' | 'decrypt';
@@ -13,7 +14,6 @@ interface FileEntry {
   name: string;
 }
 
-// Workaround for TypeScript Uint8Array<ArrayBufferLike> vs BufferSource
 function asBuf(data: Uint8Array): Uint8Array<ArrayBuffer> { return data as unknown as Uint8Array<ArrayBuffer>; }
 
 const encoder = new TextEncoder();
@@ -53,6 +53,7 @@ async function decryptPdf(data: Uint8Array, password: string): Promise<Uint8Arra
 
 export function PdfTool() {
   const { t } = useI18n();
+  const limiter = useToolLimiter({ toolKey: 'pdf-tool', freeLimit: 3 });
   const [tab, setTab] = useState<Tab>('merge');
   const [files, setFiles] = useState<FileEntry[]>([]);
   const [processing, setProcessing] = useState(false);
@@ -126,6 +127,7 @@ export function PdfTool() {
 
   const handleMerge = async () => {
     if (files.length < 2) return;
+    if (!limiter.checkLimit()) return;
     setProcessing(true);
     try {
       const merged = await PDFDocument.create();
@@ -140,12 +142,14 @@ export function PdfTool() {
       clearResult();
       setResultUrl(URL.createObjectURL(blob));
       setResultName('merged.pdf');
+      limiter.markUsed();
     } catch (err: any) { setError(err?.message || String(err)); }
     setProcessing(false);
   };
 
   const handleSplit = async () => {
     if (files.length !== 1) return;
+    if (!limiter.checkLimit()) return;
     setProcessing(true);
     try {
       const bytes = await readFile(files[0].file);
@@ -173,12 +177,14 @@ export function PdfTool() {
       clearResult();
       setResultUrl(URL.createObjectURL(blob));
       setResultName('split.pdf');
+      limiter.markUsed();
     } catch (err: any) { setError(err?.message || String(err)); }
     setProcessing(false);
   };
 
   const handleRotate = async () => {
     if (files.length !== 1) return;
+    if (!limiter.checkLimit()) return;
     setProcessing(true);
     try {
       const bytes = await readFile(files[0].file);
@@ -205,6 +211,7 @@ export function PdfTool() {
       clearResult();
       setResultUrl(URL.createObjectURL(blob));
       setResultName('rotated.pdf');
+      limiter.markUsed();
     } catch (err: any) { setError(err?.message || String(err)); }
     setProcessing(false);
   };
@@ -212,6 +219,7 @@ export function PdfTool() {
   const handleEncrypt = async () => {
     if (files.length !== 1) return;
     if (!encryptPassword || encryptPassword !== encryptConfirm) return;
+    if (!limiter.checkLimit()) return;
     setProcessing(true);
     try {
       const bytes = await readFile(files[0].file);
@@ -220,11 +228,13 @@ export function PdfTool() {
       clearResult();
       setResultUrl(URL.createObjectURL(blob));
       setResultName(files[0].name + '.enc');
+      limiter.markUsed();
     } catch (err: any) { setError(err?.message || String(err)); }
     setProcessing(false);
   };
 
   const handleDecrypt = async () => {
+    if (!limiter.checkLimit()) return;
     if (files.length !== 1) return;
     if (!decryptPassword) return;
     setProcessing(true);
@@ -235,6 +245,7 @@ export function PdfTool() {
       clearResult();
       setResultUrl(URL.createObjectURL(blob));
       setResultName(files[0].name.replace(/\.enc$/i, '.pdf'));
+      limiter.markUsed();
     } catch (err: any) { setError(t('pdf.decryptError')); }
     setProcessing(false);
   };
@@ -444,6 +455,8 @@ export function PdfTool() {
           </a>
         </div>
       )}
+
+      <PaywallModal limiter={limiter} />
     </ToolLayout>
   );
 }

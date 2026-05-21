@@ -2,9 +2,12 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
-import { CopyButton } from '@/components/CopyButton';
+import { useI18n } from '@/lib/i18n';
+import { useToolLimiter, PaywallModal } from '@/lib/use-tool-limiter';
 
 export function TextToPoster() {
+  const { t } = useI18n();
+  const limiter = useToolLimiter({ toolKey: 'poster', freeLimit: 5 });
   const [title, setTitle] = useState('今日分享');
   const [subtitle, setSubtitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -28,15 +31,14 @@ export function TextToPoster() {
 
   const generatePoster = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) return null;
 
     canvas.width = 800;
     canvas.height = 1000;
 
-    // Background
     if (useGradient) {
       const gradient = gradientStyle === 'linear'
         ? ctx.createLinearGradient(0, 0, 800, 1000)
@@ -50,23 +52,17 @@ export function TextToPoster() {
     }
     ctx.fillRect(0, 0, 800, 1000);
 
-    // Text
     ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
     if (layout === 'center') {
-      // Title
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.fillText(title, 400, 400);
-      
-      // Subtitle
       if (subtitle) {
         ctx.font = `${fontSize * 0.6}px sans-serif`;
         ctx.fillText(subtitle, 400, 480);
       }
-      
-      // Author
       if (author) {
         ctx.font = `${fontSize * 0.4}px sans-serif`;
         ctx.fillText('— ' + author, 400, 560);
@@ -74,12 +70,10 @@ export function TextToPoster() {
     } else if (layout === 'top') {
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.fillText(title, 400, 200);
-      
       if (subtitle) {
         ctx.font = `${fontSize * 0.5}px sans-serif`;
         ctx.fillText(subtitle, 400, 280);
       }
-      
       if (author) {
         ctx.font = `${fontSize * 0.35}px sans-serif`;
         ctx.fillText(author, 400, 340);
@@ -89,10 +83,8 @@ export function TextToPoster() {
         ctx.font = `${fontSize * 0.4}px sans-serif`;
         ctx.fillText(author, 400, 500);
       }
-      
       ctx.font = `bold ${fontSize}px sans-serif`;
       ctx.fillText(title, 400, 600);
-      
       if (subtitle) {
         ctx.font = `${fontSize * 0.5}px sans-serif`;
         ctx.fillText(subtitle, 400, 680);
@@ -103,6 +95,7 @@ export function TextToPoster() {
   }, [title, subtitle, author, bgColor, textColor, fontSize, gradientStyle, gradientColors, useGradient, layout]);
 
   const downloadPoster = () => {
+    if (!limiter.checkLimit()) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     
@@ -110,6 +103,7 @@ export function TextToPoster() {
     link.download = 'poster.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
+    limiter.markUsed();
   };
 
   const bgPresets = [
@@ -299,6 +293,8 @@ export function TextToPoster() {
 
         <canvas ref={canvasRef} className="hidden" />
       </div>
+
+      <PaywallModal limiter={limiter} />
     </ToolLayout>
   );
 }

@@ -3,9 +3,11 @@
 import { useState, useRef, useCallback } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
 import { useI18n } from '@/lib/i18n';
+import { useToolLimiter, PaywallModal } from '@/lib/use-tool-limiter';
 
 export function MemeGenerator() {
   const { t } = useI18n();
+  const limiter = useToolLimiter({ toolKey: 'meme-gen', freeLimit: 5 });
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [imageUrl, setImageUrl] = useState('');
   const [topText, setTopText] = useState('');
@@ -47,6 +49,8 @@ export function MemeGenerator() {
 
   const generate = useCallback(() => {
     if (!image) return;
+    if (!limiter.checkLimit()) return;
+
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
 
@@ -117,7 +121,8 @@ export function MemeGenerator() {
     drawBottomText(bottomText);
 
     setResultUrl(canvas.toDataURL('image/png'));
-  }, [image, topText, bottomText, fontSize, strokeSize, textColor, strokeColor]);
+    limiter.markUsed();
+  }, [image, topText, bottomText, fontSize, strokeSize, textColor, strokeColor, limiter]);
 
   const download = useCallback(() => {
     if (!resultUrl) return;
@@ -236,6 +241,7 @@ export function MemeGenerator() {
       )}
 
       <canvas ref={canvasRef} className="hidden" />
+      <PaywallModal limiter={limiter} />
     </ToolLayout>
   );
 }
