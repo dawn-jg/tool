@@ -27,7 +27,7 @@ function resetDailyCount(): void {
 
 // Donation counter — per-browser localStorage, starts with a seed for realism
 const DONATION_SEED = 42;
-const DONATION_KEY = 'imgc-donation-count';
+const DONATION_KEY = 'global-donation-count';
 
 function getDonationCount(): number {
   if (typeof window === 'undefined') return DONATION_SEED;
