@@ -177,6 +177,7 @@ const translations = {
     "imgc.paywallTip": "微信/支付宝扫码赞赏任意金额",
     "imgc.paywallBtn": "已赞赏，继续使用",
     "imgc.paywallTrust": "纯信任模式 · 点击按钮即重置次数",
+    "imgc.donateCount": "已有 {n} 人赞赏 🎉",
 
     "tool.imageResizer": "图片调整大小",
     "tool.imageResizerDesc": "在线调整图片尺寸大小工具",
@@ -483,6 +484,7 @@ const translations = {
     "imgc.paywallTip": "Scan with WeChat/Alipay to support any amount",
     "imgc.paywallBtn": "Done! Continue using",
     "imgc.paywallTrust": "Trust-based · click to reset count",
+    "imgc.donateCount": "{n} people have donated 🎉",
 
     "tool.imageResizer": "Image Resizer",
     "tool.imageResizerDesc": "Online tool to resize image dimensions",

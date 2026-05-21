@@ -25,6 +25,22 @@ function resetDailyCount(): void {
   localStorage.setItem(getDailyKey(), '0');
 }
 
+// Donation counter — per-browser localStorage, starts with a seed for realism
+const DONATION_SEED = 42;
+const DONATION_KEY = 'imgc-donation-count';
+
+function getDonationCount(): number {
+  if (typeof window === 'undefined') return DONATION_SEED;
+  const v = localStorage.getItem(DONATION_KEY);
+  return v ? parseInt(v) : DONATION_SEED;
+}
+
+function incrementDonationCount(): number {
+  const n = getDonationCount() + 1;
+  localStorage.setItem(DONATION_KEY, String(n));
+  return n;
+}
+
 type OutputFormat = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif';
 
 const FORMATS: { value: OutputFormat; ext: string; lossy: boolean }[] = [
@@ -63,11 +79,14 @@ export function ImageCompressor() {
   const [avifSupported, setAvifSupported] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [dailyCount, setDailyCount] = useState(0);
+  const [donationCount, setDonationCount] = useState(DONATION_SEED);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    setDailyCount(getDailyCount());
+    setDonationCount(getDonationCount());
     const c = document.createElement('canvas');
     c.width = 1; c.height = 1;
     c.toBlob(b => setAvifSupported(!!b), 'image/avif');
@@ -317,8 +336,12 @@ export function ImageCompressor() {
               {t('imgc.paywallTip')}
             </p>
 
+            <p className="text-sm font-medium text-purple-600 dark:text-purple-400">
+              {t('imgc.donateCount').replace('{n}', String(donationCount))}
+            </p>
+
             <button
-              onClick={() => { resetDailyCount(); setDailyCount(0); setShowPaywall(false); }}
+              onClick={() => { resetDailyCount(); setDailyCount(0); setShowPaywall(false); incrementDonationCount(); setDonationCount(getDonationCount()); }}
               className="w-full py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold rounded-xl transition-colors"
             >
               {t('imgc.paywallBtn')}
