@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 export async function GET(request: NextRequest) {
   const domain = request.nextUrl.searchParams.get('domain');
 
@@ -16,7 +18,6 @@ export async function GET(request: NextRequest) {
   const rdapDomain = cleanDomain.toUpperCase();
 
   try {
-    // Use RDAP (Registration Data Access Protocol) - standardized, no auth required
     const response = await fetch(
       `https://rdap.org/domain/${encodeURIComponent(rdapDomain)}`,
       {
@@ -38,34 +39,26 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
 
-    // Extract dates from events array
     const events = data.events || [];
     const getEventDate = (action: string) => {
       const event = events.find((e: any) => e.eventAction === action);
       return event?.eventDate || '';
     };
 
-    // Extract nameservers
     const nameservers = (data.nameservers || []).map((ns: any) => ns.ldhName);
 
-    // Extract registrar from entities or publicIds
     let registrar = '';
-    
-    // Try to get registrar from publicIds (type=IANA Registrar ID)
     const publicIds = data.publicIds || [];
     const ianaRegistrar = publicIds.find((p: any) => p.type === 'IANA Registrar ID');
     if (ianaRegistrar) {
       registrar = ianaRegistrar.identifier || '';
     }
-    
-    // If not found, try entities with registrar role
     if (!registrar) {
       const entities = data.entities || [];
-      const registrarEntity = entities.find((e: any) => 
+      const registrarEntity = entities.find((e: any) =>
         e.roles?.includes('registrar')
       );
       if (registrarEntity) {
-        // Try to get name from vcardArray
         const vcard = registrarEntity?.vcardArray;
         if (vcard && Array.isArray(vcard)) {
           const fn = vcard.find((v: any) => Array.isArray(v) && v[0] === 'fn');
@@ -73,7 +66,6 @@ export async function GET(request: NextRequest) {
             registrar = fn[3];
           }
         }
-        // Fallback to handle/identifier
         if (!registrar) {
           registrar = registrarEntity.handle || registrarEntity.identifier || '';
         }
