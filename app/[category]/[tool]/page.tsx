@@ -1,5 +1,7 @@
 "use client";
 
+export const runtime = 'edge';
+
 import { notFound } from "next/navigation";
 import { getTool } from "@/lib/tools-data";
 import { getToolComponent } from "@/lib/tool-components";
