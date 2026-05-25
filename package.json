@@ -4,6 +4,7 @@
   "private": true,
   "description": "Tooltip.cc - 免费在线工具箱",
   "scripts": {
+    "prebuild": "node scripts/create-polyfill.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
