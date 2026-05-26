@@ -1,31 +1,25 @@
 const fs = require('fs');
 const path = require('path');
 
-// ====== 0. Create node_modules/async_hooks polyfill (for esbuild filesystem resolution) ======
-var ahDir = path.resolve('node_modules/async_hooks');
-fs.mkdirSync(ahDir, { recursive: true });
-fs.writeFileSync(path.join(ahDir, 'package.json'), JSON.stringify({name:'async_hooks', version:'1.0.0', main:'index.js'}));
-fs.writeFileSync(path.join(ahDir, 'index.js'), 'function AsyncLocalStorage() {\n' +
-'  var stores = [];\n' +
-'  this.getStore = function() { return stores.length > 0 ? stores[stores.length - 1] : undefined; };\n' +
-'  this.run = function(store, cb) {\n' +
-'    stores.push(store);\n' +
-'    try { return cb(); }\n' +
-'    finally { stores.pop(); }\n' +
-'  };\n' +
-'  this.enterWith = function(store) { stores.push(store); };\n' +
-'  this.disable = function() { stores = []; };\n' +
-'}\n' +
-'module.exports = {\n' +
-'  AsyncLocalStorage: AsyncLocalStorage,\n' +
-'  createHook: function() { return { enable: function(){}, disable: function(){} }; },\n' +
-'  AsyncResource: function() {},\n' +
-'  executionAsyncId: function() { return 0; },\n' +
-'  executionAsyncResource: function() { return {}; },\n' +
-'  triggerAsyncId: function() { return 0; },\n' +
-'};\n');
-console.log('[patch] Created node_modules/async_hooks polyfill');
+// ====== 0. Patch compiled Next.js runtime files (the root cause of vercel build inlining bare require("async_hooks")) ======
+var compiledDir = path.resolve('node_modules/next/dist/compiled/next-server');
+var patched = 0;
+if (fs.existsSync(compiledDir)) {
+  var files = fs.readdirSync(compiledDir).filter(function(f) { return f.endsWith('.js'); });
+  for (var i = 0; i < files.length; i++) {
+    var fp = path.join(compiledDir, files[i]);
+    var content = fs.readFileSync(fp, 'utf8');
+    if (content.indexOf('require("async_hooks")') !== -1 || content.indexOf("require('async_hooks')") !== -1) {
+      content = content.replace(/require\(["']async_hooks["']\)/g, 'require("node:async_hooks")');
+      fs.writeFileSync(fp, content, 'utf8');
+      console.log('[patch] Compiled runtime: ' + files[i] + ' (barrier async_hooks -> node:async_hooks)');
+      patched++;
+    }
+  }
+}
+if (patched === 0) console.log('[patch] No compiled runtime files needed patching');
 
+// ====== 1. Next.js dist files (polyfills + require redirect) ======
 var polyfillContent = 'module.exports = {\n' +
   '  createHook: function() { return { enable: function() {}, disable: function() {} }; },\n' +
   '  AsyncLocalStorage: (function() {\n' +
@@ -54,8 +48,6 @@ var polyfillContent = 'module.exports = {\n' +
   '  executionAsyncResource: function() { return {}; },\n' +
   '  triggerAsyncId: function() { return 0; },\n' +
 '};\n';
-
-// ====== 1. Next.js dist files ======
 
 var polyfillTargets = [
   'node_modules/next/dist/server/async-hooks-polyfill.js',
@@ -103,15 +95,10 @@ for (var p = 0; p < nextPatches.length; p++) {
   }
 }
 
-// ====== 2. @cloudflare/next-on-pages: patch builtInModulesPlugin to intercept async_hooks ======
-
+// ====== 2. @cloudflare/next-on-pages: add bare async_hooks to esbuild externals ======
 var nopIndex = 'node_modules/@cloudflare/next-on-pages/dist/index.js';
 if (fs.existsSync(nopIndex)) {
   var nopContent = fs.readFileSync(nopIndex, 'utf8');
-
-  // Find the builtInModulesPlugin setup function and add an onResolve for bare "async_hooks"
-  // Target: the line after build3.onResolve({ filter: /^(node|cloudflare):/ }, ...
-  // We need to add: build3.onResolve({ filter: /^async_hooks$/ }, () => ({ path: 'async_hooks', namespace: 'built-in-modules' }));
 
   var targetStr = 'build3.onResolve({ filter: /^(node|cloudflare):/ }, ({ kind, path: path2 }) => {\n      return kind === "require-call" ? { path: path2, namespace: "built-in-modules" } : void 0;\n    });';
   var newResolver = 'build3.onResolve({ filter: /^(node|cloudflare):/ }, ({ kind, path: path2 }) => {\n' +
@@ -130,4 +117,4 @@ if (fs.existsSync(nopIndex)) {
   console.log('[patch] @cloudflare/next-on-pages index.js patched successfully');
 }
 
-console.log('[patch] Done');
+console.log('[patch] Done. Patched ' + patched + ' compiled runtime files');
