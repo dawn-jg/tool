@@ -67,6 +67,7 @@ export const tools: Tool[] = [
   { slug: 'exif-viewer', category: 'image-tools', nameKey: 'tool.exifViewer', descriptionKey: 'tool.exifViewerDesc', keywords: 'Exif,元数据,图片信息,GPS', icon: Camera },
   { slug: 'image-compressor', category: 'image-tools', nameKey: 'tool.imageCompressor', descriptionKey: 'tool.imageCompressorDesc', keywords: '图片压缩,格式转换,图片优化,JPG转PNG,PNG转WebP,WebP转换,AVIF,在线压缩,图片瘦身,减小图片体积,photo compress,image converter', icon: Archive },
   { slug: 'meme-generator', category: 'image-tools', nameKey: 'tool.memeGenerator', descriptionKey: 'tool.memeGeneratorDesc', keywords: '表情包,生成器,Meme,图片加字,搞笑,表情,Meme Generator', icon: Sparkles },
+  { slug: 'image-resizer', category: 'image-tools', nameKey: 'tool.imageResizer', descriptionKey: 'tool.imageResizerDesc', keywords: '图片缩放,尺寸调整,Resize,压缩分辨率,图片改大小', icon: Crop },
 
   // data-tools
   { slug: 'random-password', category: 'data-tools', nameKey: 'tool.randomPassword', descriptionKey: 'tool.randomPasswordDesc', keywords: '密码,随机,安全,生成', icon: Lock },
@@ -110,7 +111,7 @@ export const tools: Tool[] = [
   { slug: 'daily-fortune', category: 'utilities', nameKey: 'tool.dailyFortune', descriptionKey: 'tool.dailyFortuneDesc', keywords: '运势,占卜,幸运,每日', icon: Sparkles },
   { slug: 'lucky-wheel', category: 'utilities', nameKey: 'tool.luckyWheel', descriptionKey: 'tool.luckyWheelDesc', keywords: '转盘,抽奖,游戏,随机', icon: CircleDot },
   { slug: 'mortgage-calculator', category: 'utilities', nameKey: 'tool.mortgageCalculator', descriptionKey: 'tool.mortgageCalculatorDesc', keywords: '房贷,贷款,理财,计算,月供', icon: Calculator },
-  { slug: 'programmer-daily', category: 'developer', nameKey: 'tool.programmerDaily', descriptionKey: 'tool.programmerDailyDesc', keywords: '程序员,ASCII,时间戳,HTTP,进制,颜色', icon: Code },
+  { slug: 'programmer-daily', category: 'developer-tools', nameKey: 'tool.programmerDaily', descriptionKey: 'tool.programmerDailyDesc', keywords: '程序员,ASCII,时间戳,HTTP,进制,颜色', icon: Code },
 
   // network-tools
   { slug: 'ip-info', category: 'network-tools', nameKey: 'tool.ipInfo', descriptionKey: 'tool.ipInfoDesc', keywords: 'IP,地址,查询,位置,公网', icon: Globe },

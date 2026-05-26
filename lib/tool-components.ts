@@ -23,6 +23,7 @@ import { SvgToJsx } from '@/components/tools/image/svg-to-jsx';
 import { ExifViewer } from '@/components/tools/image/exif-viewer';
 import { ImageCompressor } from '@/components/tools/image/image-compressor';
 import { MemeGenerator } from '@/components/tools/image/meme-generator';
+import { ImageResizer } from '@/components/tools/image/image-resizer';
 import { RandomPassword } from '@/components/tools/data/random-password';
 import { CronGenerator } from '@/components/tools/data/cron-generator';
 import { BaseConverter } from '@/components/tools/data/base-converter';
@@ -89,6 +90,7 @@ const componentMap: Record<string, React.ComponentType> = {
   'image-tools/exif-viewer': ExifViewer,
   'image-tools/image-compressor': ImageCompressor,
   'image-tools/meme-generator': MemeGenerator,
+  'image-tools/image-resizer': ImageResizer,
   'data-tools/random-password': RandomPassword,
   'data-tools/cron-generator': CronGenerator,
   'data-tools/base-converter': BaseConverter,
@@ -120,7 +122,7 @@ const componentMap: Record<string, React.ComponentType> = {
   'utilities/pdf-tool': PdfTool,
   'utilities/lucky-wheel': LuckyWheel,
   'utilities/mortgage-calculator': MortgageCalculator,
-  'utilities/programmer-daily': ProgrammerDaily,
+  'developer-tools/programmer-daily': ProgrammerDaily,
   'network-tools/ip-info': IpInfoTool,
   'network-tools/dns-lookup': DnsLookup,
   'network-tools/latency-test': LatencyTest,

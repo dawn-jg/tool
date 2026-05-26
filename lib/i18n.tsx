@@ -135,6 +135,8 @@ const translations = {
     "tool.imageCompressorDesc": "在线图片压缩与格式转换工具，支持PNG/JPG/WebP/AVIF互转、质量调节、尺寸调整，纯浏览器端处理",
     "tool.memeGenerator": "表情包生成器",
     "tool.memeGeneratorDesc": "上传图片添加文字，快速生成搞笑表情包，支持微信/抖音分享",
+    "tool.imageResizer": "图片尺寸调整",
+    "tool.imageResizerDesc": "在线调整图片尺寸，支持锁定宽高比、PNG/JPG/WebP格式导出，纯浏览器处理",
 
     // meme generator i18n
     "meme.dropzone": "点击或拖拽上传图片",
@@ -185,9 +187,6 @@ const translations = {
     "paywall.tip": "微信/支付宝扫码赞赏任意金额",
     "paywall.btn": "已赞赏，继续使用",
     "paywall.count": "已有 {n} 人赞赏 🎉",
-
-    "tool.imageResizer": "图片调整大小",
-    "tool.imageResizerDesc": "在线调整图片尺寸大小工具",
 
     // tools - data
     "tool.randomPassword": "随机密码生成",
@@ -449,6 +448,8 @@ const translations = {
     "tool.imageCompressorDesc": "Online image compression & format converter — PNG/JPG/WebP/AVIF, quality slider, resize, 100% client-side",
     "tool.memeGenerator": "Meme Generator",
     "tool.memeGeneratorDesc": "Add text to images, create funny memes instantly, share on WeChat & Douyin",
+    "tool.imageResizer": "Image Resizer",
+    "tool.imageResizerDesc": "Resize images online with aspect ratio lock, export as PNG/JPG/WebP, 100% client-side",
 
     // meme generator i18n
     "meme.dropzone": "Click or drag to upload an image",
@@ -500,8 +501,6 @@ const translations = {
     "paywall.btn": "Done! Continue using",
     "paywall.count": "{n} people have donated 🎉",
 
-    "tool.imageResizer": "Image Resizer",
-    "tool.imageResizerDesc": "Online tool to resize image dimensions",
 
     // tools - data
     "tool.randomPassword": "Random Password",

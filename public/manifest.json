@@ -1,0 +1,16 @@
+﻿{
+  "name": "tooltip.cc - 免费在线工具箱",
+  "short_name": "Tooltip",
+  "description": "55+免费在线工具，无需注册打开即用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

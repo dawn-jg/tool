@@ -13,6 +13,20 @@ export const metadata: Metadata = {
   keywords: "在线工具,json格式化,base64,正则测试,二维码生成,md5,uuid,工具箱",
   authors: [{ name: "Tooltip.cc" }],
   robots: "index, follow",
+  manifest: "/manifest.json",
+  openGraph: {
+    title: "Tooltip.cc - 免费在线工具箱",
+    description: "55+免费的在线工具，提供JSON格式化、Base64编解码、正则测试、二维码生成等实用功能，无需注册，打开即用。",
+    url: "https://tooltip.cc",
+    siteName: "Tooltip.cc",
+    locale: "zh_CN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Tooltip.cc - 免费在线工具箱",
+    description: "55+免费的在线工具，无需注册，打开即用。",
+  },
 };
 
 export default function RootLayout({
@@ -48,6 +62,19 @@ export default function RootLayout({
         <script charSet="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
         <script dangerouslySetInnerHTML={{ __html: "LA.init({id:'LBnlcELKHTZlDEIf',ck:'LBnlcELKHTZlDEIf'})" }}></script>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7487473818971469" crossOrigin="anonymous"></script>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Tooltip.cc",
+              url: "https://tooltip.cc",
+              description: "免费的在线工具网站，提供JSON格式化、Base64编解码、正则测试、二维码生成等55+实用工具。",
+              inLanguage: "zh-CN",
+            }),
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col">
         <I18nProvider>

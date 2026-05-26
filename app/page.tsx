@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, ArrowRight, Globe, Sparkles } from "lucide-react";
+import { AdUnit } from "@/components/AdUnit";
 import { useI18n } from "@/lib/i18n";
 
 const categories = [
@@ -10,7 +11,7 @@ const categories = [
     nameDescKey: "cat.developerDesc",
     href: "/developer-tools",
     icon: Code,
-    count: 10,
+    count: 19,
     color: "bg-blue-500",
   },
   {
@@ -26,7 +27,7 @@ const categories = [
     nameDescKey: "cat.imageDesc",
     href: "/image-tools",
     icon: ImageIcon,
-    count: 7,
+    count: 9,
     color: "bg-purple-500",
   },
   {
@@ -42,7 +43,7 @@ const categories = [
     nameDescKey: "cat.generatorsDesc",
     href: "/generators",
     icon: Zap,
-    count: 5,
+    count: 8,
     color: "bg-yellow-500",
   },
   {
@@ -50,7 +51,7 @@ const categories = [
     nameDescKey: "cat.validatorsDesc",
     href: "/validators",
     icon: CheckCircle,
-    count: 7,
+    count: 9,
     color: "bg-teal-500",
   },
   {
@@ -58,7 +59,7 @@ const categories = [
     nameDescKey: "cat.utilitiesDesc",
     href: "/utilities",
     icon: Calculator,
-    count: 13,
+    count: 16,
     color: "bg-pink-500",
   },
   {
@@ -123,6 +124,8 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+
+        <AdUnit />
 
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
