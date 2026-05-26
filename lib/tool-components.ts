@@ -8,6 +8,14 @@ import { JwtDecoder } from '@/components/tools/developer/jwt-decoder';
 import { HashGenerator } from '@/components/tools/developer/hash-generator';
 import { UuidGenerator } from '@/components/tools/developer/uuid-generator';
 import { HtmlEntities } from '@/components/tools/developer/html-entities';
+import { FlexboxGenerator } from '@/components/tools/developer/flexbox-generator';
+import { BoxShadowGenerator } from '@/components/tools/developer/box-shadow-generator';
+import { BorderRadiusGenerator } from '@/components/tools/developer/border-radius-generator';
+import { ColorFormatConverter } from '@/components/tools/developer/color-format';
+import { CssAnimationGenerator } from '@/components/tools/developer/css-animation-generator';
+import { UrlEncoderDecoder } from '@/components/tools/developer/url-encoder-decoder';
+import { JsonPathQuery } from '@/components/tools/developer/json-path-query';
+import { MarkdownPreview } from '@/components/tools/developer/markdown-preview';
 import { TextDiff } from '@/components/tools/text/text-diff';
 import { MarkdownEditor } from '@/components/tools/text/markdown-editor';
 import { CaseConverter } from '@/components/tools/text/case-converter';
@@ -80,6 +88,14 @@ const componentMap: Record<string, React.ComponentType> = {
   'developer-tools/hash-generator': HashGenerator,
   'developer-tools/uuid-generator': UuidGenerator,
   'developer-tools/html-entities': HtmlEntities,
+  'developer-tools/flexbox-generator': FlexboxGenerator,
+  'developer-tools/box-shadow-generator': BoxShadowGenerator,
+  'developer-tools/border-radius-generator': BorderRadiusGenerator,
+  'developer-tools/color-format': ColorFormatConverter,
+  'developer-tools/css-animation-generator': CssAnimationGenerator,
+  'developer-tools/url-encoder-decoder': UrlEncoderDecoder,
+  'developer-tools/json-path-query': JsonPathQuery,
+  'developer-tools/markdown-preview': MarkdownPreview,
   'text-tools/text-diff': TextDiff,
   'text-tools/markdown-editor': MarkdownEditor,
   'text-tools/case-converter': CaseConverter,
