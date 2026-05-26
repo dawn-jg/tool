@@ -44,8 +44,8 @@ function calculateMortgage(
       monthlyPayment = (principal * monthlyRate * factor) / (factor - 1);
       totalInterest = monthlyPayment * months - principal;
     }
-    firstMonthPrincipal = principal * monthlyRate;
-    firstMonthInterest = monthlyPayment - firstMonthPrincipal;
+    firstMonthInterest = principal * monthlyRate;
+    firstMonthPrincipal = monthlyPayment - firstMonthInterest;
   } else {
     // 等额本金: Monthly payment = P/n + remaining * r
     const monthlyPrincipal = principal / months;

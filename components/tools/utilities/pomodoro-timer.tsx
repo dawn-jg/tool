@@ -50,8 +50,9 @@ export function PomodoroTimer() {
       startTimer();
     } else if (intervalRef.current) {
       stopTimer();
-      setState('idle');
+      // Keep state as-is (working/break) for resume
     } else {
+      // Resume from pause — state is still correct
       startTimer();
     }
   };
