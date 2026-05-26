@@ -32,6 +32,9 @@ import { FakeData } from '@/components/tools/generators/fake-data';
 import { ColorGradient } from '@/components/tools/generators/color-gradient';
 import { MetaTags } from '@/components/tools/generators/meta-tags';
 import { DataUri } from '@/components/tools/generators/data-uri';
+import { RandomNumberGenerator } from '@/components/tools/generators/random-number-generator';
+import { ColorPaletteGenerator } from '@/components/tools/generators/color-palette-generator';
+import { GradientGenerator } from '@/components/tools/generators/gradient-generator';
 import { JsonValidator } from '@/components/tools/validators/json-validator';
 import { EmailValidator } from '@/components/tools/validators/email-validator';
 import { PhoneValidator } from '@/components/tools/validators/phone-validator';
@@ -39,6 +42,8 @@ import { IdCardValidator } from '@/components/tools/validators/id-card-validator
 import { CreditCardValidator } from '@/components/tools/validators/credit-card-validator';
 import { UrlValidator } from '@/components/tools/validators/url-validator';
 import { ColorContrast } from '@/components/tools/validators/color-contrast';
+import { DomainValidator } from '@/components/tools/validators/domain-validator';
+import { IpValidator } from '@/components/tools/validators/ip-validator';
 import { UnitConverter } from '@/components/tools/utilities/unit-converter';
 import { TimezoneConverter } from '@/components/tools/utilities/timezone-converter';
 import { TimerTool } from '@/components/tools/utilities/timer';
@@ -99,6 +104,9 @@ const componentMap: Record<string, React.ComponentType> = {
   'generators/color-gradient': ColorGradient,
   'generators/meta-tags': MetaTags,
   'generators/data-uri': DataUri,
+  'generators/random-number-generator': RandomNumberGenerator,
+  'generators/color-palette-generator': ColorPaletteGenerator,
+  'generators/gradient-generator': GradientGenerator,
   'validators/json-validator': JsonValidator,
   'validators/email-validator': EmailValidator,
   'validators/phone-validator': PhoneValidator,
@@ -106,6 +114,8 @@ const componentMap: Record<string, React.ComponentType> = {
   'validators/credit-card-validator': CreditCardValidator,
   'validators/url-validator': UrlValidator,
   'validators/color-contrast': ColorContrast,
+  'validators/domain-validator': DomainValidator,
+  'validators/ip-validator': IpValidator,
   'utilities/unit-converter': UnitConverter,
   'utilities/timezone-converter': TimezoneConverter,
   'utilities/timer': TimerTool,
