@@ -5,7 +5,16 @@ const path = require('path');
 var scanDirs = [
   path.resolve('node_modules/next/dist/compiled'),
   path.resolve('node_modules/@vercel/next/dist'),
+  path.resolve('node_modules/vercel/dist/chunks'),
 ];
+// Also add node_modules of any other vercel internal packages
+var vercelPkg = path.resolve('node_modules/vercel/node_modules/@vercel');
+if (fs.existsSync(vercelPkg)) {
+  fs.readdirSync(vercelPkg).forEach(function(n) {
+    var d = path.join(vercelPkg, n, 'dist');
+    if (fs.existsSync(d)) scanDirs.push(d);
+  });
+}
 var patched = 0;
 for (var di = 0; di < scanDirs.length; di++) {
   walkDir(scanDirs[di], function(fp) {
