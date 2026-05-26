@@ -1,23 +1,36 @@
 const fs = require('fs');
 const path = require('path');
 
-// ====== 0. Patch compiled Next.js runtime files (the root cause of vercel build inlining bare require("async_hooks")) ======
-var compiledDir = path.resolve('node_modules/next/dist/compiled/next-server');
+// ====== 0. Patch ALL compiled files under next/dist/compiled/ containing require("async_hooks") ======
+var compiledDir = path.resolve('node_modules/next/dist/compiled');
 var patched = 0;
-if (fs.existsSync(compiledDir)) {
-  var files = fs.readdirSync(compiledDir).filter(function(f) { return f.endsWith('.js'); });
-  for (var i = 0; i < files.length; i++) {
-    var fp = path.join(compiledDir, files[i]);
+walkDir(compiledDir, function(fp) {
+  if (!fp.endsWith('.js')) return;
+  try {
     var content = fs.readFileSync(fp, 'utf8');
     if (content.indexOf('require("async_hooks")') !== -1 || content.indexOf("require('async_hooks')") !== -1) {
       content = content.replace(/require\(["']async_hooks["']\)/g, 'require("node:async_hooks")');
       fs.writeFileSync(fp, content, 'utf8');
-      console.log('[patch] Compiled runtime: ' + files[i] + ' (barrier async_hooks -> node:async_hooks)');
+      console.log('[patch] Compiled: ' + path.relative(compiledDir, fp));
       patched++;
     }
-  }
+  } catch(e) {}
+});
+if (patched === 0) console.log('[patch] No compiled files needed patching');
+
+function walkDir(dir, cb) {
+  try {
+    var entries = fs.readdirSync(dir);
+    for (var i = 0; i < entries.length; i++) {
+      var full = path.join(dir, entries[i]);
+      try {
+        var stat = fs.statSync(full);
+        if (stat.isDirectory()) walkDir(full, cb);
+        else cb(full);
+      } catch(e) {}
+    }
+  } catch(e) {}
 }
-if (patched === 0) console.log('[patch] No compiled runtime files needed patching');
 
 // ====== 1. Next.js dist files (polyfills + require redirect) ======
 var polyfillContent = 'module.exports = {\n' +
@@ -117,4 +130,4 @@ if (fs.existsSync(nopIndex)) {
   console.log('[patch] @cloudflare/next-on-pages index.js patched successfully');
 }
 
-console.log('[patch] Done. Patched ' + patched + ' compiled runtime files');
+console.log('[patch] Done. Patched ' + patched + ' compiled files with bare async_hooks');
