@@ -1,6 +1,31 @@
 const fs = require('fs');
 const path = require('path');
 
+// ====== 0. Create node_modules/async_hooks polyfill (for esbuild filesystem resolution) ======
+var ahDir = path.resolve('node_modules/async_hooks');
+fs.mkdirSync(ahDir, { recursive: true });
+fs.writeFileSync(path.join(ahDir, 'package.json'), JSON.stringify({name:'async_hooks', version:'1.0.0', main:'index.js'}));
+fs.writeFileSync(path.join(ahDir, 'index.js'), 'function AsyncLocalStorage() {\n' +
+'  var stores = [];\n' +
+'  this.getStore = function() { return stores.length > 0 ? stores[stores.length - 1] : undefined; };\n' +
+'  this.run = function(store, cb) {\n' +
+'    stores.push(store);\n' +
+'    try { return cb(); }\n' +
+'    finally { stores.pop(); }\n' +
+'  };\n' +
+'  this.enterWith = function(store) { stores.push(store); };\n' +
+'  this.disable = function() { stores = []; };\n' +
+'}\n' +
+'module.exports = {\n' +
+'  AsyncLocalStorage: AsyncLocalStorage,\n' +
+'  createHook: function() { return { enable: function(){}, disable: function(){} }; },\n' +
+'  AsyncResource: function() {},\n' +
+'  executionAsyncId: function() { return 0; },\n' +
+'  executionAsyncResource: function() { return {}; },\n' +
+'  triggerAsyncId: function() { return 0; },\n' +
+'};\n');
+console.log('[patch] Created node_modules/async_hooks polyfill');
+
 var polyfillContent = 'module.exports = {\n' +
   '  createHook: function() { return { enable: function() {}, disable: function() {} }; },\n' +
   '  AsyncLocalStorage: (function() {\n' +
