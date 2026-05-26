@@ -68,6 +68,7 @@ import { DailyFortune } from '@/components/tools/utilities/daily-fortune';
 import { PdfTool } from '@/components/tools/utilities/pdf-tool';
 import { LuckyWheel } from '@/components/tools/utilities/lucky-wheel';
 import MortgageCalculator from '@/components/tools/utilities/mortgage-calculator';
+import VideoDownloader from '@/components/tools/utilities/video-downloader';
 import ProgrammerDaily from '@/components/tools/utilities/programmer-daily';
 import IpInfoTool from '@/components/tools/network/ip-info';
 import DnsLookup from '@/components/tools/network/dns-lookup';
@@ -148,6 +149,7 @@ const componentMap: Record<string, React.ComponentType> = {
   'utilities/pdf-tool': PdfTool,
   'utilities/lucky-wheel': LuckyWheel,
   'utilities/mortgage-calculator': MortgageCalculator,
+  'utilities/video-downloader': VideoDownloader,
   'developer-tools/programmer-daily': ProgrammerDaily,
   'network-tools/ip-info': IpInfoTool,
   'network-tools/dns-lookup': DnsLookup,

@@ -481,6 +481,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tooltip.cc/utilities/video-downloader</loc>
+    <lastmod>2026-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tooltip.cc/utilities/pdf-tool</loc>
     <lastmod>2026-05-26</lastmod>
     <changefreq>monthly</changefreq>

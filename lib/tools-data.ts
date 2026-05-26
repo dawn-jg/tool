@@ -110,6 +110,7 @@ export const tools: Tool[] = [
   { slug: 'text-to-poster', category: 'utilities', nameKey: 'tool.textToPoster', descriptionKey: 'tool.textToPosterDesc', keywords: '文字,海报,生成,图片', icon: ImageIcon },
   { slug: 'daily-fortune', category: 'utilities', nameKey: 'tool.dailyFortune', descriptionKey: 'tool.dailyFortuneDesc', keywords: '运势,占卜,幸运,每日', icon: Sparkles },
   { slug: 'lucky-wheel', category: 'utilities', nameKey: 'tool.luckyWheel', descriptionKey: 'tool.luckyWheelDesc', keywords: '转盘,抽奖,游戏,随机', icon: CircleDot },
+  { slug: 'video-downloader', category: 'utilities', nameKey: 'tool.videoDownloader', descriptionKey: 'tool.videoDownloaderDesc', keywords: '视频,下载,B站,TikTok,抖音,快手,小红书,短视频,解析', icon: Play },
   { slug: 'mortgage-calculator', category: 'utilities', nameKey: 'tool.mortgageCalculator', descriptionKey: 'tool.mortgageCalculatorDesc', keywords: '房贷,贷款,理财,计算,月供', icon: Calculator },
   { slug: 'programmer-daily', category: 'developer-tools', nameKey: 'tool.programmerDaily', descriptionKey: 'tool.programmerDailyDesc', keywords: '程序员,ASCII,时间戳,HTTP,进制,颜色', icon: Code },
 
