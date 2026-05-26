@@ -1,22 +1,27 @@
 const fs = require('fs');
 const path = require('path');
 
-// ====== 0. Patch ALL compiled files under next/dist/compiled/ containing require("async_hooks") ======
-var compiledDir = path.resolve('node_modules/next/dist/compiled');
+// ====== 0. Patch ALL files with bare require("async_hooks") in next and @vercel ======
+var scanDirs = [
+  path.resolve('node_modules/next/dist/compiled'),
+  path.resolve('node_modules/@vercel/next/dist'),
+];
 var patched = 0;
-walkDir(compiledDir, function(fp) {
-  if (!fp.endsWith('.js')) return;
-  try {
-    var content = fs.readFileSync(fp, 'utf8');
-    if (content.indexOf('require("async_hooks")') !== -1 || content.indexOf("require('async_hooks')") !== -1) {
-      content = content.replace(/require\(["']async_hooks["']\)/g, 'require("node:async_hooks")');
-      fs.writeFileSync(fp, content, 'utf8');
-      console.log('[patch] Compiled: ' + path.relative(compiledDir, fp));
-      patched++;
-    }
-  } catch(e) {}
-});
-if (patched === 0) console.log('[patch] No compiled files needed patching');
+for (var di = 0; di < scanDirs.length; di++) {
+  walkDir(scanDirs[di], function(fp) {
+    if (!fp.endsWith('.js')) return;
+    try {
+      var content = fs.readFileSync(fp, 'utf8');
+      if (content.indexOf('require("async_hooks")') !== -1) {
+        content = content.replace(/require\(["']async_hooks["']\)/g, 'require("node:async_hooks")');
+        fs.writeFileSync(fp, content, 'utf8');
+        console.log('[patch] ' + fp.substring(fp.indexOf('node_modules') + 13));
+        patched++;
+      }
+    } catch(e) {}
+  });
+}
+if (patched === 0) console.log('[patch] No files needed patching');
 
 function walkDir(dir, cb) {
   try {
