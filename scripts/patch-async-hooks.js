@@ -62,12 +62,10 @@ for (var p = 0; p < nextPatches.length; p++) {
   }
   var content = fs.readFileSync(patch.file, 'utf8');
   var modified = false;
-  // Pattern 1: require("async_hooks")
   if (content.indexOf('require("async_hooks")') !== -1 || content.indexOf("require('async_hooks')") !== -1) {
     content = content.replace(/require\(["']async_hooks["']\)/g, 'require("' + patch.relative + '")');
     modified = true;
   }
-  // Pattern 2: require("node:async_hooks")
   if (content.indexOf('require("node:async_hooks")') !== -1 || content.indexOf("require('node:async_hooks')") !== -1) {
     content = content.replace(/require\(["']node:async_hooks["']\)/g, 'require("' + patch.relative + '")');
     modified = true;
@@ -80,42 +78,31 @@ for (var p = 0; p < nextPatches.length; p++) {
   }
 }
 
-// ====== 2. @cloudflare/next-on-pages: add "async_hooks" to esbuild externals ======
+// ====== 2. @cloudflare/next-on-pages: patch builtInModulesPlugin to intercept async_hooks ======
 
 var nopIndex = 'node_modules/@cloudflare/next-on-pages/dist/index.js';
 if (fs.existsSync(nopIndex)) {
   var nopContent = fs.readFileSync(nopIndex, 'utf8');
 
-  // esbuild #1: worker bundle
-  var old1 = 'external: ["node:*", "./__next-on-pages-dist__/*", "cloudflare:*"],';
-  var new1 = 'external: ["node:*", "./__next-on-pages-dist__/*", "cloudflare:*", "async_hooks"],';
-  if (nopContent.indexOf(old1) !== -1) {
-    nopContent = nopContent.split(old1).join(new1);
-    console.log('[patch] @cloudflare/next-on-pages esbuild #1: added async_hooks to externals');
-  }
+  // Find the builtInModulesPlugin setup function and add an onResolve for bare "async_hooks"
+  // Target: the line after build3.onResolve({ filter: /^(node|cloudflare):/ }, ...
+  // We need to add: build3.onResolve({ filter: /^async_hooks$/ }, () => ({ path: 'async_hooks', namespace: 'built-in-modules' }));
 
-  // esbuild #2: edge functions stdin bundle
-  // The target string contains a backtick template literal - use indexOf to find it safely
-  var old2Start = 'external: ["node:*", `';
-  var old2End = '`, "*.wasm", "cloudflare:*"],';
-  var idx2 = nopContent.indexOf(old2Start);
-  if (idx2 !== -1) {
-    var endIdx = nopContent.indexOf(old2End, idx2);
-    if (endIdx !== -1) {
-      var fullOld2 = nopContent.substring(idx2, endIdx + old2End.length);
-      var fullNew2 = fullOld2.replace('"cloudflare:*"]', '"cloudflare:*", "async_hooks"]');
-      nopContent = nopContent.split(fullOld2).join(fullNew2);
-      console.log('[patch] @cloudflare/next-on-pages esbuild #2: added async_hooks to externals');
-    }
-  }
+  var targetStr = 'build3.onResolve({ filter: /^(node|cloudflare):/ }, ({ kind, path: path2 }) => {\n      return kind === "require-call" ? { path: path2, namespace: "built-in-modules" } : void 0;\n    });';
+  var newResolver = 'build3.onResolve({ filter: /^(node|cloudflare):/ }, ({ kind, path: path2 }) => {\n' +
+    '      return kind === "require-call" ? { path: path2, namespace: "built-in-modules" } : void 0;\n' +
+    '    });\n' +
+    '    build3.onResolve({ filter: /^async_hooks$/ }, () => ({ path: "node:async_hooks", namespace: "built-in-modules" }));';
 
-  // Verify both patterns are gone
-  if (nopContent.indexOf(old1) === -1 && nopContent.indexOf(old2Start + '`${relativeNopDistPath}') === -1) {
-    fs.writeFileSync(nopIndex, nopContent, 'utf8');
-    console.log('[patch] @cloudflare/next-on-pages index.js patched successfully');
+  if (nopContent.indexOf(targetStr) !== -1) {
+    nopContent = nopContent.split(targetStr).join(newResolver);
+    console.log('[patch] @cloudflare/next-on-pages: added async_hooks resolver to builtInModulesPlugin');
   } else {
-    console.error('[patch] WARNING: some patterns not found in @cloudflare/next-on-pages index.js');
+    console.error('[patch] WARNING: could not find builtInModulesPlugin onResolve pattern');
   }
+
+  fs.writeFileSync(nopIndex, nopContent, 'utf8');
+  console.log('[patch] @cloudflare/next-on-pages index.js patched successfully');
 }
 
 console.log('[patch] Done');
