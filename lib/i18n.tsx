@@ -16,7 +16,7 @@ const translations = {
   zh: {
     // site
     "site.title": "tooltip.cc",
-    "site.subtitle": "免费在线工具箱 · 55+ 实用工具 · 纯浏览器端运行 · 保护隐私安全",
+    "site.subtitle": "免费在线工具箱 · 79+ 实用工具 · 纯浏览器端运行 · 保护隐私安全",
     "nav.home": "首页",
     "nav.allTools": "全部工具",
 

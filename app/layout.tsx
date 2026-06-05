@@ -9,14 +9,14 @@ export const metadata: Metadata = {
     default: "Tooltip.cc - 免费在线工具箱",
     template: "%s - Tooltip.cc",
   },
-  description: "免费的在线工具网站，提供JSON格式化、Base64编解码、正则测试、二维码生成等55+实用工具，无需注册，打开即用。",
+  description: "免费在线工具箱，提供JSON格式化、Base64编解码、正则测试、二维码生成等79+实用工具。所有工具在浏览器本地运行，数据不上传服务器，无需注册，打开即用。",
   keywords: "在线工具,json格式化,base64,正则测试,二维码生成,md5,uuid,工具箱",
   authors: [{ name: "Tooltip.cc" }],
   robots: "index, follow",
   manifest: "/manifest.json",
   openGraph: {
     title: "Tooltip.cc - 免费在线工具箱",
-    description: "55+免费的在线工具，提供JSON格式化、Base64编解码、正则测试、二维码生成等实用功能，无需注册，打开即用。",
+    description: "79+免费在线工具，JSON格式化、Base64编解码、正则测试、二维码生成、图片压缩等实用功能，所有工具浏览器本地运行，隐私安全。",
     url: "https://tooltip.cc",
     siteName: "Tooltip.cc",
     locale: "zh_CN",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Tooltip.cc - 免费在线工具箱",
-    description: "55+免费的在线工具，无需注册，打开即用。",
+    description: "79+免费在线工具，无需注册，浏览器本地运行，保护隐私。",
   },
 };
 
@@ -70,7 +70,7 @@ export default function RootLayout({
               "@type": "WebSite",
               name: "Tooltip.cc",
               url: "https://tooltip.cc",
-              description: "免费的在线工具网站，提供JSON格式化、Base64编解码、正则测试、二维码生成等55+实用工具。",
+              description: "免费在线工具箱，提供JSON格式化、Base64编解码、正则测试、二维码生成等79+实用工具，浏览器本地运行，隐私安全。",
               inLanguage: "zh-CN",
             }),
           }}

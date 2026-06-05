@@ -14,14 +14,11 @@ export function Footer() {
             <Link href="/" className="hover:text-blue-600 transition-colors">
               首页
             </Link>
-            <Link href="/developer-tools" className="hover:text-blue-600 transition-colors">
-              开发者工具
+            <Link href="/about" className="hover:text-blue-600 transition-colors">
+              关于
             </Link>
-            <Link href="/text-tools" className="hover:text-blue-600 transition-colors">
-              文本处理
-            </Link>
-            <Link href="/image-tools" className="hover:text-blue-600 transition-colors">
-              图片工具
+            <Link href="/privacy-policy" className="hover:text-blue-600 transition-colors">
+              隐私政策
             </Link>
           </div>
         </div>
