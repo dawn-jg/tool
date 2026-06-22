@@ -89,7 +89,7 @@ export default function AboutPage() {
             </p>
             <ul className="list-disc pl-5 space-y-1">
               <li>GitHub: <a href="https://github.com/dawn-jg/tool" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">dawn-jg/tool</a></li>
-              <li>邮箱: tooltip.cc@outlook.com</li>
+              <li>邮箱: admin@tooltip.cc</li>
             </ul>
           </section>
         </div>

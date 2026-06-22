@@ -103,7 +103,7 @@ export default function PrivacyPolicyPage() {
               联系我们
             </h2>
             <p>
-              如对本隐私政策有任何疑问，请联系：tooltip.cc@outlook.com
+              如对本隐私政策有任何疑问，请联系：admin@tooltip.cc
             </p>
           </section>
         </div>
