@@ -88,7 +88,6 @@ export default function AboutPage() {
               如果你有功能建议、发现 Bug、或想添加新工具，欢迎通过以下方式联系：
             </p>
             <ul className="list-disc pl-5 space-y-1">
-              <li>GitHub: <a href="https://github.com/dawn-jg/tool" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">dawn-jg/tool</a></li>
               <li>邮箱: admin@tooltip.cc</li>
             </ul>
           </section>
