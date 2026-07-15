@@ -14,18 +14,19 @@ export interface Category {
   nameKey: string;
   icon: LucideIcon;
   descriptionKey: string;
+  introKey: string;
 }
 
 export const categories: Category[] = [
-  { slug: 'developer-tools', nameKey: 'cat.developer', icon: Code, descriptionKey: 'cat.developerDesc' },
-  { slug: 'text-tools', nameKey: 'cat.text', icon: FileText, descriptionKey: 'cat.textDesc' },
-  { slug: 'image-tools', nameKey: 'cat.image', icon: ImageIcon, descriptionKey: 'cat.imageDesc' },
-  { slug: 'data-tools', nameKey: 'cat.data', icon: Database, descriptionKey: 'cat.dataDesc' },
-  { slug: 'generators', nameKey: 'cat.generators', icon: Zap, descriptionKey: 'cat.generatorsDesc' },
-  { slug: 'validators', nameKey: 'cat.validators', icon: CheckCircle, descriptionKey: 'cat.validatorsDesc' },
-  { slug: 'utilities', nameKey: 'cat.utilities', icon: Calculator, descriptionKey: 'cat.utilitiesDesc' },
-  { slug: 'network-tools', nameKey: 'cat.network', icon: Globe, descriptionKey: 'cat.networkDesc' },
-  { slug: 'fun-tools', nameKey: 'cat.fun', icon: Sparkles, descriptionKey: 'cat.funDesc' },
+  { slug: 'developer-tools', nameKey: 'cat.developer', icon: Code, descriptionKey: 'cat.developerDesc', introKey: 'cat.developerIntro' },
+  { slug: 'text-tools', nameKey: 'cat.text', icon: FileText, descriptionKey: 'cat.textDesc', introKey: 'cat.textIntro' },
+  { slug: 'image-tools', nameKey: 'cat.image', icon: ImageIcon, descriptionKey: 'cat.imageDesc', introKey: 'cat.imageIntro' },
+  { slug: 'data-tools', nameKey: 'cat.data', icon: Database, descriptionKey: 'cat.dataDesc', introKey: 'cat.dataIntro' },
+  { slug: 'generators', nameKey: 'cat.generators', icon: Zap, descriptionKey: 'cat.generatorsDesc', introKey: 'cat.generatorsIntro' },
+  { slug: 'validators', nameKey: 'cat.validators', icon: CheckCircle, descriptionKey: 'cat.validatorsDesc', introKey: 'cat.validatorsIntro' },
+  { slug: 'utilities', nameKey: 'cat.utilities', icon: Calculator, descriptionKey: 'cat.utilitiesDesc', introKey: 'cat.utilitiesIntro' },
+  { slug: 'network-tools', nameKey: 'cat.network', icon: Globe, descriptionKey: 'cat.networkDesc', introKey: 'cat.networkIntro' },
+  { slug: 'fun-tools', nameKey: 'cat.fun', icon: Sparkles, descriptionKey: 'cat.funDesc', introKey: 'cat.funIntro' },
 ];
 
 export const tools: Tool[] = [

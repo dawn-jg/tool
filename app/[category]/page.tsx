@@ -23,7 +23,7 @@ export default function CategoryPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600">
             <Icon className="h-6 w-6 text-white" />
           </div>
@@ -31,6 +31,10 @@ export default function CategoryPage({ params }: Props) {
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t(cat.nameKey)}</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">{t(cat.descriptionKey)}</p>
           </div>
+        </div>
+
+        <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{t(cat.introKey)}</p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
