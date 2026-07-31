@@ -10,6 +10,19 @@ function getText(key: string): string {
 }
 
 const SITE_NAME = "Tooltip.cc";
+const SITE_DESC_SUFFIX = "在线使用，免费快捷，浏览器本地运行，无需注册，保护隐私。";
+
+function buildDescription(name: string, desc: string, keywords?: string): string {
+  // 关键词取前几个有意义的（过滤纯英文/符号）
+  let kw = "";
+  if (keywords) {
+    const parts = keywords.split(",").filter((k) => /[\u4e00-\u9fa5]/.test(k)).slice(0, 4).join("、");
+    if (parts) kw = `支持${parts}等功能。`;
+  }
+  const full = `${desc}。${kw}${SITE_DESC_SUFFIX}`;
+  // 控制长度 80-200 字符
+  return full.length > 200 ? full.slice(0, 197) + "…" : full;
+}
 
 export function getCategoryMetadata(slug: string): Metadata {
   const cat = getCategory(slug);
@@ -43,7 +56,7 @@ export function getToolMetadata(categorySlug: string, toolSlug: string): Metadat
   const name = getText(tool.nameKey);
   const desc = getText(tool.descriptionKey);
   const keywords = tool.keywords;
-  const description = desc.length < 50 ? `${desc}。在线使用，免费快捷，浏览器本地运行，无需注册。` : desc;
+  const description = buildDescription(name, desc, keywords);
   return {
     title: `${name} - 在线工具`,
     description,

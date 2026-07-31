@@ -329,7 +329,7 @@ export const translations = {
   en: {
     // site
     "site.title": "tooltip.cc",
-    "site.subtitle": "Free Online Tools · 55+ Tools · Browser-only · Privacy Focused",
+    "site.subtitle": "Free Online Tools · 79+ Tools · Browser-only · Privacy Focused",
     "nav.home": "Home",
     "nav.allTools": "All Tools",
 
