@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 export const metadata: Metadata = {
   title: {
     default: "Tooltip.cc - 免费在线工具箱",
-    template: "%s - Tooltip.cc",
+    template: "%s",
   },
   description: "免费在线工具箱，提供JSON格式化、Base64编解码、正则测试、二维码生成等79+实用工具。所有工具在浏览器本地运行，数据不上传服务器，无需注册，打开即用。",
   keywords: "在线工具,json格式化,base64,正则测试,二维码生成,md5,uuid,工具箱",
