@@ -39,18 +39,17 @@ async function fetchServers(search: string): Promise<any[]> {
   });
   if (!res.ok) throw new Error(`Ookla API responded ${res.status}`);
   const data = await res.json();
-  const servers = (data || [])
-    .filter((s: any) => s.https_functional === 1)
-    .map((s: any) => ({
-      id: String(s.id),
-      name: s.name,
-      country: s.country,
-      cc: s.cc,
-      sponsor: s.sponsor,
-      host: s.host,
-      // 用 host 字段（ooklaserver.net 代理域名，证书匹配该域名，避免 526 TLS 错误）
-      base: `https://${s.host}/speedtest/`,
-    }));
+  // 代理模式下 CF 服务端 fetch 无混合内容/CORS 限制，http 节点也可用，不过滤
+  const servers = (data || []).map((s: any) => ({
+    id: String(s.id),
+    name: s.name,
+    country: s.country,
+    cc: s.cc,
+    sponsor: s.sponsor,
+    host: s.host,
+    // 保留原协议（http/https），base 指向 speedtest 目录
+    base: s.url.replace(/upload\.php$/, ''),
+  }));
   setCache(servers);
   return servers;
 }
