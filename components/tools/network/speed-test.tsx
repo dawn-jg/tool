@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
 import { useI18n } from '@/lib/i18n';
 
 /*
  * 网速测试工具
- * 测速引擎: LibreSpeed (https://github.com/librespeed/speedtest) - GNU LGPLv3
- * 测速后端: Cloudflare 官方测速服务 (speed.cloudflare.com/__down, /__up)
- * 数据通过 Cloudflare 全球边缘节点传输，结果反映用户到最近边缘节点的网络质量
+ * 直接调用 Cloudflare 官方测速服务 (speed.cloudflare.com/__down, /__up)
+ * 纯 fetch/XHR 实现，无第三方依赖，结果在页面内展示
  */
+
+type TestPhase = 'idle' | 'testing' | 'done';
 
 interface SpeedResult {
   download: string;
@@ -18,22 +19,113 @@ interface SpeedResult {
   jitter: string;
 }
 
-type TestPhase = 'idle' | 'testing' | 'done';
+const CF_DOWN = 'https://speed.cloudflare.com/__down';
+const CF_UP = 'https://speed.cloudflare.com/__up';
 
-// 动态加载 LibreSpeed 脚本（放 public/speedtest/ 下）
-function loadScript(src: string): Promise<void> {
+// 下载测速：流式读取下载数据，实时计算速率
+async function runDownload(
+  totalBytes: number,
+  onProgress: (mbps: number) => void
+): Promise<number> {
+  const url = `${CF_DOWN}?bytes=${totalBytes}&r=${Math.random()}`;
+  const start = performance.now();
+  const resp = await fetch(url);
+  if (!resp.ok || !resp.body) throw new Error('download failed');
+  const reader = resp.body.getReader();
+  let received = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.length;
+    const elapsed = (performance.now() - start) / 1000;
+    if (elapsed > 0.2) onProgress((received * 8) / elapsed / 1_000_000);
+  }
+  const elapsed = (performance.now() - start) / 1000;
+  if (elapsed <= 0) return 0;
+  return (received * 8) / elapsed / 1_000_000;
+}
+
+// 上传测速：XHR 带进度事件，定时采样计算速率，超时后取最终值
+function runUpload(
+  totalBytes: number,
+  onProgress: (mbps: number) => void
+): Promise<number> {
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${src}"]`);
-    if (existing) {
-      resolve();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = src;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('script load failed'));
-    document.body.appendChild(script);
+    const chunk = new Uint8Array(1024 * 1024);
+    for (let i = 0; i < chunk.length; i++) chunk[i] = Math.floor(Math.random() * 256);
+    const parts: BlobPart[] = [];
+    for (let i = 0; i < Math.ceil(totalBytes / chunk.length); i++) parts.push(chunk);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${CF_UP}?r=${Math.random()}`, true);
+
+    let loaded = 0;
+    let lastLoaded = 0;
+    let lastTime = performance.now();
+    let speed = 0;
+    let settled = false;
+
+    xhr.upload.onprogress = (e) => {
+      loaded = e.loaded;
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      if (dt >= 0.5) {
+        speed = ((loaded - lastLoaded) * 8) / dt / 1_000_000;
+        lastLoaded = loaded;
+        lastTime = now;
+        onProgress(speed);
+      }
+    };
+
+    const interval = setInterval(() => {
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      if (dt >= 1) {
+        speed = ((loaded - lastLoaded) * 8) / dt / 1_000_000;
+        lastLoaded = loaded;
+        lastTime = now;
+        onProgress(speed);
+      }
+    }, 500);
+
+    const finish = (val: number) => {
+      if (settled) return;
+      settled = true;
+      clearInterval(interval);
+      resolve(val);
+    };
+
+    xhr.onload = () => finish(speed);
+    xhr.onerror = () => {
+      if (settled) return;
+      settled = true;
+      clearInterval(interval);
+      reject(new Error('upload failed'));
+    };
+
+    // Cloudflare __up 端点上传完成后会挂起连接，10 秒后强制结束取当前速率
+    setTimeout(() => {
+      try {
+        xhr.abort();
+      } catch (e) {}
+      finish(speed);
+    }, 12000);
+
+    xhr.send(new Blob(parts));
   });
+}
+
+// 延迟/抖动：多次小请求测量 RTT，平均值为延迟，平均绝对偏差为抖动
+async function runPing(count: number): Promise<{ ping: number; jitter: number }> {
+  const pings: number[] = [];
+  for (let i = 0; i < count; i++) {
+    const t0 = performance.now();
+    await fetch(`${CF_DOWN}?bytes=100&r=${Math.random()}`, { cache: 'no-store' });
+    pings.push(performance.now() - t0);
+  }
+  const avg = pings.reduce((a, b) => a + b, 0) / pings.length;
+  const mad = pings.reduce((a, b) => a + Math.abs(b - avg), 0) / pings.length;
+  return { ping: avg, jitter: mad };
 }
 
 export default function SpeedTestTool() {
@@ -43,98 +135,54 @@ export default function SpeedTestTool() {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [libLoaded, setLibLoaded] = useState(false);
-  const speedtestRef = useRef<any>(null);
+  const abortRef = useRef(false);
 
-  useEffect(() => {
-    setStatus(t('tool.speedTestReady'));
-  }, [t]);
-
-  // 加载 LibreSpeed 引擎
-  useEffect(() => {
-    let mounted = true;
-    loadScript('/speedtest/speedtest.js')
-      .then(() => {
-        if (mounted && typeof (window as any).Speedtest === 'function') {
-          setLibLoaded(true);
-        }
-      })
-      .catch(() => {
-        if (mounted) setError(t('tool.speedTestLoadError'));
-      });
-    return () => {
-      mounted = false;
-    };
-  }, [t]);
-
-  const startTest = useCallback(() => {
-    if (!libLoaded) {
-      setError(t('tool.speedTestLoadError'));
-      return;
-    }
+  const startTest = useCallback(async () => {
     setPhase('testing');
     setError(null);
     setResult({ download: '--', upload: '--', ping: '--', jitter: '--' });
     setProgress(0);
+    abortRef.current = false;
 
-    let s: any;
     try {
-      s = new (window as any).Speedtest();
+      // 1. 下载测速 (25MB)
+      setStatus(t('tool.speedTestPhase1'));
+      const dl = await runDownload(25_000_000, (mbps) => {
+        if (abortRef.current) return;
+        setResult((r) => ({ ...r, download: mbps.toFixed(2) }));
+      });
+      if (abortRef.current) return;
+      setResult((r) => ({ ...r, download: dl.toFixed(2) }));
+      setProgress(40);
+
+      // 2. 上传测速 (12MB)
+      setStatus(t('tool.speedTestPhase3'));
+      const ul = await runUpload(12_000_000, (mbps) => {
+        if (abortRef.current) return;
+        setResult((r) => ({ ...r, upload: mbps.toFixed(2) }));
+      });
+      if (abortRef.current) return;
+      setResult((r) => ({ ...r, upload: ul.toFixed(2) }));
+      setProgress(75);
+
+      // 3. 延迟/抖动 (8 次)
+      setStatus(t('tool.speedTestPhase2'));
+      const { ping, jitter } = await runPing(8);
+      if (abortRef.current) return;
+      setResult((r) => ({ ...r, ping: ping.toFixed(1), jitter: jitter.toFixed(1) }));
+      setProgress(100);
+
+      setPhase('done');
+      setStatus(t('tool.speedTestDone'));
     } catch (e) {
       setError(t('tool.speedTestEngineError'));
       setPhase('idle');
-      return;
+      setStatus('');
     }
-    speedtestRef.current = s;
-
-    // 配置 Cloudflare 官方测速端点
-    s.setParameter('url_dl', 'https://speed.cloudflare.com/__down?bytes=25000000');
-    s.setParameter('url_ul', 'https://speed.cloudflare.com/__up');
-    s.setParameter('url_ping', 'https://speed.cloudflare.com/__down?bytes=100');
-    s.setParameter('telemetry_level', 0);
-    s.setParameter('garbagePhp_chunkSize', 25000000);
-    s.setParameter('xhr_dlMultistream', 4);
-    s.setParameter('xhr_ulMultistream', 4);
-    s.setParameter('time_dl_max', 12);
-    s.setParameter('time_ul_max', 12);
-    s.setParameter('test_order', 'D_U_P');
-
-    const phases: Record<number, string> = {
-      0: t('tool.speedTestPhase0'),
-      1: t('tool.speedTestPhase1'),
-      2: t('tool.speedTestPhase2'),
-      3: t('tool.speedTestPhase3'),
-      4: t('tool.speedTestPhase4'),
-      5: t('tool.speedTestPhase5'),
-    };
-
-    s.onupdate = function (d: any) {
-      setResult({
-        download: d.dlStatus || '--',
-        upload: d.ulStatus || '--',
-        ping: d.pingStatus || '--',
-        jitter: d.jitterStatus || '--',
-      });
-      const p = Math.max(d.dlProgress || 0, d.ulProgress || 0, d.pingProgress || 0);
-      setProgress(Math.round(p * 100));
-      setStatus(phases[d.testState] || '');
-    };
-
-    s.onend = function () {
-      setPhase('done');
-      setProgress(100);
-      setStatus(t('tool.speedTestDone'));
-    };
-
-    s.start();
-  }, [libLoaded, t]);
+  }, [t]);
 
   const stopTest = useCallback(() => {
-    if (speedtestRef.current) {
-      try {
-        speedtestRef.current.abort();
-      } catch (e) {}
-    }
+    abortRef.current = true;
     setPhase('idle');
     setStatus(t('tool.speedTestAborted'));
   }, [t]);
@@ -156,32 +204,6 @@ export default function SpeedTestTool() {
       instructions="tool.speedTestInstructions"
     >
       <div className="max-w-2xl mx-auto space-y-6">
-        {/* 官方测速入口 */}
-        <div className="p-5 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl">
-          <div className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-1">
-            {t('tool.speedTestOfficial')}
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            {t('tool.speedTestOfficialDesc')}
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="https://speed.cloudflare.com/"
-              className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium transition-colors inline-flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
-              {t('tool.speedTestOfficialCf')}
-            </a>
-            <a
-              href="https://www.speedtest.net/"
-              className="px-5 py-2.5 bg-gray-700 hover:bg-gray-800 text-white rounded-xl text-sm font-medium transition-colors inline-flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
-              {t('tool.speedTestOfficialOokla')}
-            </a>
-          </div>
-        </div>
-
         {/* 指标卡片 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {metricCard(t('tool.speedTestDownload'), result.download, 'Mbps', 'text-blue-600 dark:text-blue-400')}
@@ -215,10 +237,9 @@ export default function SpeedTestTool() {
           {phase !== 'testing' ? (
             <button
               onClick={startTest}
-              disabled={!libLoaded}
-              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-xl font-medium transition-colors"
+              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors"
             >
-              {!libLoaded ? t('tool.speedTestLoading') : phase === 'done' ? t('tool.speedTestRestart') : t('tool.speedTestStart')}
+              {phase === 'done' ? t('tool.speedTestRestart') : t('tool.speedTestStart')}
             </button>
           ) : (
             <button
