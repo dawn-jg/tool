@@ -156,6 +156,36 @@ export default function SpeedTestTool() {
       instructions="tool.speedTestInstructions"
     >
       <div className="max-w-2xl mx-auto space-y-6">
+        {/* 官方测速入口 */}
+        <div className="p-5 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl">
+          <div className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-1">
+            {t('tool.speedTestOfficial')}
+          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            {t('tool.speedTestOfficialDesc')}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href="https://speed.cloudflare.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium transition-colors inline-flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+              {t('tool.speedTestOfficialCf')}
+            </a>
+            <a
+              href="https://www.speedtest.net/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-gray-700 hover:bg-gray-800 text-white rounded-xl text-sm font-medium transition-colors inline-flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+              {t('tool.speedTestOfficialOokla')}
+            </a>
+          </div>
+        </div>
+
         {/* 指标卡片 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {metricCard(t('tool.speedTestDownload'), result.download, 'Mbps', 'text-blue-600 dark:text-blue-400')}
