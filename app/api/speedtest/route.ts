@@ -21,18 +21,17 @@ const DOWNLOAD_FILES = [
   'random2500x2500.jpg',
 ];
 
-// 服务器列表缓存（edge isolate 内全局，10 分钟过期）
-function getCache(): { servers: any[]; ts: number } | null {
-  return (globalThis as any).__ooklaServersCache || null;
-}
-function setCache(servers: any[]) {
-  (globalThis as any).__ooklaServersCache = { servers, ts: Date.now() };
+// 服务器列表缓存（按 search 区分，10 分钟过期）
+function getCache(): Record<string, { servers: any[]; ts: number }> {
+  return ((globalThis as any).__ooklaServersCache =
+    (globalThis as any).__ooklaServersCache || {});
 }
 
 async function fetchServers(search: string): Promise<any[]> {
-  const cached = getCache();
-  if (cached && Date.now() - cached.ts < 10 * 60 * 1000) {
-    return cached.servers;
+  const cache = getCache();
+  const hit = cache[search];
+  if (hit && Date.now() - hit.ts < 10 * 60 * 1000) {
+    return hit.servers;
   }
   const res = await fetch(`${OOKLA_JS_API}&search=${encodeURIComponent(search)}&limit=50`, {
     headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
@@ -50,7 +49,7 @@ async function fetchServers(search: string): Promise<any[]> {
     // 保留原协议（http/https），base 指向 speedtest 目录
     base: s.url.replace(/upload\.php$/, ''),
   }));
-  setCache(servers);
+  cache[search] = { servers, ts: Date.now() };
   return servers;
 }
 
@@ -64,8 +63,25 @@ export async function GET(request: NextRequest) {
   try {
     if (action === 'servers') {
       const search = sp.get('search') || 'China';
-      const servers = await fetchServers(search);
-      return NextResponse.json({ servers });
+      // 支持逗号分隔多个地区，合并去重（Ookla API 动态截断，单 search 可能缺节点）
+      const searches = search.split(',').map((s) => s.trim()).filter(Boolean);
+      const seen = new Set<string>();
+      const merged: any[] = [];
+      for (const q of searches) {
+        let list: any[] = [];
+        try {
+          list = await fetchServers(q);
+        } catch (e) {
+          // 单个 search 失败不影响其他
+        }
+        for (const s of list) {
+          if (!seen.has(s.id)) {
+            seen.add(s.id);
+            merged.push(s);
+          }
+        }
+      }
+      return NextResponse.json({ servers: merged });
     }
 
     const id = sp.get('id');
@@ -76,8 +92,8 @@ export async function GET(request: NextRequest) {
     try {
       servers = await fetchServers(sp.get('search') || 'China');
     } catch (e) {
-      const cached = getCache();
-      if (cached) servers = cached.servers;
+      const hit = getCache()[sp.get('search') || 'China'];
+      if (hit) servers = hit.servers;
     }
     const server = servers.find((s) => s.id === id);
     if (!server) return NextResponse.json({ error: 'server not found' }, { status: 404 });
@@ -143,8 +159,8 @@ export async function POST(request: NextRequest) {
     try {
       servers = await fetchServers(sp.get('search') || 'China');
     } catch (e) {
-      const cached = getCache();
-      if (cached) servers = cached.servers;
+      const hit = getCache()[sp.get('search') || 'China'];
+      if (hit) servers = hit.servers;
     }
     const server = servers.find((s) => s.id === id);
     if (!server) return NextResponse.json({ error: 'server not found' }, { status: 404 });

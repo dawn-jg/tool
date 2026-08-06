@@ -143,7 +143,7 @@ export default function SpeedTestTool() {
     let mounted = true;
     setPhase('loading');
     setStatus(t('tool.speedTestLoading'));
-    fetch('/api/speedtest?action=servers&search=China')
+    fetch('/api/speedtest?action=servers&search=China,Beijing,Shanghai,Guangzhou,Hong%20Kong')
       .then((r) => r.json())
       .then(async (data) => {
         if (!mounted) return;
