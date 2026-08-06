@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
 import { useI18n } from '@/lib/i18n';
 
 /*
  * 网速测试工具
- * 直接调用 Cloudflare 官方测速服务 (speed.cloudflare.com/__down, /__up)
- * 纯 fetch/XHR 实现，无第三方依赖，结果在页面内展示
+ * 测速引擎: Ookla Speedtest (speedtest.net)
+ * 服务器列表经 /api/speedtest 代理获取（Ookla 服务器不开放 CORS，无法直连）
+ * 下载/上传/延迟均通过站内代理转发到 Ookla 测速服务器，结果在页面内展示
  */
 
-type TestPhase = 'idle' | 'testing' | 'done';
+type TestPhase = 'idle' | 'loading' | 'testing' | 'done';
 
 interface SpeedResult {
   download: string;
@@ -19,45 +20,65 @@ interface SpeedResult {
   jitter: string;
 }
 
-const CF_DOWN = 'https://speed.cloudflare.com/__down';
-const CF_UP = 'https://speed.cloudflare.com/__up';
+interface OoklaServer {
+  id: string;
+  name: string;
+  country: string;
+  cc: string;
+  sponsor: string;
+  host: string;
+  base: string;
+}
 
-// 下载测速：流式读取下载数据，实时计算速率
+const DOWNLOAD_FILE = 'random1000x1000.jpg';
+const UPLOAD_BYTES = 12_000_000;
+const DOWNLOAD_DURATION = 10_000; // ms
+
+// 下载测速：循环拉取测速文件，流式数字节，实时计算速率
 async function runDownload(
-  totalBytes: number,
+  serverId: string,
   onProgress: (mbps: number) => void
 ): Promise<number> {
-  const url = `${CF_DOWN}?bytes=${totalBytes}&r=${Math.random()}`;
   const start = performance.now();
-  const resp = await fetch(url);
-  if (!resp.ok || !resp.body) throw new Error('download failed');
-  const reader = resp.body.getReader();
-  let received = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    received += value.length;
-    const elapsed = (performance.now() - start) / 1000;
-    if (elapsed > 0.2) onProgress((received * 8) / elapsed / 1_000_000);
+  let total = 0;
+  let lastTime = start;
+  let lastBytes = 0;
+  while (performance.now() - start < DOWNLOAD_DURATION) {
+    const resp = await fetch(`/api/speedtest?action=download&id=${serverId}&file=${DOWNLOAD_FILE}`);
+    if (!resp.ok || !resp.body) throw new Error('download failed');
+    const reader = resp.body.getReader();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.length;
+      const now = performance.now();
+      if (now - lastTime > 400) {
+        const dt = (now - lastTime) / 1000;
+        const mbps = ((total - lastBytes) * 8) / dt / 1_000_000;
+        lastTime = now;
+        lastBytes = total;
+        onProgress(mbps);
+      }
+    }
   }
   const elapsed = (performance.now() - start) / 1000;
   if (elapsed <= 0) return 0;
-  return (received * 8) / elapsed / 1_000_000;
+  return (total * 8) / elapsed / 1_000_000;
 }
 
-// 上传测速：XHR 带进度事件，onprogress 采样计算速率，超时后取最终值
+// 上传测速：XHR POST 到站内代理（同源），onprogress 采样速率，超时取最终值
 function runUpload(
-  totalBytes: number,
+  serverId: string,
   onProgress: (mbps: number) => void
 ): Promise<number> {
   return new Promise((resolve) => {
     const chunk = new Uint8Array(1024 * 1024);
     for (let i = 0; i < chunk.length; i++) chunk[i] = Math.floor(Math.random() * 256);
     const parts: BlobPart[] = [];
-    for (let i = 0; i < Math.ceil(totalBytes / chunk.length); i++) parts.push(chunk);
+    for (let i = 0; i < Math.ceil(UPLOAD_BYTES / chunk.length); i++) parts.push(chunk);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${CF_UP}?r=${Math.random()}`, true);
+    xhr.open('POST', `/api/speedtest?action=upload&id=${serverId}`, true);
 
     let lastLoaded = 0;
     let lastTime = performance.now();
@@ -76,7 +97,7 @@ function runUpload(
     xhr.upload.onprogress = (e) => {
       const now = performance.now();
       const dt = (now - lastTime) / 1000;
-      if (dt >= 0.5) {
+      if (dt >= 0.4) {
         speed = ((e.loaded - lastLoaded) * 8) / dt / 1_000_000;
         lastLoaded = e.loaded;
         lastTime = now;
@@ -87,19 +108,18 @@ function runUpload(
     xhr.onload = () => finish(speed);
     xhr.onerror = () => finish(speed); // 出错也返回已测到的速率，避免中断整轮测试
 
-    // Cloudflare __up 端点上传完成后会挂起连接，12 秒后强制结束取当前速率
     setTimeout(() => finish(speed), 12000);
 
     xhr.send(new Blob(parts));
   });
 }
 
-// 延迟/抖动：多次小请求测量 RTT，平均值为延迟，平均绝对偏差为抖动
-async function runPing(count: number): Promise<{ ping: number; jitter: number }> {
+// 延迟/抖动：多次请求站内 ping 代理，平均值为延迟，平均绝对偏差为抖动
+async function runPing(serverId: string, count: number): Promise<{ ping: number; jitter: number }> {
   const pings: number[] = [];
   for (let i = 0; i < count; i++) {
     const t0 = performance.now();
-    await fetch(`${CF_DOWN}?bytes=100&r=${Math.random()}`, { cache: 'no-store' });
+    await fetch(`/api/speedtest?action=ping&id=${serverId}`);
     pings.push(performance.now() - t0);
   }
   const avg = pings.reduce((a, b) => a + b, 0) / pings.length;
@@ -110,13 +130,47 @@ async function runPing(count: number): Promise<{ ping: number; jitter: number }>
 export default function SpeedTestTool() {
   const { t } = useI18n();
   const [phase, setPhase] = useState<TestPhase>('idle');
+  const [servers, setServers] = useState<OoklaServer[]>([]);
+  const [serverId, setServerId] = useState('');
   const [result, setResult] = useState<SpeedResult>({ download: '--', upload: '--', ping: '--', jitter: '--' });
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState('');
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef(false);
 
+  // 加载 Ookla 服务器列表（优先中国节点）
+  useEffect(() => {
+    let mounted = true;
+    setPhase('loading');
+    setStatus(t('tool.speedTestLoading'));
+    fetch('/api/speedtest?action=servers&search=China')
+      .then((r) => r.json())
+      .then((data) => {
+        if (!mounted) return;
+        if (data.servers && data.servers.length > 0) {
+          setServers(data.servers);
+          setServerId(data.servers[0].id);
+          setPhase('idle');
+          setStatus(t('tool.speedTestReady'));
+        } else {
+          setError(t('tool.speedTestNoServer'));
+          setPhase('idle');
+          setStatus('');
+        }
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setError(t('tool.speedTestLoadError'));
+        setPhase('idle');
+        setStatus('');
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [t]);
+
   const startTest = useCallback(async () => {
+    if (!serverId) return;
     setPhase('testing');
     setError(null);
     setResult({ download: '--', upload: '--', ping: '--', jitter: '--' });
@@ -124,31 +178,31 @@ export default function SpeedTestTool() {
     abortRef.current = false;
 
     try {
-      // 1. 下载测速 (25MB)
+      // 1. 延迟/抖动 (8 次)
+      setStatus(t('tool.speedTestPhase2'));
+      const { ping, jitter } = await runPing(serverId, 8);
+      if (abortRef.current) return;
+      setResult((r) => ({ ...r, ping: ping.toFixed(0), jitter: jitter.toFixed(0) }));
+      setProgress(15);
+
+      // 2. 下载测速 (10 秒)
       setStatus(t('tool.speedTestPhase1'));
-      const dl = await runDownload(25_000_000, (mbps) => {
+      const dl = await runDownload(serverId, (mbps) => {
         if (abortRef.current) return;
         setResult((r) => ({ ...r, download: mbps.toFixed(2) }));
       });
       if (abortRef.current) return;
       setResult((r) => ({ ...r, download: dl.toFixed(2) }));
-      setProgress(40);
+      setProgress(65);
 
-      // 2. 上传测速 (12MB)
+      // 3. 上传测速 (12MB)
       setStatus(t('tool.speedTestPhase3'));
-      const ul = await runUpload(12_000_000, (mbps) => {
+      const ul = await runUpload(serverId, (mbps) => {
         if (abortRef.current) return;
         setResult((r) => ({ ...r, upload: mbps.toFixed(2) }));
       });
       if (abortRef.current) return;
       setResult((r) => ({ ...r, upload: ul.toFixed(2) }));
-      setProgress(75);
-
-      // 3. 延迟/抖动 (8 次)
-      setStatus(t('tool.speedTestPhase2'));
-      const { ping, jitter } = await runPing(8);
-      if (abortRef.current) return;
-      setResult((r) => ({ ...r, ping: ping.toFixed(1), jitter: jitter.toFixed(1) }));
       setProgress(100);
 
       setPhase('done');
@@ -158,7 +212,7 @@ export default function SpeedTestTool() {
       setPhase('idle');
       setStatus('');
     }
-  }, [t]);
+  }, [serverId, t]);
 
   const stopTest = useCallback(() => {
     abortRef.current = true;
@@ -183,6 +237,27 @@ export default function SpeedTestTool() {
       instructions="tool.speedTestInstructions"
     >
       <div className="max-w-2xl mx-auto space-y-6">
+        {/* 服务器选择 */}
+        {servers.length > 0 && (
+          <div className="flex items-center gap-3 flex-wrap">
+            <label className="text-sm text-gray-600 dark:text-gray-300">
+              {t('tool.speedTestServer')}
+            </label>
+            <select
+              value={serverId}
+              onChange={(e) => setServerId(e.target.value)}
+              disabled={phase === 'testing'}
+              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-800 dark:text-gray-100 disabled:opacity-50"
+            >
+              {servers.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name} · {s.sponsor}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {/* 指标卡片 */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {metricCard(t('tool.speedTestDownload'), result.download, 'Mbps', 'text-blue-600 dark:text-blue-400')}
@@ -216,9 +291,10 @@ export default function SpeedTestTool() {
           {phase !== 'testing' ? (
             <button
               onClick={startTest}
-              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors"
+              disabled={phase === 'loading' || !serverId}
+              className="px-8 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-xl font-medium transition-colors"
             >
-              {phase === 'done' ? t('tool.speedTestRestart') : t('tool.speedTestStart')}
+              {phase === 'loading' ? t('tool.speedTestLoading') : phase === 'done' ? t('tool.speedTestRestart') : t('tool.speedTestStart')}
             </button>
           ) : (
             <button
