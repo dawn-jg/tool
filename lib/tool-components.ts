@@ -73,6 +73,7 @@ import ProgrammerDaily from '@/components/tools/utilities/programmer-daily';
 import IpInfoTool from '@/components/tools/network/ip-info';
 import DnsLookup from '@/components/tools/network/dns-lookup';
 import LatencyTest from '@/components/tools/network/latency-test';
+import SpeedTest from '@/components/tools/network/speed-test';
 import HttpHeaders from '@/components/tools/network/http-headers';
 import DomainInfo from '@/components/tools/network/domain-info';
 import MbtiTest from '@/components/tools/fun/mbti-test';
@@ -154,6 +155,7 @@ const componentMap: Record<string, React.ComponentType> = {
   'network-tools/ip-info': IpInfoTool,
   'network-tools/dns-lookup': DnsLookup,
   'network-tools/latency-test': LatencyTest,
+  'network-tools/speed-test': SpeedTest,
   'network-tools/http-headers': HttpHeaders,
   'network-tools/domain-info': DomainInfo,
   'fun-tools/mbti-test': MbtiTest,
