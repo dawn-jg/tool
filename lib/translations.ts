@@ -61,6 +61,9 @@ export const translations = {
     "common.error": "错误",
     "common.success": "成功",
     "common.usage": "使用说明",
+  "common.format": "格式化",
+  "common.compress": "压缩",
+  "common.indent": "缩进",
 
     // tools - developer
     "tool.jsonFormatter": "JSON格式化",
@@ -411,6 +414,9 @@ export const translations = {
     "common.error": "Error",
     "common.success": "Success",
     "common.usage": "Usage",
+  "common.format": "Format",
+  "common.compress": "Minify",
+  "common.indent": "Indent",
 
     // tools - developer
     "tool.jsonFormatter": "JSON Formatter",
