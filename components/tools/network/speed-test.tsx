@@ -97,7 +97,7 @@ export default function SpeedTestTool() {
     s.setParameter('xhr_ulMultistream', 4);
     s.setParameter('time_dl_max', 12);
     s.setParameter('time_ul_max', 12);
-    s.setParameter('test_order', 'D_U');
+    s.setParameter('test_order', 'D_U_P');
 
     const phases: Record<number, string> = {
       0: t('tool.speedTestPhase0'),
