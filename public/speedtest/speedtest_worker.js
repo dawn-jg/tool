@@ -481,9 +481,7 @@ function ulTest(done) {
 							testStream(i, 0);
 						};
 						xhr[i].open("POST", settings.url_ul + url_sep(settings.url_ul) + (settings.mpot ? "cors=true&" : "") + "r=" + Math.random(), true); // random string to prevent caching
-						try {
-							xhr[i].setRequestHeader("Content-Encoding", "identity"); // disable compression (some browsers may refuse it, but data is incompressible anyway)
-						} catch (e) {}
+						// NOTE: Content-Encoding header removed - Cloudflare __up rejects it (CORS preflight fails)
 						//No Content-Type header in MPOT branch because it triggers bugs in some browsers
 						xhr[i].send(reqsmall);
 					} else {
@@ -527,9 +525,7 @@ function ulTest(done) {
 						}.bind(this);
 						// send xhr
 						xhr[i].open("POST", settings.url_ul + url_sep(settings.url_ul) + (settings.mpot ? "cors=true&" : "") + "r=" + Math.random(), true); // random string to prevent caching
-						try {
-							xhr[i].setRequestHeader("Content-Encoding", "identity"); // disable compression (some browsers may refuse it, but data is incompressible anyway)
-						} catch (e) {}
+						// NOTE: Content-Encoding header removed - Cloudflare __up rejects it (CORS preflight fails)
 						//No Content-Type header in MPOT branch because it triggers bugs in some browsers
 						xhr[i].send(req);
 					}
