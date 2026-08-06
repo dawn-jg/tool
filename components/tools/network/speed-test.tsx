@@ -138,25 +138,52 @@ export default function SpeedTestTool() {
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef(false);
 
-  // 加载 Ookla 服务器列表（优先中国节点）
+  // 加载 Ookla 服务器列表（优先中国节点），并行探测可用性，自动选最快节点
   useEffect(() => {
     let mounted = true;
     setPhase('loading');
     setStatus(t('tool.speedTestLoading'));
     fetch('/api/speedtest?action=servers&search=China')
       .then((r) => r.json())
-      .then((data) => {
+      .then(async (data) => {
         if (!mounted) return;
-        if (data.servers && data.servers.length > 0) {
-          setServers(data.servers);
-          setServerId(data.servers[0].id);
-          setPhase('idle');
-          setStatus(t('tool.speedTestReady'));
-        } else {
+        if (!data.servers || data.servers.length === 0) {
           setError(t('tool.speedTestNoServer'));
           setPhase('idle');
           setStatus('');
+          return;
         }
+        // 并行探测各节点可用性与延迟
+        const probed = await Promise.all(
+          data.servers.map(async (s: OoklaServer) => {
+            try {
+              const t0 = performance.now();
+              const r = await fetch(`/api/speedtest?action=ping&id=${s.id}`);
+              const j = await r.json();
+              return {
+                ...s,
+                ok: j.status === 200,
+                rtt: j.ms + (performance.now() - t0),
+              };
+            } catch (e) {
+              return { ...s, ok: false, rtt: Infinity };
+            }
+          })
+        );
+        if (!mounted) return;
+        const usable = probed
+          .filter((s: any) => s.ok)
+          .sort((a: any, b: any) => a.rtt - b.rtt);
+        if (usable.length === 0) {
+          setError(t('tool.speedTestNoServer'));
+          setPhase('idle');
+          setStatus('');
+          return;
+        }
+        setServers(usable);
+        setServerId(usable[0].id);
+        setPhase('idle');
+        setStatus(t('tool.speedTestReady'));
       })
       .catch(() => {
         if (!mounted) return;

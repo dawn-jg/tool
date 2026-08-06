@@ -48,7 +48,8 @@ async function fetchServers(search: string): Promise<any[]> {
       cc: s.cc,
       sponsor: s.sponsor,
       host: s.host,
-      base: s.url.replace(/^http:\/\//, 'https://').replace(/upload\.php$/, ''),
+      // 用 host 字段（ooklaserver.net 代理域名，证书匹配该域名，避免 526 TLS 错误）
+      base: `https://${s.host}/speedtest/`,
     }));
   setCache(servers);
   return servers;
@@ -83,12 +84,19 @@ export async function GET(request: NextRequest) {
     if (!server) return NextResponse.json({ error: 'server not found' }, { status: 404 });
 
     if (action === 'ping') {
-      const start = Date.now();
-      const res = await fetch(`${server.base}${LATENCY_FILE}`, {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-      });
-      await res.arrayBuffer();
-      return NextResponse.json({ ms: Date.now() - start, status: res.status });
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 6000);
+      try {
+        const start = Date.now();
+        const res = await fetch(`${server.base}${LATENCY_FILE}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          signal: ctrl.signal,
+        });
+        await res.arrayBuffer();
+        return NextResponse.json({ ms: Date.now() - start, status: res.status });
+      } finally {
+        clearTimeout(timer);
+      }
     }
 
     if (action === 'download') {
@@ -96,20 +104,27 @@ export async function GET(request: NextRequest) {
       if (!isAllowedFile(file)) {
         return NextResponse.json({ error: 'file not allowed' }, { status: 400 });
       }
-      const res = await fetch(`${server.base}${file}`, {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-      });
-      if (!res.ok || !res.body) {
-        return NextResponse.json({ error: 'download failed' }, { status: 502 });
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 20000);
+      try {
+        const res = await fetch(`${server.base}${file}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          signal: ctrl.signal,
+        });
+        if (!res.ok || !res.body) {
+          return NextResponse.json({ error: 'download failed' }, { status: 502 });
+        }
+        return new NextResponse(res.body, {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'Cache-Control': 'no-store',
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
+      } finally {
+        clearTimeout(timer);
       }
-      return new NextResponse(res.body, {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/octet-stream',
-          'Cache-Control': 'no-store',
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
     }
 
     return NextResponse.json({ error: 'unknown action' }, { status: 400 });
@@ -136,14 +151,21 @@ export async function POST(request: NextRequest) {
     if (!server) return NextResponse.json({ error: 'server not found' }, { status: 404 });
 
     // 转发上传流到 Ookla upload.php
-    const res = await fetch(`${server.base}${UPLOAD_EP}`, {
-      method: 'POST',
-      body: request.body,
-      duplex: 'half',
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    } as RequestInit);
-    const text = await res.text();
-    return NextResponse.json({ status: res.status, text: text.slice(0, 200) });
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 20000);
+    try {
+      const res = await fetch(`${server.base}${UPLOAD_EP}`, {
+        method: 'POST',
+        body: request.body,
+        duplex: 'half',
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+        signal: ctrl.signal,
+      } as RequestInit);
+      const text = await res.text();
+      return NextResponse.json({ status: res.status, text: text.slice(0, 200) });
+    } finally {
+      clearTimeout(timer);
+    }
   } catch (e) {
     console.error('speedtest upload proxy error:', e);
     return NextResponse.json({ error: 'upload proxy failed' }, { status: 502 });
