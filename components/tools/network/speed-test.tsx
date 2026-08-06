@@ -45,12 +45,12 @@ async function runDownload(
   return (received * 8) / elapsed / 1_000_000;
 }
 
-// 上传测速：XHR 带进度事件，定时采样计算速率，超时后取最终值
+// 上传测速：XHR 带进度事件，onprogress 采样计算速率，超时后取最终值
 function runUpload(
   totalBytes: number,
   onProgress: (mbps: number) => void
 ): Promise<number> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const chunk = new Uint8Array(1024 * 1024);
     for (let i = 0; i < chunk.length; i++) chunk[i] = Math.floor(Math.random() * 256);
     const parts: BlobPart[] = [];
@@ -59,57 +59,36 @@ function runUpload(
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${CF_UP}?r=${Math.random()}`, true);
 
-    let loaded = 0;
     let lastLoaded = 0;
     let lastTime = performance.now();
     let speed = 0;
     let settled = false;
 
-    xhr.upload.onprogress = (e) => {
-      loaded = e.loaded;
-      const now = performance.now();
-      const dt = (now - lastTime) / 1000;
-      if (dt >= 0.5) {
-        speed = ((loaded - lastLoaded) * 8) / dt / 1_000_000;
-        lastLoaded = loaded;
-        lastTime = now;
-        onProgress(speed);
-      }
-    };
-
-    const interval = setInterval(() => {
-      const now = performance.now();
-      const dt = (now - lastTime) / 1000;
-      if (dt >= 1) {
-        speed = ((loaded - lastLoaded) * 8) / dt / 1_000_000;
-        lastLoaded = loaded;
-        lastTime = now;
-        onProgress(speed);
-      }
-    }, 500);
-
     const finish = (val: number) => {
       if (settled) return;
       settled = true;
-      clearInterval(interval);
-      resolve(val);
-    };
-
-    xhr.onload = () => finish(speed);
-    xhr.onerror = () => {
-      if (settled) return;
-      settled = true;
-      clearInterval(interval);
-      reject(new Error('upload failed'));
-    };
-
-    // Cloudflare __up 端点上传完成后会挂起连接，10 秒后强制结束取当前速率
-    setTimeout(() => {
       try {
         xhr.abort();
       } catch (e) {}
-      finish(speed);
-    }, 12000);
+      resolve(val);
+    };
+
+    xhr.upload.onprogress = (e) => {
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      if (dt >= 0.5) {
+        speed = ((e.loaded - lastLoaded) * 8) / dt / 1_000_000;
+        lastLoaded = e.loaded;
+        lastTime = now;
+        onProgress(speed);
+      }
+    };
+
+    xhr.onload = () => finish(speed);
+    xhr.onerror = () => finish(speed); // 出错也返回已测到的速率，避免中断整轮测试
+
+    // Cloudflare __up 端点上传完成后会挂起连接，12 秒后强制结束取当前速率
+    setTimeout(() => finish(speed), 12000);
 
     xhr.send(new Blob(parts));
   });
