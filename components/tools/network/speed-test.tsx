@@ -68,13 +68,23 @@ export default function SpeedTestTool() {
   }, [t]);
 
   const startTest = useCallback(() => {
-    if (!libLoaded) return;
+    if (!libLoaded) {
+      setError(t('tool.speedTestLoadError'));
+      return;
+    }
     setPhase('testing');
     setError(null);
     setResult({ download: '--', upload: '--', ping: '--', jitter: '--' });
     setProgress(0);
 
-    const s = new (window as any).Speedtest();
+    let s: any;
+    try {
+      s = new (window as any).Speedtest();
+    } catch (e) {
+      setError(t('tool.speedTestEngineError'));
+      setPhase('idle');
+      return;
+    }
     speedtestRef.current = s;
 
     // 配置 Cloudflare 官方测速端点
