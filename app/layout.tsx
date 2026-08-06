@@ -75,6 +75,28 @@ export default function RootLayout({
             }),
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Tooltip.cc",
+              url: "https://tooltip.cc",
+              email: "admin@tooltip.cc",
+              description: "Tooltip.cc is an independent developer-run free online tools platform. All tools run locally in the browser.",
+              foundingDate: "2026",
+              areaServed: "Worldwide",
+              knowsAbout: [
+                "Web development",
+                "Online tools",
+                "Data conversion",
+                "Image processing",
+                "Network diagnostics"
+              ],
+            }),
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col">
         <I18nProvider>

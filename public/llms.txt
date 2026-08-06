@@ -1,0 +1,117 @@
+# Tooltip.cc
+
+> Free online tools that run entirely in your browser. Privacy-first: no upload, no signup, no tracking of your data.
+
+## What is Tooltip.cc?
+
+Tooltip.cc is a collection of 80+ free online tools for developers, designers and everyday users. All tools run locally in your browser using JavaScript - your data never leaves your device. Categories include JSON formatting, Base64 encoding, regex testing, image compression, QR code generation, password generation, IP lookup, DNS lookup, speed testing and more.
+
+## Tools
+
+### Developer Tools
+
+- [json-formatter](https://tooltip.cc/developer-tools/json-formatter)
+- [base64](https://tooltip.cc/developer-tools/base64)
+- [timestamp](https://tooltip.cc/developer-tools/timestamp)
+- [regex-tester](https://tooltip.cc/developer-tools/regex-tester)
+- [sql-formatter](https://tooltip.cc/developer-tools/sql-formatter)
+- [yaml-converter](https://tooltip.cc/developer-tools/yaml-converter)
+- [jwt-decoder](https://tooltip.cc/developer-tools/jwt-decoder)
+- [hash-generator](https://tooltip.cc/developer-tools/hash-generator)
+- [uuid-generator](https://tooltip.cc/developer-tools/uuid-generator)
+- [html-entities](https://tooltip.cc/developer-tools/html-entities)
+- [flexbox-generator](https://tooltip.cc/developer-tools/flexbox-generator)
+- [box-shadow-generator](https://tooltip.cc/developer-tools/box-shadow-generator)
+- [border-radius-generator](https://tooltip.cc/developer-tools/border-radius-generator)
+- [color-format](https://tooltip.cc/developer-tools/color-format)
+- [css-animation-generator](https://tooltip.cc/developer-tools/css-animation-generator)
+- [url-encoder-decoder](https://tooltip.cc/developer-tools/url-encoder-decoder)
+- [json-path-query](https://tooltip.cc/developer-tools/json-path-query)
+- [markdown-preview](https://tooltip.cc/developer-tools/markdown-preview)
+- [programmer-daily](https://tooltip.cc/developer-tools/programmer-daily)
+
+### Text Tools
+
+- [text-diff](https://tooltip.cc/text-tools/text-diff)
+- [markdown-editor](https://tooltip.cc/text-tools/markdown-editor)
+- [case-converter](https://tooltip.cc/text-tools/case-converter)
+- [word-counter](https://tooltip.cc/text-tools/word-counter)
+- [lorem-ipsum](https://tooltip.cc/text-tools/lorem-ipsum)
+- [slug-generator](https://tooltip.cc/text-tools/slug-generator)
+- [punctuation-converter](https://tooltip.cc/text-tools/punctuation-converter)
+
+### Image Tools
+
+- [image-to-base64](https://tooltip.cc/image-tools/image-to-base64)
+- [favicon-generator](https://tooltip.cc/image-tools/favicon-generator)
+- [qrcode-generator](https://tooltip.cc/image-tools/qrcode-generator)
+- [barcode-generator](https://tooltip.cc/image-tools/barcode-generator)
+- [svg-to-jsx](https://tooltip.cc/image-tools/svg-to-jsx)
+- [exif-viewer](https://tooltip.cc/image-tools/exif-viewer)
+- [image-compressor](https://tooltip.cc/image-tools/image-compressor)
+- [meme-generator](https://tooltip.cc/image-tools/meme-generator)
+- [image-resizer](https://tooltip.cc/image-tools/image-resizer)
+
+### Data Tools
+
+- [random-password](https://tooltip.cc/data-tools/random-password)
+- [cron-generator](https://tooltip.cc/data-tools/cron-generator)
+- [base-converter](https://tooltip.cc/data-tools/base-converter)
+
+### Generators
+
+- [placeholder-image](https://tooltip.cc/generators/placeholder-image)
+- [fake-data](https://tooltip.cc/generators/fake-data)
+- [color-gradient](https://tooltip.cc/generators/color-gradient)
+- [meta-tags](https://tooltip.cc/generators/meta-tags)
+- [data-uri](https://tooltip.cc/generators/data-uri)
+- [color-palette-generator](https://tooltip.cc/generators/color-palette-generator)
+- [gradient-generator](https://tooltip.cc/generators/gradient-generator)
+- [random-number-generator](https://tooltip.cc/generators/random-number-generator)
+
+### Validators
+
+- [json-validator](https://tooltip.cc/validators/json-validator)
+- [email-validator](https://tooltip.cc/validators/email-validator)
+- [phone-validator](https://tooltip.cc/validators/phone-validator)
+- [id-card-validator](https://tooltip.cc/validators/id-card-validator)
+- [credit-card-validator](https://tooltip.cc/validators/credit-card-validator)
+- [url-validator](https://tooltip.cc/validators/url-validator)
+- [color-contrast](https://tooltip.cc/validators/color-contrast)
+- [ip-validator](https://tooltip.cc/validators/ip-validator)
+- [domain-validator](https://tooltip.cc/validators/domain-validator)
+
+### Utilities
+
+- [unit-converter](https://tooltip.cc/utilities/unit-converter)
+- [timezone-converter](https://tooltip.cc/utilities/timezone-converter)
+- [timer](https://tooltip.cc/utilities/timer)
+- [random-picker](https://tooltip.cc/utilities/random-picker)
+- [calculator](https://tooltip.cc/utilities/calculator)
+- [bmi-calculator](https://tooltip.cc/utilities/bmi-calculator)
+- [love-anniversary](https://tooltip.cc/utilities/love-anniversary)
+- [password-generator](https://tooltip.cc/utilities/password-generator)
+- [golden-egg-lottery](https://tooltip.cc/utilities/golden-egg-lottery)
+- [countdown-days](https://tooltip.cc/utilities/countdown-days)
+- [pomodoro-timer](https://tooltip.cc/utilities/pomodoro-timer)
+- [text-to-poster](https://tooltip.cc/utilities/text-to-poster)
+- [daily-fortune](https://tooltip.cc/utilities/daily-fortune)
+- [lucky-wheel](https://tooltip.cc/utilities/lucky-wheel)
+- [video-downloader](https://tooltip.cc/utilities/video-downloader)
+- [mortgage-calculator](https://tooltip.cc/utilities/mortgage-calculator)
+- [pdf-tool](https://tooltip.cc/utilities/pdf-tool)
+
+### Network Tools
+
+- [ip-info](https://tooltip.cc/network-tools/ip-info)
+- [dns-lookup](https://tooltip.cc/network-tools/dns-lookup)
+- [latency-test](https://tooltip.cc/network-tools/latency-test)
+- [speed-test](https://tooltip.cc/network-tools/speed-test)
+- [http-headers](https://tooltip.cc/network-tools/http-headers)
+- [domain-info](https://tooltip.cc/network-tools/domain-info)
+
+### Fun & Tests
+
+- [mbti-test](https://tooltip.cc/fun-tools/mbti-test)
+- [sbti-test](https://tooltip.cc/fun-tools/sbti-test)
+
