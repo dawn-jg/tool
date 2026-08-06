@@ -81,6 +81,18 @@ export async function GET(request: NextRequest) {
           }
         }
       }
+      // 降级：合并全部失败时回退单 search=China
+      if (merged.length === 0 && searches.length > 1) {
+        try {
+          const list = await fetchServers('China');
+          for (const s of list) {
+            if (!seen.has(s.id)) {
+              seen.add(s.id);
+              merged.push(s);
+            }
+          }
+        } catch (e) {}
+      }
       return NextResponse.json({ servers: merged });
     }
 
