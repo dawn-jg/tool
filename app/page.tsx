@@ -55,6 +55,14 @@ const categories = [
     color: "bg-teal-500",
   },
   {
+    nameKey: "cat.pdf",
+    nameDescKey: "cat.pdfDesc",
+    href: "/pdf-tools",
+    icon: FileText,
+    count: 5,
+    color: "bg-red-500",
+  },
+  {
     nameKey: "cat.utilities",
     nameDescKey: "cat.utilitiesDesc",
     href: "/utilities",
@@ -86,6 +94,11 @@ const featuredTools = [
   { nameKey: "tool.regexTester", descKey: "tool.regexTesterDesc", href: "/developer-tools/regex-tester" },
   { nameKey: "tool.qrcodeGenerator", descKey: "tool.qrcodeGeneratorDesc", href: "/image-tools/qrcode-generator" },
   { nameKey: "tool.randomPassword", descKey: "tool.randomPasswordDesc", href: "/data-tools/random-password" },
+  { nameKey: "tool.imageConverter", descKey: "tool.imageConverterDesc", href: "/image-tools/image-converter" },
+  { nameKey: "tool.pdfCompressor", descKey: "tool.pdfCompressorDesc", href: "/utilities/pdf-compressor" },
+  { nameKey: "tool.videoToGif", descKey: "tool.videoToGifDesc", href: "/image-tools/video-to-gif" },
+  { nameKey: "tool.zipCreator", descKey: "tool.zipCreatorDesc", href: "/utilities/zip-creator" },
+  { nameKey: "tool.jsonXmlConverter", descKey: "tool.jsonXmlConverterDesc", href: "/developer-tools/json-xml-converter" },
 ];
 
 export default function HomePage() {

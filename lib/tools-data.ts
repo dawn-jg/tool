@@ -1,4 +1,4 @@
-﻿import { type LucideIcon, Code, Gauge, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain, Files, Scissors, UserRound, Clapperboard } from 'lucide-react';
+import { type LucideIcon, Code, Gauge, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain, Files, Scissors, UserRound, Clapperboard } from 'lucide-react';
 
 export interface Tool {
   slug: string;
@@ -24,6 +24,7 @@ export const categories: Category[] = [
   { slug: 'data-tools', nameKey: 'cat.data', icon: Database, descriptionKey: 'cat.dataDesc', introKey: 'cat.dataIntro' },
   { slug: 'generators', nameKey: 'cat.generators', icon: Zap, descriptionKey: 'cat.generatorsDesc', introKey: 'cat.generatorsIntro' },
   { slug: 'validators', nameKey: 'cat.validators', icon: CheckCircle, descriptionKey: 'cat.validatorsDesc', introKey: 'cat.validatorsIntro' },
+  { slug: 'pdf-tools', nameKey: 'cat.pdf', icon: FileText, descriptionKey: 'cat.pdfDesc', introKey: 'cat.pdfIntro' },
   { slug: 'utilities', nameKey: 'cat.utilities', icon: Calculator, descriptionKey: 'cat.utilitiesDesc', introKey: 'cat.utilitiesIntro' },
   { slug: 'network-tools', nameKey: 'cat.network', icon: Globe, descriptionKey: 'cat.networkDesc', introKey: 'cat.networkIntro' },
   { slug: 'fun-tools', nameKey: 'cat.fun', icon: Sparkles, descriptionKey: 'cat.funDesc', introKey: 'cat.funIntro' },
@@ -76,11 +77,11 @@ export const tools: Tool[] = [
   { slug: 'image-watermark', category: 'image-tools', nameKey: 'tool.imageWatermark', descriptionKey: 'tool.imageWatermarkDesc', keywords: '图片加水印,文字水印,图片水印,水印工具,批量水印,Image Watermark', icon: Palette },
   { slug: 'circle-avatar', category: 'image-tools', nameKey: 'tool.circleAvatar', descriptionKey: 'tool.circleAvatarDesc', keywords: '圆形头像,头像生成,圆形裁剪,头像制作,在线头像,Circle Avatar', icon: UserRound },
   { slug: 'video-to-gif', category: 'image-tools', nameKey: 'tool.videoToGif', descriptionKey: 'tool.videoToGifDesc', keywords: '视频转GIF,GIF制作,视频转动图,在线GIF转换,Video to GIF', icon: Clapperboard },
-  { slug: 'pdf-to-image', category: 'utilities', nameKey: 'tool.pdfToImage', descriptionKey: 'tool.pdfToImageDesc', keywords: 'PDF转图片,PDF转PNG,PDF转JPG,PDF转图片在线,PDF页面导出图片,PDF to Image', icon: FileImage },
-  { slug: 'image-to-pdf', category: 'utilities', nameKey: 'tool.imageToPdf', descriptionKey: 'tool.imageToPdfDesc', keywords: '图片转PDF,图片合成PDF,JPG转PDF,PNG转PDF,多图转PDF,Image to PDF', icon: FileText },
+  { slug: 'pdf-to-image', category: 'pdf-tools', nameKey: 'tool.pdfToImage', descriptionKey: 'tool.pdfToImageDesc', keywords: 'PDF转图片,PDF转PNG,PDF转JPG,PDF转图片在线,PDF页面导出图片,PDF to Image', icon: FileImage },
+  { slug: 'image-to-pdf', category: 'pdf-tools', nameKey: 'tool.imageToPdf', descriptionKey: 'tool.imageToPdfDesc', keywords: '图片转PDF,图片合成PDF,JPG转PDF,PNG转PDF,多图转PDF,Image to PDF', icon: FileText },
   { slug: 'zip-creator', category: 'utilities', nameKey: 'tool.zipCreator', descriptionKey: 'tool.zipCreatorDesc', keywords: '创建ZIP,在线压缩,ZIP压缩包,文件打包,批量压缩文件,Zip Creator', icon: Archive },
-  { slug: 'pdf-compressor', category: 'utilities', nameKey: 'tool.pdfCompressor', descriptionKey: 'tool.pdfCompressorDesc', keywords: 'PDF压缩,PDF瘦身,压缩PDF文件,PDF减小体积,PDF Compress', icon: Archive },
-  { slug: 'pdf-watermark', category: 'utilities', nameKey: 'tool.pdfWatermark', descriptionKey: 'tool.pdfWatermarkDesc', keywords: 'PDF加水印,PDF水印,PDF文字水印,PDF加密水印,PDF Watermark', icon: Waves },
+  { slug: 'pdf-compressor', category: 'pdf-tools', nameKey: 'tool.pdfCompressor', descriptionKey: 'tool.pdfCompressorDesc', keywords: 'PDF压缩,PDF瘦身,压缩PDF文件,PDF减小体积,PDF Compress', icon: Archive },
+  { slug: 'pdf-watermark', category: 'pdf-tools', nameKey: 'tool.pdfWatermark', descriptionKey: 'tool.pdfWatermarkDesc', keywords: 'PDF加水印,PDF水印,PDF文字水印,PDF加密水印,PDF Watermark', icon: Waves },
 
   // data-tools
   { slug: 'random-password', category: 'data-tools', nameKey: 'tool.randomPassword', descriptionKey: 'tool.randomPasswordDesc', keywords: '密码,随机,安全,生成', icon: Lock },
@@ -136,7 +137,7 @@ export const tools: Tool[] = [
   { slug: 'domain-info', category: 'network-tools', nameKey: 'tool.domainInfo', descriptionKey: 'tool.domainInfoDesc', keywords: '域名,WHOIS,注册信息,过期时间', icon: Globe },
 
   // utilities
-  { slug: 'pdf-tool', category: 'utilities', nameKey: 'tool.pdfTool', descriptionKey: 'tool.pdfToolDesc', keywords: 'PDF,合并,拆分,旋转,加密,pdf-lib,merge,split,rotate,encrypt', icon: Files },
+  { slug: 'pdf-tool', category: 'pdf-tools', nameKey: 'tool.pdfTool', descriptionKey: 'tool.pdfToolDesc', keywords: 'PDF,合并,拆分,旋转,加密,pdf-lib,merge,split,rotate,encrypt', icon: Files },
 
   // fun-tools
   { slug: 'mbti-test', category: 'fun-tools', nameKey: 'tool.mbtiTest', descriptionKey: 'tool.mbtiTestDesc', keywords: 'MBTI,人格,性格,测试,16型', icon: Brain },
