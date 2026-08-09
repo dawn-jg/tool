@@ -99,6 +99,10 @@ const featuredTools = [
   { nameKey: "tool.videoToGif", descKey: "tool.videoToGifDesc", href: "/image-tools/video-to-gif" },
   { nameKey: "tool.zipCreator", descKey: "tool.zipCreatorDesc", href: "/utilities/zip-creator" },
   { nameKey: "tool.jsonXmlConverter", descKey: "tool.jsonXmlConverterDesc", href: "/developer-tools/json-xml-converter" },
+  { nameKey: "tool.pdfTool", descKey: "tool.pdfToolDesc", href: "/pdf-tools/pdf-tool" },
+  { nameKey: "tool.pdfToImage", descKey: "tool.pdfToImageDesc", href: "/pdf-tools/pdf-to-image" },
+  { nameKey: "tool.imageToPdf", descKey: "tool.imageToPdfDesc", href: "/pdf-tools/image-to-pdf" },
+  { nameKey: "tool.pdfWatermark", descKey: "tool.pdfWatermarkDesc", href: "/pdf-tools/pdf-watermark" },
 ];
 
 export default function HomePage() {
