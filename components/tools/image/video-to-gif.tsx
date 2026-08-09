@@ -4,6 +4,10 @@ import { useState, useCallback, useRef } from 'react';
 import { ToolLayout } from '@/components/ToolLayout';
 import { useToolLimiter, PaywallModal } from '@/lib/use-tool-limiter';
 
+// ffmpeg-core.wasm is ~31MB and exceeds the Cloudflare Pages 25MiB single-asset
+// limit, so it is served from jsDelivr CDN instead of being bundled as a static file.
+const FFMPEG_CORE_BASE = 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm';
+
 const QUALITY_PRESETS = [
   { value: 'low', fps: 8, width: 320, label: '低质量（文件小）' },
   { value: 'medium', fps: 12, width: 480, label: '中等质量' },
@@ -33,8 +37,8 @@ export function VideoToGif() {
         if (message.includes('Output')) setProgress('输出中...');
       });
       await ffmpeg.load({
-        coreURL: await toBlobURL('/ffmpeg/ffmpeg-core.js', 'text/javascript'),
-        wasmURL: await toBlobURL('/ffmpeg/ffmpeg-core.wasm', 'application/wasm'),
+        coreURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${FFMPEG_CORE_BASE}/ffmpeg-core.wasm`, 'application/wasm'),
       });
       ffmpegRef.current = ffmpeg;
     }
