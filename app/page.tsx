@@ -67,7 +67,7 @@ const categories = [
     nameDescKey: "cat.utilitiesDesc",
     href: "/utilities",
     icon: Calculator,
-    count: 16,
+    count: 17,
     color: "bg-pink-500",
   },
   {
@@ -95,7 +95,7 @@ const featuredTools = [
   { nameKey: "tool.qrcodeGenerator", descKey: "tool.qrcodeGeneratorDesc", href: "/image-tools/qrcode-generator" },
   { nameKey: "tool.randomPassword", descKey: "tool.randomPasswordDesc", href: "/data-tools/random-password" },
   { nameKey: "tool.imageConverter", descKey: "tool.imageConverterDesc", href: "/image-tools/image-converter" },
-  { nameKey: "tool.pdfCompressor", descKey: "tool.pdfCompressorDesc", href: "/utilities/pdf-compressor" },
+  { nameKey: "tool.pdfCompressor", descKey: "tool.pdfCompressorDesc", href: "/pdf-tools/pdf-compressor" },
   { nameKey: "tool.videoToGif", descKey: "tool.videoToGifDesc", href: "/image-tools/video-to-gif" },
   { nameKey: "tool.zipCreator", descKey: "tool.zipCreatorDesc", href: "/utilities/zip-creator" },
   { nameKey: "tool.jsonXmlConverter", descKey: "tool.jsonXmlConverterDesc", href: "/developer-tools/json-xml-converter" },
