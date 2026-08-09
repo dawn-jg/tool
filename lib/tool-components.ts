@@ -32,6 +32,19 @@ import { ExifViewer } from '@/components/tools/image/exif-viewer';
 import { ImageCompressor } from '@/components/tools/image/image-compressor';
 import { MemeGenerator } from '@/components/tools/image/meme-generator';
 import { ImageResizer } from '@/components/tools/image/image-resizer';
+import { ImageConverter } from '@/components/tools/image/image-converter';
+import { JsonXmlConverter } from '@/components/tools/developer/json-xml-converter';
+import dynamic from 'next/dynamic';
+import { CsvSplitter } from '@/components/tools/data/csv-splitter';
+import { ImageCropper } from '@/components/tools/image/image-cropper';
+import { ImageWatermark } from '@/components/tools/image/image-watermark';
+import { CircleAvatar } from '@/components/tools/image/circle-avatar';
+
+
+import { ImageToPdf } from '@/components/tools/utilities/image-to-pdf';
+import { ZipCreator } from '@/components/tools/utilities/zip-creator';
+import { PdfCompressor } from '@/components/tools/utilities/pdf-compressor';
+import { PdfWatermark } from '@/components/tools/utilities/pdf-watermark';
 import { RandomPassword } from '@/components/tools/data/random-password';
 import { CronGenerator } from '@/components/tools/data/cron-generator';
 import { BaseConverter } from '@/components/tools/data/base-converter';
@@ -114,6 +127,18 @@ const componentMap: Record<string, React.ComponentType> = {
   'image-tools/image-compressor': ImageCompressor,
   'image-tools/meme-generator': MemeGenerator,
   'image-tools/image-resizer': ImageResizer,
+  'image-tools/image-converter': ImageConverter,
+  'developer-tools/json-xml-converter': JsonXmlConverter,
+  'data-tools/csv-splitter': CsvSplitter,
+  'image-tools/image-cropper': ImageCropper,
+  'image-tools/image-watermark': ImageWatermark,
+  'image-tools/circle-avatar': CircleAvatar,
+  'image-tools/video-to-gif': dynamic(() => import('@/components/tools/image/video-to-gif').then((m) => m.VideoToGif), { ssr: false }),
+  'utilities/pdf-to-image': dynamic(() => import('@/components/tools/utilities/pdf-to-image').then((m) => m.PdfToImage), { ssr: false }),
+  'utilities/image-to-pdf': ImageToPdf,
+  'utilities/zip-creator': ZipCreator,
+  'utilities/pdf-compressor': PdfCompressor,
+  'utilities/pdf-watermark': PdfWatermark,
   'data-tools/random-password': RandomPassword,
   'data-tools/cron-generator': CronGenerator,
   'data-tools/base-converter': BaseConverter,

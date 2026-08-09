@@ -1,4 +1,4 @@
-﻿import { type LucideIcon, Code, Gauge, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain, Files } from 'lucide-react';
+﻿import { type LucideIcon, Code, Gauge, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Braces, Binary, Clock, Regex, FileCode, ArrowLeftRight, Key, Fingerprint, Hash, Quote, Diff, PenTool, CaseSensitive, ALargeSmall, Text, Link, Type, QrCode, Barcode, ImageUp, Palette, FileImage, Camera, Shield, Lock, Waves, Archive, UserPlus, PaintBucket, Globe, FileJson, Mail, Phone, CreditCard, UserCheck, Contrast, Ruler, Globe2, Timer, Shuffle, Scale, Heart, Crop, Gift, Sparkles, CircleDot, Grid, Box, Square, Circle, Play, Spline, Brain, Files, Scissors, UserRound, Clapperboard } from 'lucide-react';
 
 export interface Tool {
   slug: string;
@@ -69,6 +69,18 @@ export const tools: Tool[] = [
   { slug: 'image-compressor', category: 'image-tools', nameKey: 'tool.imageCompressor', descriptionKey: 'tool.imageCompressorDesc', keywords: '图片压缩,格式转换,图片优化,JPG转PNG,PNG转WebP,WebP转换,AVIF,在线压缩,图片瘦身,减小图片体积,photo compress,image converter', icon: Archive },
   { slug: 'meme-generator', category: 'image-tools', nameKey: 'tool.memeGenerator', descriptionKey: 'tool.memeGeneratorDesc', keywords: '表情包,生成器,Meme,图片加字,搞笑,表情,Meme Generator', icon: Sparkles },
   { slug: 'image-resizer', category: 'image-tools', nameKey: 'tool.imageResizer', descriptionKey: 'tool.imageResizerDesc', keywords: '图片缩放,尺寸调整,Resize,压缩分辨率,图片改大小', icon: Crop },
+  { slug: 'image-converter', category: 'image-tools', nameKey: 'tool.imageConverter', descriptionKey: 'tool.imageConverterDesc', keywords: '图片格式转换,PNG转JPG,WebP转换,HEIC转JPG,图片格式互换,Image Converter', icon: ArrowLeftRight },
+  { slug: 'json-xml-converter', category: 'developer-tools', nameKey: 'tool.jsonXmlConverter', descriptionKey: 'tool.jsonXmlConverterDesc', keywords: 'JSON转XML,XML转JSON,格式转换,JSON XML互转,数据格式转换', icon: ArrowLeftRight },
+  { slug: 'csv-splitter', category: 'data-tools', nameKey: 'tool.csvSplitter', descriptionKey: 'tool.csvSplitterDesc', keywords: 'CSV拆分,CSV分割,大CSV文件拆分,按行拆分,按列拆分,CSV Splitter', icon: Scissors },
+  { slug: 'image-cropper', category: 'image-tools', nameKey: 'tool.imageCropper', descriptionKey: 'tool.imageCropperDesc', keywords: '图片裁剪,在线裁剪,裁剪图片,正方形裁剪,图片截取,Image Crop', icon: Crop },
+  { slug: 'image-watermark', category: 'image-tools', nameKey: 'tool.imageWatermark', descriptionKey: 'tool.imageWatermarkDesc', keywords: '图片加水印,文字水印,图片水印,水印工具,批量水印,Image Watermark', icon: Palette },
+  { slug: 'circle-avatar', category: 'image-tools', nameKey: 'tool.circleAvatar', descriptionKey: 'tool.circleAvatarDesc', keywords: '圆形头像,头像生成,圆形裁剪,头像制作,在线头像,Circle Avatar', icon: UserRound },
+  { slug: 'video-to-gif', category: 'image-tools', nameKey: 'tool.videoToGif', descriptionKey: 'tool.videoToGifDesc', keywords: '视频转GIF,GIF制作,视频转动图,在线GIF转换,Video to GIF', icon: Clapperboard },
+  { slug: 'pdf-to-image', category: 'utilities', nameKey: 'tool.pdfToImage', descriptionKey: 'tool.pdfToImageDesc', keywords: 'PDF转图片,PDF转PNG,PDF转JPG,PDF转图片在线,PDF页面导出图片,PDF to Image', icon: FileImage },
+  { slug: 'image-to-pdf', category: 'utilities', nameKey: 'tool.imageToPdf', descriptionKey: 'tool.imageToPdfDesc', keywords: '图片转PDF,图片合成PDF,JPG转PDF,PNG转PDF,多图转PDF,Image to PDF', icon: FileText },
+  { slug: 'zip-creator', category: 'utilities', nameKey: 'tool.zipCreator', descriptionKey: 'tool.zipCreatorDesc', keywords: '创建ZIP,在线压缩,ZIP压缩包,文件打包,批量压缩文件,Zip Creator', icon: Archive },
+  { slug: 'pdf-compressor', category: 'utilities', nameKey: 'tool.pdfCompressor', descriptionKey: 'tool.pdfCompressorDesc', keywords: 'PDF压缩,PDF瘦身,压缩PDF文件,PDF减小体积,PDF Compress', icon: Archive },
+  { slug: 'pdf-watermark', category: 'utilities', nameKey: 'tool.pdfWatermark', descriptionKey: 'tool.pdfWatermarkDesc', keywords: 'PDF加水印,PDF水印,PDF文字水印,PDF加密水印,PDF Watermark', icon: Waves },
 
   // data-tools
   { slug: 'random-password', category: 'data-tools', nameKey: 'tool.randomPassword', descriptionKey: 'tool.randomPasswordDesc', keywords: '密码,随机,安全,生成', icon: Lock },
