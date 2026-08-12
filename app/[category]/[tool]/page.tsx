@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { getToolMetadata } from "@/lib/metadata";
 import { translations } from "@/lib/translations";
 import { getTool, getCategory } from "@/lib/tools-data";
@@ -8,35 +9,42 @@ export const runtime = 'edge';
 
 interface Props {
   params: { category: string; tool: string };
+  searchParams?: { lang?: string };
 }
 
 const zh = translations.zh as Record<string, string>;
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return getToolMetadata(params.category, params.tool);
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const lang = (searchParams?.lang === "en" ? "en" : "zh") as "zh" | "en";
+  return getToolMetadata(params.category, params.tool, lang);
 }
 
-function buildFaqJsonLd(category: string, tool: string): string | null {
+const en = translations.en as Record<string, string>;
+
+function tKey(key: string, lang: string): string {
+  const dict = lang === "en" ? en : zh;
+  return dict[key] || key;
+}
+
+function buildFaqJsonLd(category: string, tool: string, lang: string): string | null {
   const t = getTool(category, tool);
   if (!t) return null;
-  const name = zh[t.nameKey] || t.nameKey;
-  const desc = zh[t.descriptionKey] || t.descriptionKey;
-  const catName = zh[`cat.${category.replace('-tools', '')}`] || category;
+  const name = tKey(t.nameKey, lang);
+  const desc = tKey(t.descriptionKey, lang);
+  const catKey = `cat.${category.replace('-tools', '')}`;
+  const catName = tKey(catKey, lang) || category;
 
-  const questions = [
-    {
-      q: `${name}是什么？`,
-      a: `${name}是 Tooltip.cc 提供的免费在线${catName}，${desc}。无需注册、无需安装，打开浏览器即可使用。`,
-    },
-    {
-      q: `${name}收费吗？`,
-      a: `完全免费。Tooltip.cc 的所有工具（包括${name}）均免费使用，无需注册账号。`,
-    },
-    {
-      q: `${name}安全吗？数据会泄露吗？`,
-      a: `安全。${name}完全在浏览器本地运行，数据不会上传到任何服务器，请放心使用。`,
-    },
-  ];
+  const questions = lang === "en"
+    ? [
+        { q: `What is ${name}?`, a: `${name} is a free online tool provided by Tooltip.cc, ${desc}. No registration or installation needed — just open your browser and use it.` },
+        { q: `Does ${name} cost anything?`, a: `No, it is completely free. All tools on Tooltip.cc (including ${name}) are free to use with no account required.` },
+        { q: `Is ${name} safe? Will my data leak?`, a: `Yes, it is safe. ${name} runs entirely in your browser locally — your data is never uploaded to any server.` },
+      ]
+    : [
+        { q: `${name}是什么？`, a: `${name}是 Tooltip.cc 提供的免费在线${catName}，${desc}。无需注册、无需安装，打开浏览器即可使用。` },
+        { q: `${name}收费吗？`, a: `完全免费。Tooltip.cc 的所有工具（包括${name}）均免费使用，无需注册账号。` },
+        { q: `${name}安全吗？数据会泄露吗？`, a: `安全。${name}完全在浏览器本地运行，数据不会上传到任何服务器，请放心使用。` },
+      ];
 
   return JSON.stringify({
     "@context": "https://schema.org",
@@ -52,11 +60,11 @@ function buildFaqJsonLd(category: string, tool: string): string | null {
   });
 }
 
-function buildWebAppJsonLd(category: string, tool: string): string | null {
+function buildWebAppJsonLd(category: string, tool: string, lang: string): string | null {
   const t = getTool(category, tool);
   if (!t) return null;
-  const name = zh[t.nameKey] || t.nameKey;
-  const desc = zh[t.descriptionKey] || t.descriptionKey;
+  const name = tKey(t.nameKey, lang);
+  const desc = tKey(t.descriptionKey, lang);
   const url = `https://tooltip.cc/${t.category}/${t.slug}`;
   return JSON.stringify({
     "@context": "https://schema.org",
@@ -64,6 +72,7 @@ function buildWebAppJsonLd(category: string, tool: string): string | null {
     name,
     description: desc,
     url,
+    inLanguage: lang === "en" ? "en" : "zh-CN",
     applicationCategory: "UtilitiesApplication",
     operatingSystem: "Web",
     browserRequirements: "Requires JavaScript",
@@ -73,7 +82,9 @@ function buildWebAppJsonLd(category: string, tool: string): string | null {
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
     },
-    featureList: ["免费使用", "浏览器本地运行", "无需注册", "无需安装"],
+    featureList: lang === "en"
+      ? ["Free to use", "Runs locally in browser", "No registration", "No installation"]
+      : ["免费使用", "浏览器本地运行", "无需注册", "无需安装"],
     publisher: {
       "@type": "Organization",
       name: "Tooltip.cc",
@@ -82,27 +93,29 @@ function buildWebAppJsonLd(category: string, tool: string): string | null {
   });
 }
 
-function buildBreadcrumbJsonLd(category: string, tool: string): string | null {
+function buildBreadcrumbJsonLd(category: string, tool: string, lang: string): string | null {
   const cat = getCategory(category);
   const t = getTool(category, tool);
   if (!cat || !t) return null;
-  const catName = zh[cat.nameKey] || cat.nameKey;
-  const toolName = zh[t.nameKey] || t.nameKey;
+  const catName = tKey(cat.nameKey, lang);
+  const toolName = tKey(t.nameKey, lang);
+  const homeName = lang === "en" ? "Home" : "首页";
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "首页", item: "https://tooltip.cc/" },
+      { "@type": "ListItem", position: 1, name: homeName, item: "https://tooltip.cc/" },
       { "@type": "ListItem", position: 2, name: catName, item: `https://tooltip.cc/${cat.slug}` },
       { "@type": "ListItem", position: 3, name: toolName, item: `https://tooltip.cc/${cat.slug}/${t.slug}` },
     ],
   });
 }
 
-export default function ToolPage({ params }: Props) {
-  const faq = buildFaqJsonLd(params.category, params.tool);
-  const breadcrumb = buildBreadcrumbJsonLd(params.category, params.tool);
-  const webapp = buildWebAppJsonLd(params.category, params.tool);
+export default function ToolPage({ params, searchParams }: Props) {
+  const lang = (searchParams?.lang === "en" ? "en" : "zh") as "zh" | "en";
+  const faq = buildFaqJsonLd(params.category, params.tool, lang);
+  const breadcrumb = buildBreadcrumbJsonLd(params.category, params.tool, lang);
+  const webapp = buildWebAppJsonLd(params.category, params.tool, lang);
   return (
     <>
       {faq && (

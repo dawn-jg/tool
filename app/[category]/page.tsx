@@ -8,30 +8,35 @@ export const runtime = 'edge';
 
 interface Props {
   params: { category: string };
+  searchParams?: { lang?: string };
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return getCategoryMetadata(params.category);
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const lang = (searchParams?.lang === "en" ? "en" : "zh") as "zh" | "en";
+  return getCategoryMetadata(params.category, lang);
 }
 
 const zh = translations.zh as Record<string, string>;
 
-function buildBreadcrumbJsonLd(slug: string): string | null {
+function buildBreadcrumbJsonLd(slug: string, lang: string): string | null {
   const cat = getCategory(slug);
   if (!cat) return null;
-  const catName = zh[cat.nameKey] || cat.nameKey;
+  const dict: Record<string, string> = lang === "en" ? translations.en : zh;
+  const catName = dict[cat.nameKey] || cat.nameKey;
+  const homeName = lang === "en" ? "Home" : "首页";
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "首页", item: "https://tooltip.cc/" },
+      { "@type": "ListItem", position: 1, name: homeName, item: "https://tooltip.cc/" },
       { "@type": "ListItem", position: 2, name: catName, item: `https://tooltip.cc/${cat.slug}` },
     ],
   });
 }
 
-export default function CategoryPage({ params }: Props) {
-  const breadcrumb = buildBreadcrumbJsonLd(params.category);
+export default function CategoryPage({ params, searchParams }: Props) {
+  const lang = (searchParams?.lang === "en" ? "en" : "zh") as "zh" | "en";
+  const breadcrumb = buildBreadcrumbJsonLd(params.category, lang);
   return (
     <>
       {breadcrumb && (
