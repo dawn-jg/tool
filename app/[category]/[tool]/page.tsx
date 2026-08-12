@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getToolMetadata } from "@/lib/metadata";
 import { translations } from "@/lib/translations";
-import { getTool } from "@/lib/tools-data";
+import { getTool, getCategory } from "@/lib/tools-data";
 import ToolPageClient from "./tool-page-client";
 
 export const runtime = 'edge';
@@ -52,14 +52,38 @@ function buildFaqJsonLd(category: string, tool: string): string | null {
   });
 }
 
+function buildBreadcrumbJsonLd(category: string, tool: string): string | null {
+  const cat = getCategory(category);
+  const t = getTool(category, tool);
+  if (!cat || !t) return null;
+  const catName = zh[cat.nameKey] || cat.nameKey;
+  const toolName = zh[t.nameKey] || t.nameKey;
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "首页", item: "https://tooltip.cc/" },
+      { "@type": "ListItem", position: 2, name: catName, item: `https://tooltip.cc/${cat.slug}` },
+      { "@type": "ListItem", position: 3, name: toolName, item: `https://tooltip.cc/${cat.slug}/${t.slug}` },
+    ],
+  });
+}
+
 export default function ToolPage({ params }: Props) {
   const faq = buildFaqJsonLd(params.category, params.tool);
+  const breadcrumb = buildBreadcrumbJsonLd(params.category, params.tool);
   return (
     <>
       {faq && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: faq }}
+        />
+      )}
+      {breadcrumb && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumb }}
         />
       )}
       <ToolPageClient category={params.category} tool={params.tool} />
