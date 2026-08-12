@@ -5,24 +5,26 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X, Sun, Moon, Wrench, Code, FileText, ImageIcon, Database, Zap, CheckCircle, Calculator, Globe, Sparkles, FileStack } from "lucide-react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useI18n } from "@/lib/i18n";
 import { SearchDialog } from "./SearchDialog";
 import { cn } from "@/lib/utils";
 
 const categories = [
-  { name: "开发者工具", href: "/developer-tools", icon: Code },
-  { name: "文本处理", href: "/text-tools", icon: FileText },
-  { name: "图片工具", href: "/image-tools", icon: ImageIcon },
-  { name: "数据工具", href: "/data-tools", icon: Database },
-  { name: "生成器", href: "/generators", icon: Zap },
-  { name: "验证器", href: "/validators", icon: CheckCircle },
-  { name: "实用工具", href: "/utilities", icon: Calculator },
-  { name: "PDF 工具", href: "/pdf-tools", icon: FileStack },
-  { name: "网络工具", href: "/network-tools", icon: Globe },
-  { name: "趣味工具", href: "/fun-tools", icon: Sparkles },
+  { nameKey: "cat.developer", href: "/developer-tools", icon: Code },
+  { nameKey: "cat.text", href: "/text-tools", icon: FileText },
+  { nameKey: "cat.image", href: "/image-tools", icon: ImageIcon },
+  { nameKey: "cat.data", href: "/data-tools", icon: Database },
+  { nameKey: "cat.generators", href: "/generators", icon: Zap },
+  { nameKey: "cat.validators", href: "/validators", icon: CheckCircle },
+  { nameKey: "cat.utilities", href: "/utilities", icon: Calculator },
+  { nameKey: "cat.pdf", href: "/pdf-tools", icon: FileStack },
+  { nameKey: "cat.network", href: "/network-tools", icon: Globe },
+  { nameKey: "cat.fun", href: "/fun-tools", icon: Sparkles },
 ];
 
 export function Header() {
   const pathname = usePathname();
+  const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -60,7 +62,7 @@ export function Header() {
                     : "text-gray-600 dark:text-gray-300"
                 )}
               >
-                {cat.name}
+                {t(cat.nameKey)}
               </Link>
             ))}
           </nav>
@@ -103,7 +105,7 @@ export function Header() {
                   )}
                 >
                   <Icon className="h-4 w-4" />
-                  {cat.name}
+                  {t(cat.nameKey)}
                 </Link>
               );
             })}

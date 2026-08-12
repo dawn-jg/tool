@@ -1,27 +1,123 @@
-// IndexNow URL 提交脚本
-// 用法: node scripts/indexnow-submit.js
-// 前提: Bing Webmaster 已验证 tooltip.cc 并绑定 key (public/<key>.txt)
+// scripts/indexnow-submit.js (auto-generated, do not edit manually)
+// Last updated: 2026-08-12
 const key = "70e83ca4f6512db9";
 const host = "tooltip.cc";
-
 const urls = [
-  "https://tooltip.cc/",
+  "https://tooltip.cc",
+  "https://tooltip.cc/developer-tools",
+  "https://tooltip.cc/text-tools",
+  "https://tooltip.cc/image-tools",
+  "https://tooltip.cc/data-tools",
+  "https://tooltip.cc/generators",
+  "https://tooltip.cc/validators",
+  "https://tooltip.cc/pdf-tools",
+  "https://tooltip.cc/utilities",
+  "https://tooltip.cc/network-tools",
+  "https://tooltip.cc/fun-tools",
+  "https://tooltip.cc/developer-tools/json-formatter",
+  "https://tooltip.cc/developer-tools/base64",
+  "https://tooltip.cc/developer-tools/timestamp",
+  "https://tooltip.cc/developer-tools/regex-tester",
+  "https://tooltip.cc/developer-tools/sql-formatter",
+  "https://tooltip.cc/developer-tools/yaml-converter",
+  "https://tooltip.cc/developer-tools/jwt-decoder",
+  "https://tooltip.cc/developer-tools/hash-generator",
+  "https://tooltip.cc/developer-tools/uuid-generator",
+  "https://tooltip.cc/developer-tools/html-entities",
+  "https://tooltip.cc/developer-tools/flexbox-generator",
+  "https://tooltip.cc/developer-tools/box-shadow-generator",
+  "https://tooltip.cc/developer-tools/border-radius-generator",
+  "https://tooltip.cc/developer-tools/color-format",
+  "https://tooltip.cc/developer-tools/css-animation-generator",
+  "https://tooltip.cc/developer-tools/url-encoder-decoder",
+  "https://tooltip.cc/developer-tools/json-path-query",
+  "https://tooltip.cc/developer-tools/markdown-preview",
+  "https://tooltip.cc/developer-tools/json-xml-converter",
+  "https://tooltip.cc/developer-tools/programmer-daily",
+  "https://tooltip.cc/text-tools/text-diff",
+  "https://tooltip.cc/text-tools/markdown-editor",
+  "https://tooltip.cc/text-tools/case-converter",
+  "https://tooltip.cc/text-tools/word-counter",
+  "https://tooltip.cc/text-tools/lorem-ipsum",
+  "https://tooltip.cc/text-tools/slug-generator",
+  "https://tooltip.cc/text-tools/punctuation-converter",
+  "https://tooltip.cc/image-tools/image-to-base64",
+  "https://tooltip.cc/image-tools/favicon-generator",
+  "https://tooltip.cc/image-tools/qrcode-generator",
+  "https://tooltip.cc/image-tools/barcode-generator",
+  "https://tooltip.cc/image-tools/svg-to-jsx",
+  "https://tooltip.cc/image-tools/exif-viewer",
+  "https://tooltip.cc/image-tools/image-compressor",
+  "https://tooltip.cc/image-tools/meme-generator",
+  "https://tooltip.cc/image-tools/image-resizer",
+  "https://tooltip.cc/image-tools/image-converter",
+  "https://tooltip.cc/image-tools/image-cropper",
+  "https://tooltip.cc/image-tools/image-watermark",
+  "https://tooltip.cc/image-tools/circle-avatar",
+  "https://tooltip.cc/image-tools/video-to-gif",
+  "https://tooltip.cc/data-tools/csv-splitter",
+  "https://tooltip.cc/data-tools/random-password",
+  "https://tooltip.cc/data-tools/cron-generator",
+  "https://tooltip.cc/data-tools/base-converter",
+  "https://tooltip.cc/generators/placeholder-image",
+  "https://tooltip.cc/generators/fake-data",
+  "https://tooltip.cc/generators/color-gradient",
+  "https://tooltip.cc/generators/meta-tags",
+  "https://tooltip.cc/generators/data-uri",
+  "https://tooltip.cc/generators/color-palette-generator",
+  "https://tooltip.cc/generators/gradient-generator",
+  "https://tooltip.cc/generators/random-number-generator",
+  "https://tooltip.cc/validators/json-validator",
+  "https://tooltip.cc/validators/email-validator",
+  "https://tooltip.cc/validators/phone-validator",
+  "https://tooltip.cc/validators/id-card-validator",
+  "https://tooltip.cc/validators/credit-card-validator",
+  "https://tooltip.cc/validators/url-validator",
+  "https://tooltip.cc/validators/color-contrast",
+  "https://tooltip.cc/validators/ip-validator",
+  "https://tooltip.cc/validators/domain-validator",
+  "https://tooltip.cc/pdf-tools/pdf-to-image",
+  "https://tooltip.cc/pdf-tools/image-to-pdf",
+  "https://tooltip.cc/pdf-tools/pdf-compressor",
+  "https://tooltip.cc/pdf-tools/pdf-watermark",
+  "https://tooltip.cc/pdf-tools/pdf-tool",
+  "https://tooltip.cc/utilities/zip-creator",
+  "https://tooltip.cc/utilities/unit-converter",
+  "https://tooltip.cc/utilities/timezone-converter",
+  "https://tooltip.cc/utilities/timer",
+  "https://tooltip.cc/utilities/random-picker",
+  "https://tooltip.cc/utilities/calculator",
+  "https://tooltip.cc/utilities/bmi-calculator",
+  "https://tooltip.cc/utilities/love-anniversary",
+  "https://tooltip.cc/utilities/password-generator",
+  "https://tooltip.cc/utilities/golden-egg-lottery",
+  "https://tooltip.cc/utilities/countdown-days",
+  "https://tooltip.cc/utilities/pomodoro-timer",
+  "https://tooltip.cc/utilities/text-to-poster",
+  "https://tooltip.cc/utilities/daily-fortune",
+  "https://tooltip.cc/utilities/lucky-wheel",
+  "https://tooltip.cc/utilities/video-downloader",
+  "https://tooltip.cc/utilities/mortgage-calculator",
+  "https://tooltip.cc/network-tools/ip-info",
+  "https://tooltip.cc/network-tools/dns-lookup",
+  "https://tooltip.cc/network-tools/latency-test",
+  "https://tooltip.cc/network-tools/speed-test",
+  "https://tooltip.cc/network-tools/http-headers",
+  "https://tooltip.cc/network-tools/domain-info",
+  "https://tooltip.cc/fun-tools/mbti-test",
+  "https://tooltip.cc/fun-tools/sbti-test",
   "https://tooltip.cc/about",
-  "https://tooltip.cc/privacy-policy",
+  "https://tooltip.cc/privacy-policy"
 ];
 
 const body = { host, key, keyLocation: `https://${host}/${key}.txt`, urlList: urls };
-
 fetch("https://api.indexnow.org/indexnow", {
   method: "POST",
   headers: { "Content-Type": "application/json; charset=utf-8" },
   body: JSON.stringify(body),
 })
-  .then((res) => {
+  .then(res => {
     console.log("Status:", res.status);
-    if (res.status !== 200 && res.status !== 202) {
-      return res.text().then((t) => console.log("Body:", t));
-    }
-    console.log("Submitted OK");
+    res.status === 200 || res.status === 202 ? console.log("Submitted OK") : res.text().then(t => console.log("Body:", t));
   })
-  .catch((e) => console.error("Error:", e.message));
+  .catch(e => console.error("Error:", e.message));
