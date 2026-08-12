@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Tooltip.cc" }],
   robots: "index, follow",
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "https://tooltip.cc",
+  },
   openGraph: {
     title: "Tooltip.cc - 免费在线工具箱",
     description: "79+免费在线工具，JSON格式化、Base64编解码、正则测试、二维码生成、图片压缩等实用功能，所有工具浏览器本地运行，隐私安全。",
@@ -21,11 +24,13 @@ export const metadata: Metadata = {
     siteName: "Tooltip.cc",
     locale: "zh_CN",
     type: "website",
+    images: [{ url: "https://tooltip.cc/og-image.png", width: 1200, height: 630, alt: "Tooltip.cc" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Tooltip.cc - 免费在线工具箱",
     description: "79+免费在线工具，无需注册，浏览器本地运行，保护隐私。",
+    images: ["https://tooltip.cc/og-image.png"],
   },
 };
 

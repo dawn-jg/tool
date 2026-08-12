@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a"/>
+      <stop offset="50%" style="stop-color:#2563eb"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1050" cy="120" r="180" fill="rgba(255,255,255,0.06)"/>
+  <circle cx="150" cy="520" r="220" fill="rgba(255,255,255,0.05)"/>
+  <text x="600" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">Tooltip.cc</text>
+  <text x="600" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="rgba(255,255,255,0.9)">免费在线工具箱 · 浏览器本地运行</text>
+  <text x="600" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="rgba(255,255,255,0.7)">JSON格式化 / Base64 / 正则测试 / 二维码 / 图片处理</text>
+  <rect x="470" y="460" width="260" height="56" rx="28" fill="rgba(255,255,255,0.15)"/>
+  <text x="600" y="497" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#ffffff">数据不上传 · 无需注册</text>
+</svg>

@@ -70,6 +70,7 @@ export const translations = {
 
     // tools - developer
     "tool.jsonFormatter": "JSON格式化",
+  "tool.jsonFormatter.instructions": "粘贴JSON数据，点击格式化美化排版，或点击压缩去除多余空格。支持校验JSON语法合法性。所有处理均在浏览器本地完成，数据不会上传。",
     "tool.jsonFormatterDesc": "格式化、压缩、校验JSON数据并树形展示",
     "tool.base64": "Base64编解码",
     "tool.base64Desc": "文本Base64编码与解码转换",
@@ -450,6 +451,7 @@ export const translations = {
 
     // tools - developer
     "tool.jsonFormatter": "JSON Formatter",
+  "tool.jsonFormatter.instructions": "Paste JSON data, click Format to beautify, or click Minify to remove extra whitespace. Validation checks JSON syntax. All processing happens locally in your browser - nothing is uploaded.",
     "tool.jsonFormatterDesc": "Beautify, minify, and validate JSON with tree view",
     "tool.base64": "Base64 Encoder/Decoder",
     "tool.base64Desc": "Encode and decode Base64 strings",
