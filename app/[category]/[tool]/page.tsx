@@ -52,6 +52,36 @@ function buildFaqJsonLd(category: string, tool: string): string | null {
   });
 }
 
+function buildWebAppJsonLd(category: string, tool: string): string | null {
+  const t = getTool(category, tool);
+  if (!t) return null;
+  const name = zh[t.nameKey] || t.nameKey;
+  const desc = zh[t.descriptionKey] || t.descriptionKey;
+  const url = `https://tooltip.cc/${t.category}/${t.slug}`;
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name,
+    description: desc,
+    url,
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "Web",
+    browserRequirements: "Requires JavaScript",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+    },
+    featureList: ["免费使用", "浏览器本地运行", "无需注册", "无需安装"],
+    publisher: {
+      "@type": "Organization",
+      name: "Tooltip.cc",
+      url: "https://tooltip.cc/",
+    },
+  });
+}
+
 function buildBreadcrumbJsonLd(category: string, tool: string): string | null {
   const cat = getCategory(category);
   const t = getTool(category, tool);
@@ -72,6 +102,7 @@ function buildBreadcrumbJsonLd(category: string, tool: string): string | null {
 export default function ToolPage({ params }: Props) {
   const faq = buildFaqJsonLd(params.category, params.tool);
   const breadcrumb = buildBreadcrumbJsonLd(params.category, params.tool);
+  const webapp = buildWebAppJsonLd(params.category, params.tool);
   return (
     <>
       {faq && (
@@ -84,6 +115,12 @@ export default function ToolPage({ params }: Props) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: breadcrumb }}
+        />
+      )}
+      {webapp && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: webapp }}
         />
       )}
       <ToolPageClient category={params.category} tool={params.tool} />

@@ -33,7 +33,7 @@ export function getCategoryMetadata(slug: string): Metadata {
   const intro = getText(cat.introKey);
   const description = intro.length > 150 ? intro.slice(0, 150) + "…" : intro || desc;
   return {
-    title: `${name} - 免费在线工具`,
+    title: `${name} - 免费在线工具 | ${SITE_NAME}`,
     description,
     alternates: {
       canonical: `https://tooltip.cc/${cat.slug}`,
@@ -63,7 +63,7 @@ export function getToolMetadata(categorySlug: string, toolSlug: string): Metadat
   const keywords = tool.keywords;
   const description = buildDescription(name, desc, keywords);
   return {
-    title: `${name} - 在线工具`,
+    title: `${name} - 免费在线工具 | ${SITE_NAME}`,
     description,
     keywords,
     alternates: {
