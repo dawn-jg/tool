@@ -116,8 +116,15 @@ export default function ToolPage({ params, searchParams }: Props) {
   const faq = buildFaqJsonLd(params.category, params.tool, lang);
   const breadcrumb = buildBreadcrumbJsonLd(params.category, params.tool, lang);
   const webapp = buildWebAppJsonLd(params.category, params.tool, lang);
+  const path = `/${params.category}/${params.tool}`;
   return (
     <>
+      {/* @ts-expect-error hreflang not typed */}
+      <link rel="alternate" hreflang="zh-CN" href={`https://tooltip.cc${path}`} />
+      {/* @ts-expect-error hreflang not typed */}
+      <link rel="alternate" hreflang="en" href={`https://tooltip.cc${path}?lang=en`} />
+      {/* @ts-expect-error hreflang not typed */}
+      <link rel="alternate" hreflang="x-default" href={`https://tooltip.cc${path}`} />
       {faq && (
         <script
           type="application/ld+json"

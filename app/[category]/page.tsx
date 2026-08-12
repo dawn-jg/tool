@@ -39,6 +39,12 @@ export default function CategoryPage({ params, searchParams }: Props) {
   const breadcrumb = buildBreadcrumbJsonLd(params.category, lang);
   return (
     <>
+      {/* @ts-expect-error hreflang not typed */}
+      <link rel="alternate" hreflang="zh-CN" href={`https://tooltip.cc/${params.category}`} />
+      {/* @ts-expect-error hreflang not typed */}
+      <link rel="alternate" hreflang="en" href={`https://tooltip.cc/${params.category}?lang=en`} />
+      {/* @ts-expect-error hreflang not typed */}
+      <link rel="alternate" hreflang="x-default" href={`https://tooltip.cc/${params.category}`} />
       {breadcrumb && (
         <script
           type="application/ld+json"
