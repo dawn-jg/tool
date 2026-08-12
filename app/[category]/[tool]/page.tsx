@@ -111,11 +111,42 @@ function buildBreadcrumbJsonLd(category: string, tool: string, lang: string): st
   });
 }
 
+function buildHowToJsonLd(category: string, tool: string, lang: string): string | null {
+  const t = getTool(category, tool);
+  if (!t) return null;
+  const name = tKey(t.nameKey, lang);
+  const steps = lang === "en"
+    ? [
+        "Open the tool below.",
+        "Enter or upload the content you want to process in the input field.",
+        "Click the action button to process your input.",
+        "Copy the result or download the output file.",
+      ]
+    : [
+        "打开下方工具。",
+        "在输入框中输入或上传需要处理的内容。",
+        "点击相应功能按钮执行操作。",
+        "复制结果或下载输出文件。",
+      ];
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `${lang === "en" ? "How to Use" : "如何使用"} ${name}`,
+    description: tKey(t.descriptionKey, lang),
+    step: steps.map((text, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      text,
+    })),
+  });
+}
+
 export default function ToolPage({ params, searchParams }: Props) {
   const lang = (searchParams?.lang === "en" ? "en" : "zh") as "zh" | "en";
   const faq = buildFaqJsonLd(params.category, params.tool, lang);
   const breadcrumb = buildBreadcrumbJsonLd(params.category, params.tool, lang);
   const webapp = buildWebAppJsonLd(params.category, params.tool, lang);
+  const howto = buildHowToJsonLd(params.category, params.tool, lang);
   const path = `/${params.category}/${params.tool}`;
   return (
     <>
@@ -141,6 +172,12 @@ export default function ToolPage({ params, searchParams }: Props) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: webapp }}
+        />
+      )}
+      {howto && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: howto }}
         />
       )}
       <ToolPageClient category={params.category} tool={params.tool} />
