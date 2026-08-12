@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "关于我们",
-  description: "Tooltip.cc 是一个免费在线工具箱，提供79+实用工具，所有工具在浏览器本地运行，保护隐私安全。",
+  description: "Tooltip.cc 是一个免费在线工具箱，提供92+实用工具，所有工具在浏览器本地运行，保护隐私安全。",
 };
 
 export default function AboutPage() {
@@ -20,7 +20,7 @@ export default function AboutPage() {
               我们是什么
             </h2>
             <p>
-              Tooltip.cc 是一个<strong>免费在线工具箱</strong>，目前已收录 79+ 个实用工具，
+              Tooltip.cc 是一个<strong>免费在线工具箱</strong>，目前已收录 92+ 个实用工具，
               涵盖开发者工具、文本处理、图片工具、数据工具、生成器、验证器、网络工具等多个类别。
             </p>
             <p>
@@ -44,18 +44,31 @@ export default function AboutPage() {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              内容责任声明
+            </h2>
+            <p>
+              Tooltip.cc 所有工具均为技术功能型内容，不涉及新闻资讯、用户生成内容或医疗/金融建议。
+              我们不对用户通过工具产生的内容承担连带责任，详情参阅
+              <Link href="/privacy-policy" className="text-blue-600 hover:underline"> 隐私政策</Link>。
+            </p>
+          </section>
+
+
+          <section>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               工具分类
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { name: "开发者工具", desc: "JSON格式化、正则测试、Base64、时间戳等", count: 19 },
+                { name: "开发者工具", desc: "JSON格式化、正则测试、Base64、时间戳等", count: 20 },
                 { name: "文本处理", desc: "文本对比、Markdown编辑、字数统计等", count: 7 },
-                { name: "图片工具", desc: "图片压缩、二维码生成、Favicon生成等", count: 9 },
-                { name: "数据工具", desc: "密码生成、Cron表达式、进制转换等", count: 3 },
+                { name: "图片工具", desc: "图片压缩、二维码生成、Favicon生成等", count: 14 },
+                { name: "数据工具", desc: "密码生成、Cron表达式、进制转换等", count: 4 },
+                { name: "PDF 工具", desc: "PDF压缩、合并、分割、图片转PDF等", count: 5 },
                 { name: "生成器", desc: "占位图、渐变色、假数据等", count: 8 },
                 { name: "验证器", desc: "邮箱、手机号、身份证等格式验证", count: 9 },
-                { name: "实用工具", desc: "计算器、计时器、视频下载等", count: 16 },
-                { name: "网络工具", desc: "IP查询、DNS查询、HTTP头查看等", count: 5 },
+                { name: "实用工具", desc: "计算器、计时器、视频下载等", count: 17 },
+                { name: "网络工具", desc: "IP查询、DNS查询、HTTP头查看等", count: 6 },
                 { name: "趣味工具", desc: "MBTI人格测试等", count: 2 },
               ].map((cat) => (
                 <div key={cat.name} className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
