@@ -82,11 +82,14 @@ export function getToolMetadata(categorySlug: string, toolSlug: string, lang: La
   const keywords = tool.keywords;
   const description = buildDescription(name, desc, keywords, lang);
   const locale = lang === "en" ? "en_US" : "zh_CN";
+  // 分类名（如“开发者工具”），用于 Title 长尾词
+  const cat = getCategory(categorySlug);
+  const catName = cat ? getText(cat.nameKey, lang) : "";
   return {
     title:
       lang === "en"
-        ? `${name} - Free Online Tool | ${SITE_NAME}`
-        : `${name} - 免费在线工具 | ${SITE_NAME}`,
+        ? `${name} - Free Online ${catName} | ${SITE_NAME}`
+        : `${name} - 免费在线${catName} | ${SITE_NAME}`,
     description,
     keywords,
     alternates: buildLangAlternates(`/${tool.category}/${tool.slug}`),

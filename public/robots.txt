@@ -1,4 +1,7 @@
-﻿User-agent: *
+User-agent: *
 Allow: /
+
+# API 端点不参与索引
+Disallow: /api/
 
 Sitemap: https://tooltip.cc/sitemap.xml

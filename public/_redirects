@@ -1,0 +1,30 @@
+# Cloudflare Pages 重定向规则
+# 旧式裸 slug → 真实分类路径（301 永久重定向，防索引丢失）
+
+/base64-encode            /developer-tools/base64            301
+/base64-decode            /developer-tools/base64            301
+/json-formatter           /developer-tools/json-formatter    301
+/json-formatter-online    /developer-tools/json-formatter    301
+/json-pretty              /developer-tools/json-formatter    301
+/json-prettify            /developer-tools/json-formatter    301
+/regex-tester             /developer-tools/regex-tester      301
+/regex-test               /developer-tools/regex-tester      301
+/qr-code-generator        /image-tools/qrcode-generator      301
+/qrcode-generator         /image-tools/qrcode-generator      301
+/qr-generator             /image-tools/qrcode-generator      301
+/url-encode               /developer-tools/url-encoder-decoder 301
+/url-decode               /developer-tools/url-encoder-decoder 301
+/url-encoder              /developer-tools/url-encoder-decoder 301
+/base64-encoder           /developer-tools/base64            301
+/image-compressor         /image-tools/image-compressor      301
+/image-resizer            /image-tools/image-resizer         301
+/pdf-compressor           /pdf-tools/pdf-compressor          301
+/pdf-to-image             /pdf-tools/pdf-to-image            301
+/image-to-pdf             /pdf-tools/image-to-pdf            301
+/pdf-watermark            /pdf-tools/pdf-watermark           301
+/json-validator           /validators/json-validator         301
+/email-validator          /validators/email-validator        301
+/url-validator            /validators/url-validator          301
+/password-generator       /utilities/password-generator      301
+/random-password          /data-tools/random-password        301
+/timestamp                /developer-tools/timestamp         301
