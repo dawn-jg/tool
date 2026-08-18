@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { getToolMetadata } from "@/lib/metadata";
 import { translations } from "@/lib/translations";
 import { getTool, getCategory } from "@/lib/tools-data";
+import { toolContent } from "@/lib/tool-content";
 import ToolPageClient from "./tool-page-client";
 
 export const runtime = 'edge';
@@ -33,18 +34,25 @@ function buildFaqJsonLd(category: string, tool: string, lang: string): string | 
   const desc = tKey(t.descriptionKey, lang);
   const catKey = `cat.${category.replace('-tools', '')}`;
   const catName = tKey(catKey, lang) || category;
+  const content = toolContent[tool];
 
-  const questions = lang === "en"
+  // 通用兜底问题
+  const genericQuestions = lang === "en"
     ? [
-        { q: `What is ${name}?`, a: `${name} is a free online tool provided by Tooltip.cc, ${desc}. No registration or installation needed — just open your browser and use it.` },
-        { q: `Does ${name} cost anything?`, a: `No, it is completely free. All tools on Tooltip.cc (including ${name}) are free to use with no account required.` },
-        { q: `Is ${name} safe? Will my data leak?`, a: `Yes, it is safe. ${name} runs entirely in your browser locally — your data is never uploaded to any server.` },
+        { q: `What is ${name}?`, a: `${name} is a free online tool provided by Tooltip.cc, ${desc}. No registration or installation needed.` },
+        { q: `Is ${name} free?`, a: `Yes, completely free. All Tooltip.cc tools are free with no account required.` },
+        { q: `Is my data safe?`, a: `Yes. ${name} runs entirely in your browser — data never leaves your device.` },
       ]
     : [
-        { q: `${name}是什么？`, a: `${name}是 Tooltip.cc 提供的免费在线${catName}，${desc}。无需注册、无需安装，打开浏览器即可使用。` },
-        { q: `${name}收费吗？`, a: `完全免费。Tooltip.cc 的所有工具（包括${name}）均免费使用，无需注册账号。` },
-        { q: `${name}安全吗？数据会泄露吗？`, a: `安全。${name}完全在浏览器本地运行，数据不会上传到任何服务器，请放心使用。` },
+        { q: `${name}是什么？`, a: `${name}是 Tooltip.cc 提供的免费在线${catName}，${desc}。无需注册，打开浏览器即可使用。` },
+        { q: `${name}收费吗？`, a: `完全免费。Tooltip.cc 所有工具均免费使用，无需注册账号。` },
+        { q: `${name}安全吗？`, a: `安全。${name}完全在浏览器本地运行，数据不会上传到任何服务器。` },
       ];
+
+  // 工具特有 FAQ 优先
+  const questions = content?.faq
+    ? content.faq.map(item => ({ q: item.q, a: item.a }))
+    : genericQuestions;
 
   return JSON.stringify({
     "@context": "https://schema.org",
@@ -115,10 +123,12 @@ function buildHowToJsonLd(category: string, tool: string, lang: string): string 
   const t = getTool(category, tool);
   if (!t) return null;
   const name = tKey(t.nameKey, lang);
-  const steps = lang === "en"
+  const content = toolContent[tool];
+
+  const genericSteps = lang === "en"
     ? [
         "Open the tool below.",
-        "Enter or upload the content you want to process in the input field.",
+        "Enter or upload the content you want to process.",
         "Click the action button to process your input.",
         "Copy the result or download the output file.",
       ]
@@ -128,6 +138,8 @@ function buildHowToJsonLd(category: string, tool: string, lang: string): string 
         "点击相应功能按钮执行操作。",
         "复制结果或下载输出文件。",
       ];
+
+  const steps = content?.steps || genericSteps;
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "HowTo",

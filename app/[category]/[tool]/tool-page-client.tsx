@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getTool, getToolsByCategory } from "@/lib/tools-data";
 import { getToolComponent } from "@/lib/tool-components";
 import { useI18n } from "@/lib/i18n";
+import { toolContent } from "@/lib/tool-content";
 
 interface Props {
   category: string;
@@ -21,27 +22,12 @@ export default function ToolPageClient({ category, tool }: Props) {
 
   const toolName = t(toolData.nameKey);
   const toolDesc = t(toolData.descriptionKey);
+  const content = toolContent[tool];
 
   // 相关工具（同分类，排除当前）
   const related = getToolsByCategory(category)
     .filter((x) => x.slug !== tool)
     .slice(0, 6);
-
-  // FAQ（与 server 端 JSON-LD 保持一致的可见文本）
-  const faqItems = [
-    {
-      q: `${toolName}是什么？`,
-      a: `${toolName}是 Tooltip.cc 提供的免费在线工具，${toolDesc}。无需注册、无需安装，打开浏览器即可使用。`,
-    },
-    {
-      q: `${toolName}收费吗？`,
-      a: `完全免费。Tooltip.cc 的所有工具（包括${toolName}）均免费使用，无需注册账号。`,
-    },
-    {
-      q: `${toolName}安全吗？数据会泄露吗？`,
-      a: `安全。${toolName}完全在浏览器本地运行，数据不会上传到任何服务器，请放心使用。`,
-    },
-  ];
 
   return (
     <div>
@@ -49,39 +35,45 @@ export default function ToolPageClient({ category, tool }: Props) {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           {toolName}
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">{toolDesc}</p>
+        <p className="text-gray-600 dark:text-gray-300 mb-4">{toolDesc}</p>
+        {content?.summary && (
+          <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{content.summary}</p>
+        )}
       </div>
       <Component />
 
-      {/* 使用说明（通用 HowTo，基于工具名称生成步骤） */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          {t("common.howToUse")}
-        </h2>
-        <ol className="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
-          <li>{t("common.step1")}</li>
-          <li>{t("common.step2")}</li>
-          <li>{t("common.step3")}</li>
-          <li>{t("common.step4")}</li>
-        </ol>
-      </section>
+      {/* 使用说明（真实步骤） */}
+      {content?.steps && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            {t("common.howToUse")}
+          </h2>
+          <ol className="list-decimal list-inside space-y-3 text-gray-700 dark:text-gray-300">
+            {content.steps.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
+        </section>
+      )}
 
-      {/* FAQ 可见文本 */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          {t("common.faqTitle")}
-        </h2>
-        <div className="space-y-6">
-          {faqItems.map((item, i) => (
-            <div key={i}>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                {item.q}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">{item.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* FAQ（工具特有真实问题） */}
+      {content?.faq && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            {t("common.faqTitle")}
+          </h2>
+          <div className="space-y-6">
+            {content.faq.map((item, i) => (
+              <div key={i}>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                  {item.q}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 相关工具内链 */}
       {related.length > 0 && (
