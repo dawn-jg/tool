@@ -1,29 +1,33 @@
-// scripts/verify-content.js
-// 验证工具页的 FAQ 正文、HowTo 步骤、相关工具内链、JSON-LD
+// 验证工具页真实内容上线
 const https = require('https');
-function fetch(u) {
-  return new Promise((resolve, reject) => {
-    https.get(u, res => { let b=''; res.on('data',c=>b+=c); res.on('end',()=>resolve(b)); }).on('error', reject);
+
+const urls = [
+  'https://tooltip.cc/developer-tools/json-formatter',
+  'https://tooltip.cc/developer-tools/base64',
+  'https://tooltip.cc/image-tools/qrcode-generator',
+  'https://tooltip.cc/network-tools/speed-test',
+];
+
+function fetch(url) {
+  return new Promise((resolve) => {
+    https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {
+      let data = '';
+      res.on('data', (c) => (data += c));
+      res.on('end', () => resolve({ status: res.statusCode, body: data }));
+    }).on('error', () => resolve({ status: 0, body: '' }));
   });
 }
+
 (async () => {
-  const url = 'https://tooltip.cc/developer-tools/json-formatter';
-  const html = await fetch(url);
-  console.log('=== 工具页内容验证 ===');
-  console.log('1. HowTo 使用步骤:', html.includes('使用步骤') ? 'OK' : 'MISSING');
-  console.log('2. FAQ 可见文本:', html.includes('常见问题') ? 'OK' : 'MISSING');
-  console.log('3. 相关工具:', html.includes('相关工具') ? 'OK' : 'MISSING');
-  console.log('4. FAQ JSON-LD:', html.includes('FAQPage') ? 'OK' : 'MISSING');
-  console.log('5. Breadcrumb JSON-LD:', html.includes('BreadcrumbList') ? 'OK' : 'MISSING');
-  console.log('6. WebApplication JSON-LD:', html.includes('WebApplication') ? 'OK' : 'MISSING');
-  // 检查相关工具链接数
-  const relatedLinks = html.match(/href="\/developer-tools\/(?!json-formatter)[a-z-]+"/g) || [];
-  console.log('7. 相关工具链接数:', relatedLinks.length);
-  // 检查 HowTo 步骤
-  const steps = html.match(/<li[^>]*>[^<]*<\/li>/g) || [];
-  console.log('8. li 步骤数:', steps.length);
-  // 检查 H1/H2
-  const h1 = html.match(/<h1[^>]*>([^<]*)<\/h1>/g) || [];
-  const h2 = html.match(/<h2[^>]*>([^<]*)<\/h2>/g) || [];
-  console.log('9. H1 数量:', h1.length, '| H2:', h2.map(x => x.replace(/<[^>]*>/g, '')).join(' / '));
+  for (const url of urls) {
+    const { status, body } = await fetch(url);
+    const slug = url.split('/').pop();
+    // 检查是否有工具特有内容（比如常见 FAQ 问题）
+    const hasUnique = body.includes('常见错误') || body.includes('实时') ||
+      body.includes('加密随机数') || body.includes('下载') ||
+      body.includes('FAQs') || body.includes('常见问题') || body.includes('使用说明');
+    const hasHowTo = body.includes('如何使用') || body.includes('使用说明');
+    const faqCount = (body.match(/是什么？|怎么办？|有什么区别|支持/g) || []).length;
+    console.log(`[${status}] ${slug} | unique=${hasUnique} howto=${hasHowTo} faqHits=${faqCount} len=${body.length}`);
+  }
 })();

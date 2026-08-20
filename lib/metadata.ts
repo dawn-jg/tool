@@ -50,15 +50,16 @@ export function getCategoryMetadata(slug: string, lang: Lang = "zh"): Metadata {
   const intro = getText(cat.introKey, lang);
   const description = intro.length > 150 ? intro.slice(0, 150) + "…" : intro || desc;
   const locale = lang === "en" ? "en_US" : "zh_CN";
+  const title =
+    lang === "en"
+      ? `${name} - Free Online Tools | ${SITE_NAME}`
+      : `${name} - 免费在线工具 | ${SITE_NAME}`;
   return {
-    title:
-      lang === "en"
-        ? `${name} - Free Online Tools | ${SITE_NAME}`
-        : `${name} - 免费在线工具 | ${SITE_NAME}`,
+    title,
     description,
     alternates: buildLangAlternates(`/${cat.slug}`),
     openGraph: {
-      title: `${name} - ${SITE_NAME}`,
+      title,
       description,
       url: `https://tooltip.cc/${cat.slug}`,
       siteName: SITE_NAME,
@@ -68,7 +69,7 @@ export function getCategoryMetadata(slug: string, lang: Lang = "zh"): Metadata {
     },
     twitter: {
       card: "summary",
-      title: `${name} - ${SITE_NAME}`,
+      title,
       description,
     },
   };
@@ -85,16 +86,17 @@ export function getToolMetadata(categorySlug: string, toolSlug: string, lang: La
   // 分类名（如“开发者工具”），用于 Title 长尾词
   const cat = getCategory(categorySlug);
   const catName = cat ? getText(cat.nameKey, lang) : "";
+  const title =
+    lang === "en"
+      ? `${name} - Free Online ${catName} | ${SITE_NAME}`
+      : `${name} - 免费在线${catName} | ${SITE_NAME}`;
   return {
-    title:
-      lang === "en"
-        ? `${name} - Free Online ${catName} | ${SITE_NAME}`
-        : `${name} - 免费在线${catName} | ${SITE_NAME}`,
+    title,
     description,
     keywords,
     alternates: buildLangAlternates(`/${tool.category}/${tool.slug}`),
     openGraph: {
-      title: `${name} - ${SITE_NAME}`,
+      title,
       description,
       url: `https://tooltip.cc/${tool.category}/${tool.slug}`,
       siteName: SITE_NAME,
@@ -104,7 +106,7 @@ export function getToolMetadata(categorySlug: string, toolSlug: string, lang: La
     },
     twitter: {
       card: "summary",
-      title: `${name} - ${SITE_NAME}`,
+      title,
       description,
     },
   };

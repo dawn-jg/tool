@@ -1,12 +1,12 @@
 // scripts/gen-sitemap-all.js
-// 重建 sitemap：sitemap-index.xml + 3 个子文件
+// 重建 sitemap：sitemap-index.xml + 3 个子文件（工具页 lastmod 用真实文件修改时间）
 // 运行: node scripts/gen-sitemap-all.js
 const fs = require('fs');
 const path = require('path');
 
 const DATA_PATH = path.join(__dirname, '..', 'lib', 'tools-data.ts');
 const OUT_DIR = path.join(__dirname, '..', 'public');
-const TODAY = '2026-08-13'; // 统一 lastmod
+const TODAY = new Date().toISOString().slice(0, 10); // 今天
 
 const src = fs.readFileSync(DATA_PATH, 'utf8');
 
@@ -22,6 +22,32 @@ const tools = [];
 while ((m = toolRe.exec(src)) !== null) { tools.push({ slug: m[1], category: m[2] }); }
 
 const BASE = 'https://tooltip.cc';
+
+// 工具组件文件 → lastmod（真实文件 mtime）
+function getToolLastmod(slug) {
+  const candidates = [
+    path.join(__dirname, '..', 'components', 'tools', 'developer', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'text', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'image', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'data', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'generators', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'validators', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'pdf', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'utilities', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'network', `${slug}.tsx`),
+    path.join(__dirname, '..', 'components', 'tools', 'fun', `${slug}.tsx`),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const st = fs.statSync(p);
+      const d = new Date(st.mtime);
+      // 避免未来日期
+      if (d > new Date()) return TODAY;
+      return d.toISOString().slice(0, 10);
+    }
+  }
+  return TODAY; // 找不到文件则用今天
+}
 
 function url(loc, lastmod, freq, pri) {
   return `  <url>\n    <loc>${loc}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>${freq}</changefreq>\n    <priority>${pri}</priority>\n  </url>`;
@@ -53,11 +79,16 @@ const catUrls = cats.map(slug => ({
 }));
 writeSitemap('sitemap-categories.xml', catUrls);
 
-// 3. tools.xml：92 个工具页（按分类排序）
+// 3. tools.xml：92 个工具页（按分类排序，lastmod 用真实文件 mtime）
 const byCat = {};
 for (const t of tools) { (byCat[t.category] = byCat[t.category] || []).push(t); }
 const toolUrls = [];
-for (const c of cats) { for (const t of byCat[c] || []) toolUrls.push({ loc: `${BASE}/${c}/${t.slug}`, lastmod: TODAY, freq: 'monthly', pri: '0.8' }); }
+for (const c of cats) {
+  for (const t of byCat[c] || []) {
+    const lm = getToolLastmod(t.slug);
+    toolUrls.push({ loc: `${BASE}/${c}/${t.slug}`, lastmod: lm, freq: 'monthly', pri: '0.8' });
+  }
+}
 writeSitemap('sitemap-tools.xml', toolUrls);
 
 // 4. sitemap-index.xml
@@ -76,4 +107,4 @@ indexLines.push('</sitemapindex>');
 indexLines.push('');
 fs.writeFileSync(path.join(OUT_DIR, 'sitemap.xml'), indexLines.join('\n'), 'utf8');
 
-console.log(`Done: sitemap.xml (index) + sitemap-static.xml (${3} urls) + sitemap-categories.xml (${catUrls.length} urls) + sitemap-tools.xml (${toolUrls.length} urls)`);
+console.log(`Done: sitemap.xml (index) + sitemap-static.xml (3 urls) + sitemap-categories.xml (${catUrls.length} urls) + sitemap-tools.xml (${toolUrls.length} urls)`);
